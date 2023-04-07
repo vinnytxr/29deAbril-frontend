@@ -16,7 +16,7 @@ export default function RegisterScreen() {
                     <div className="col d-flex justify-content-end">
                         <p className="mt-3">Já tem conta? <a className="fw-bold link-termos" href="https://www.google.com.br">ENTRE AGORA!</a></p>
                     </div>
-                    <p className="fw-bold fs-4 ms-1 mt-5">Estude Gratuitamente!</p>
+                    <p className="fw-bold fs-4 ms-1 mt-5">Estude ************!</p>
                 </div>
 
                 <div className="row ps-1 mt-2">
