@@ -25,7 +25,7 @@ const LoginScreen = () => {
         if (Object.keys(formErrors).length === 0 && isSubmit) {
             console.log(formErrors);
         }
-    }, [])
+    }, [formErrors, isSubmit])
 
     const handleSubmit = (e) => {
         e.preventDefault();

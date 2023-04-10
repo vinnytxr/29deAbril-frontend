@@ -1,12 +1,13 @@
 import React from 'react';
 import { Component } from 'react';
-import './nav.css';
+
+// Style
+import './style.css';
 
 import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookBookmark, faBookmark, faCompass, faPen, faTag } from '@fortawesome/free-solid-svg-icons'
-
 
 
 class SideNav extends Component {
