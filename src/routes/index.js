@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import LoginPage from "../pages/Login";
 import RegisterScreen from "../pages/Register";
+import NewCourseScreen from "../pages/CreateCourse";
 
 const Routes = createBrowserRouter([
   {
@@ -11,6 +12,10 @@ const Routes = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterScreen/>,
+  },
+  {
+    path: "/novocurso",
+    element: <NewCourseScreen/>,
   },
 ]);
 
