@@ -7,7 +7,7 @@ import { Form } from 'react-bootstrap';
 // Style
 import './style.css'
 
-const LoginScreen = () => {
+const LoginPage = () => {
     const intialValues = { username: "", password: "" };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
@@ -102,4 +102,4 @@ const LoginScreen = () => {
     )
 }
 
-export default LoginScreen
+export default LoginPage
