@@ -5,11 +5,6 @@ import Avatar from 'react-avatar';
 
 import './style.css'
 
-// componentes
-import SideNav from "../../components/NavBar";
-
-
-
 //Bootstrap
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -29,6 +24,7 @@ import {
 //Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faMagnifyingGlass, faPaperPlane, } from '@fortawesome/free-solid-svg-icons'
+import SideNav from "../../components/NavBar";
 
 
 
@@ -88,9 +84,6 @@ function NewCourseScreen() {
             <>
                 <div className="container-fluid fundo">
                     <Row>
-                        <div className="col-2 d-none d-lg-inline">
-                            <SideNav />
-                        </div>
                         <Col>
                             <Navbar>
                                 <Container fluid>
