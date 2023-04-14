@@ -1,24 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faCirclePlus, faCheck } from '@fortawesome/free-solid-svg-icons'
 
 import './style.css'
-import { Form, Row } from "react-bootstrap";
+import { Form, Row, Toast, ToastHeader, ToastBody } from "react-bootstrap";
 
 export default function RegisterScreen() {
-
-    const intialValues = { nome: "", email: "", password: "", cpf: "" };
+    const intialValues = { name: "", email: "", password: "", cpf: "", about: "nothing", photo: "null", role: [2] };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
 
+  
+
     const handleChange = (e) => {
-        console.log(e.target);
+       // console.log(e.target);
         const { name, value } = e.target;
 
         if (name === "cpf") {
             // Remove tudo que não é número
+            if (value.length > 14) {
+                return;
+            }
             const formattedValue = value.replace(/\D/g, '');
 
             // Adiciona pontos e traço nos locais corretos
@@ -33,22 +37,49 @@ export default function RegisterScreen() {
     }
 
     useEffect(() => {
-        console.log(formValues);
-        if(Object.keys(formErrors).length === 0 && isSubmit){
-            console.log("FOI")// CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
+        //console.log(formValues);
+        if (Object.keys(formErrors).length === 0 && isSubmit) {
+            //console.log(JSON.stringify(formValues))// CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
+            
+                fetch('https://portal-aulas-api.fly.dev/user/', {
+                    method: 'POST',
+                    body: JSON.stringify(
+                        formValues
+                    ),
+                    headers: {
+                        'Content-type': 'application/json; charset=UTF-8',
+                    },
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                         //console.log("OLHA O ERRO")
+                         alert("Falha ao se comunicar com o servidor.");
+                        }
+                        return response.json();
+                      })
+                    .then((data) => {
+                        //console.log("erro 400", data);
+                        //setToast(true)
+                    })
+                    .catch((err) => {
+                        //console.log("catch", err.message);
+                        //setToast(true)
+                    });
+            
+           
         }
     }, [isSubmit]);
 
     useEffect(() => {
-        console.log(formValues);
+        //console.log(formValues);
         if (isSubmit)
             setFormErrors(validate(formValues));
     }, [formValues]);
 
     useEffect(() => {
-        console.log(formErrors);
+       // console.log(formErrors);
         if (Object.keys(formErrors).length === 0 && isSubmit) {
-            console.log(formErrors);
+           // console.log(formErrors);
         }
     }, [])
 
@@ -57,10 +88,37 @@ export default function RegisterScreen() {
         setFormErrors(validate(formValues));
         setIsSubmit(true);
         if (Object.keys(formErrors).length !== 0 && isSubmit) {
-            console.log("TEM ERROS");
+           // console.log("TEM ERROS");
         }
         if (Object.keys(formErrors).length === 0 && isSubmit) {
-            console.log("FOI"); // CAHAMAR A FUNÇÃO DE CADASTRO AQUI E AQUI TAMBÉM ======================================================================================
+           // console.log("FOI"); // CAHAMAR A FUNÇÃO DE CADASTRO AQUI E AQUI TAMBÉM ======================================================================================
+           
+            fetch('https://portal-aulas-api.fly.dev/user/', {
+                method: 'POST',
+                body: JSON.stringify(
+                    formValues
+                ),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                     //console.log("OLHA O ERRO")
+                     alert("Falha ao se comunicar com o servidor.");
+                    }
+                    return response.json();
+                  })
+                .then((data) => {
+                   // console.log("erro 400", data);
+                    //setToast(true)
+                })
+                .catch((err) => {
+                    //console.log("catch", err.message);
+                    //setToast(true)
+                });
+            
+           
         }
     }
 
@@ -73,8 +131,8 @@ export default function RegisterScreen() {
         const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
         const regexcpf = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
 
-        if (!values.nome) {
-            errors.nome = "Digite um nome!";
+        if (!values.name) {
+            errors.name = "Digite um nome!";
         }
 
         if (!values.email && isSubmit) {
@@ -108,6 +166,9 @@ export default function RegisterScreen() {
 
     return (
         <>
+
+         
+
             <div className="container-fluid p-5 col-sm-7 col-md-8 col-lg-10">
                 <div className="row">
                     <div className="col">
@@ -123,12 +184,12 @@ export default function RegisterScreen() {
                     <Form onSubmit={handleSubmit}>
                         <input
                             type="text"
-                            name="nome"
+                            name="name"
                             placeholder="Nome e Sobrenome"
                             className="form-control"
-                            value={formValues.nome}
+                            value={formValues.name}
                             onChange={handleChange} />
-                        <p className="ps-2" style={{ color: "red" }}>{formErrors.nome}</p>
+                        <p className="ps-2" style={{ color: "red" }}>{formErrors.name}</p>
 
                         <div className="mt-3">
                             <input
