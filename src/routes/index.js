@@ -18,11 +18,11 @@ const DefaultRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/register' element={<RegisterScreen/>}/>
+        {/* <Route path='/login' element={<LoginPage/>}/> */}
+        {/* <Route path='/register' element={<RegisterScreen/>}/> */}
         <Route element={<SidebarLayout/>}>
           <Route path='/' element={<Home /> }/>
-          <Route path='/novo-curso' element={<NewCourseScreen /> }/>
+          {/* <Route path='/novo-curso' element={<NewCourseScreen /> }/> */}
         </Route>
       </Routes>
     </BrowserRouter>
