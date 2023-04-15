@@ -1,14 +1,84 @@
-html, body {
-    margin: 0;
-    height: 100%;
-    background-color: rgb(248, 249, 250)
-}
-.formulario-cadastro{
-    box-shadow: 1px 1px 5px rgb(179, 179, 179);
-    margin-bottom: 10px;
+section.box-course {
+    padding-top: 5vh;
+    padding-bottom: 5vh;
 }
 
-.input-anotation{
-    font-size: 13px;
-    color: lightslategray
+.container-new-course .submit-form {
+    background-color: #198754;
+    border-color: #198754;
+    font-weight: bold;
+}
+
+.container-new-course .submit-form:active {
+    background-color: white;
+    color: #198754;
+    border-color: white;
+
+}
+
+.container-course h2 {
+    font-weight: bold;
+    color: #198754;
+}
+
+.container-new-course input, .container-new-course textarea, .container-course .submit-form {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.container-new-course .image-for-input-file {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+}
+
+.container-new-course .error {
+    border-color: #dc3545 !important;
+    color: #dc3545 !important;
+}
+
+.container-new-course .ok {
+    border-color: #198754 !important;
+    color: #198754 !important;
+}
+
+.container-new-course .file-input-span .ok, .container-new-course .file-input-span .error {
+    font-weight: bold;
+}
+
+.container-course .pl0 {
+    padding-left: 0 !important;
+}
+
+.container-course .pr0 {
+    padding-right: 0 !important;
+}
+
+.container-new-course img.image-for-input-file {
+    height: 50vh;
+}
+
+.container-new-course textarea.input-description {
+    height: calc(50vh + 60px)
+}
+
+.container-course .submit-form-learning {
+    margin-left: 5px;
+    width: calc(20% - 5px);
+    border: 2px solid #198754;
+    background-color: #198754;
+}
+
+@media(max-width: 991.98px){
+    .container-course .pl0, .container-course .pr0 {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .container-new-course img.image-for-input-file {
+        height: 30vh;
+    }
+    
+    .container-new-course textarea.input-description {
+        height: calc(30vh + 60px)
+    }
 }
