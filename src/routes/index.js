@@ -1,4 +1,5 @@
-import { createBrowserRouter } from "react-router-dom";
+
+import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom';
 
 import LoginPage from "../pages/Login";
 import RegisterScreen from "../pages/Register";
@@ -30,4 +31,19 @@ const Routes = createBrowserRouter([
   
 ]);
 
-export default Routes
+const DefaultRoutes = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* <Route path='/login' element={<LoginPage/>}/> */}
+        {/* <Route path='/register' element={<RegisterScreen/>}/> */}
+        <Route element={<SidebarLayout/>}>
+          <Route path='/' element={<Home /> }/>
+          {/* <Route path='/novo-curso' element={<NewCourseScreen /> }/> */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
+}
+
+export default DefaultRoutes
