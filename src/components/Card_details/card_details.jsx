@@ -4,11 +4,11 @@ import Card from 'react-bootstrap/Card';
 
 import "./card_details.css"
 
-function Card_details () {
+function Card_details ({image}) {
     return (
-        <div class ="card-css text-center">
+        <div className ="card-css text-center">
         <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top" src="https://blog.cod3r.com.br/wp-content/uploads/2020/10/Code-Photography-Images-08-950x500.jpg" />
+        <Card.Img variant="top" src={image.banner} />
         <Card.Body>
             <Card.Title className='text-color'>
                 Gostou do conteúdo do curso?
