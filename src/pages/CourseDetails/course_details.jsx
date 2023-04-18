@@ -4,21 +4,20 @@ import "./course_details.css"
 
 // Bootstrap
 import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.bundle"
 
 // Components
-import Card_details from "../../components/Card_details/card_details"
-import Check_details from "../../components/Check_details/check_details"
-import Check_Course_Information from "../../components/Check_Course_Information/check_course_information"
+import CardDetails from "../../components/CardDetails/card_details"
+import CheckDetails from "../../components/CheckDetails/check_details"
+import CheckCourseInformation from "../../components/CheckCourseInformation/check_course_information"
+import StarRating from "../../components/StarRating/star_rating";
 
 // Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 //import { faHeart, faShareNodes} from '@fortawesome/free-solid-svg-icons'
-import { faStar} from '@fortawesome/free-solid-svg-icons'
 
 function CourseDetails() {
 
-  const [data, setData] = useState({ title: "", description: "", banner: "", professor: { name: "Marcos Carpinski" } });
+  const [data, setData] = useState({});
   const [isFetched, setIsFetched] = useState(false);
 
   useEffect(() => {
@@ -26,14 +25,14 @@ function CourseDetails() {
     const dataFetch = async () => {
       const data = await (
         await fetch(
-          "http://localhost:8080/courses/courses/1"
+          "http://portal-aulas-api.fly.dev/courses/courses/1"
         )
       ).json();
       // set state when the data received
-      setData({ ...data, professor: { name: "Marcos Capinski" } });
+      setData({ ...data});
+      console.log(data);
       setIsFetched(true);
     };
-
     dataFetch();
   }, []);
 
@@ -41,12 +40,17 @@ function CourseDetails() {
   return (
     <div className="container-fluid body">
       <div className="row">
+        <div className="col-2">
+          {/* SideBar */}
+        </div>
         <div className="col mt-5">
           <Card className="custom-bg">
             <div className="row">
-              <div className="col">
+              <div className="col-8">
                 <div className="row mt-4 mx-2">
-                  <Card.Title> {data.title} </Card.Title>
+                  <Card.Title> 
+                    {data.title} 
+                  </Card.Title>
                 </div>
                 <div className="row mt-5 mx-2">
                   <Card.Text>
@@ -54,18 +58,12 @@ function CourseDetails() {
                   </Card.Text>
                 </div>
                 <div className="row mt-5 mx-2">
-                  <Card.Text>
-                    <FontAwesomeIcon style={{ color: "#ffff00", fontSize: "20" }} icon={faStar} />
-                    <FontAwesomeIcon style={{ color: "#ffff00", fontSize: "20" }} icon={faStar} />
-                    <FontAwesomeIcon style={{ color: "#ffff00", fontSize: "20" }} icon={faStar} />
-                    <FontAwesomeIcon style={{ color: "#ffff00", fontSize: "20" }} icon={faStar} />
-                    <FontAwesomeIcon style={{ color: "#ffffff", fontSize: "20" }} icon={faStar} />
-                  </Card.Text>
+                    <StarRating value={4.6}/>
                 </div>
                 <div className="row">
                   <div className="col">
                     <Card.Text className="mt-5 ms-3">
-                      {data?.professor?.name}
+                      Professor: {data?.professor?.name}
                     </Card.Text>
                   </div>
                   {/* <div className="col mt-5 mx-5">
@@ -77,32 +75,34 @@ function CourseDetails() {
                 </div>
               </div>
 
-              <div className="col my-2">
-                <Card_details image={data} />
+              <div className="col d-flex justify-content-center align-items-center my-2">
+                <CardDetails image={data.banner} />
               </div>
             </div>
           </Card>
 
-          <div className="row my-3">
-            <div className="col">
+          <div className="row">
+            <div className="col mt-3">
               <Card className="body-card">
                 <div className="row">
-                  <Card.Text className="mt-2 ms-2">
+                  <Card.Text className="my-2 ms-3">
                     O que você aprenderá:
                   </Card.Text>
                 </div>
-                <Check_details />
+                <CheckDetails cdetails={data}/>
               </Card>
             </div>
+          </div>
 
-            <div className="col">
-              <Card className="body-card">
+          <div className="row">
+            <div className="col mt-3">
+              <Card className="body-card ">
                 <div className="row">
-                  <Card.Text className="mt-2 ms-2">
+                  <Card.Text className="my-2 ms-3">
                     O curso inclui:
                   </Card.Text>
                   <div>
-                    <Check_Course_Information />
+                    <CheckCourseInformation />
                   </div>
                 </div>
               </Card>

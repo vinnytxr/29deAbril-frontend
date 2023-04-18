@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBook, faCertificate, faFileArchive, faPlayCircle } from '@fortawesome/free-solid-svg-icons'
 
 
-const Check_Course_Information = () => {
+const CheckCourseInformation = () => {
     return (
       <div >
         <ListGroup>
@@ -19,4 +19,4 @@ const Check_Course_Information = () => {
     );
   };
   
-  export default Check_Course_Information;
+  export default CheckCourseInformation;

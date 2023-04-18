@@ -4,17 +4,17 @@ import Card from 'react-bootstrap/Card';
 
 import "./card_details.css"
 
-function Card_details ({image}) {
+function CardDetails ({image}) {
     return (
         <div className ="card-css text-center">
-        <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top" src={image.banner} />
+        <Card style={{ width: '14rem' }}>
+        <Card.Img variant="top" src={image} />
         <Card.Body>
             <Card.Title className='text-color'>
                 Gostou do conteúdo do curso?
             </Card.Title>
             <Card.Text className='text-color'>
-            Inscreva-se já!
+                Inscreva-se já!
             </Card.Text>
             <Button disabled className="bottom-color">Inscreva-se</Button>
         </Card.Body>
@@ -23,4 +23,4 @@ function Card_details ({image}) {
     );
 };
 
-export default Card_details;
+export default CardDetails;
