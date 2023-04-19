@@ -10,32 +10,33 @@ import CardDetails from "../../components/CardDetails/card_details"
 import CheckDetails from "../../components/CheckDetails/check_details"
 import CheckCourseInformation from "../../components/CheckCourseInformation/check_course_information"
 import StarRating from "../../components/StarRating/star_rating";
+import AccordionListCourse from "../../components/AccordionList/accordion_list";
 
 // Icons
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 //import { faHeart, faShareNodes} from '@fortawesome/free-solid-svg-icons'
 
 function CourseDetails() {
 
   const [data, setData] = useState({});
   const [isFetched, setIsFetched] = useState(false);
+  
+  const id = 1; //Alterar o curso que deseja visualizar, quando for integrar vou deixar direto na função
 
   useEffect(() => {
     // fetch data
     const dataFetch = async () => {
       const data = await (
         await fetch(
-          "http://portal-aulas-api.fly.dev/courses/courses/1"
+          `http://portal-aulas-api.fly.dev/courses/courses/${id}`
         )
       ).json();
       // set state when the data received
       setData({ ...data});
-      console.log(data);
       setIsFetched(true);
     };
     dataFetch();
   }, []);
-
 
   return (
     <div className="container-fluid body">
@@ -47,7 +48,7 @@ function CourseDetails() {
           <Card className="custom-bg">
             <div className="row">
               <div className="col-8">
-                <div className="row mt-4 mx-2">
+                <div className="row mt-4 mx-2 fw-bold">
                   <Card.Title> 
                     {data.title} 
                   </Card.Title>
@@ -85,7 +86,24 @@ function CourseDetails() {
             <div className="col mt-3">
               <Card className="body-card">
                 <div className="row">
+                  <Card.Text className="my-2 ms-3 fw-bold">
+                    Sobre o curso:
+                  </Card.Text>
+                </div>
+                <div className="row">
                   <Card.Text className="my-2 ms-3">
+                    Descrição geral do curso, sem limite de linhas.....
+                  </Card.Text>
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col mt-3">
+              <Card className="body-card">
+                <div className="row">
+                  <Card.Text className="my-2 ms-3 fw-bold">
                     O que você aprenderá:
                   </Card.Text>
                 </div>
@@ -98,7 +116,7 @@ function CourseDetails() {
             <div className="col mt-3">
               <Card className="body-card ">
                 <div className="row">
-                  <Card.Text className="my-2 ms-3">
+                  <Card.Text className="my-2 ms-3 fw-bold">
                     O curso inclui:
                   </Card.Text>
                   <div>
@@ -110,8 +128,17 @@ function CourseDetails() {
           </div>
 
           <div className="row">
-            <div className="col">
-              Aulas
+            <div className="col mt-3">
+              <Card className="body-card ">
+                <div className="row">
+                  <Card.Text className="my-2 ms-3 fw-bold">
+                    Conteúdo do curso:
+                  </Card.Text>
+                  <div>
+                    <AccordionListCourse />
+                  </div>
+                </div>
+              </Card>
             </div>
           </div>
         </div>
