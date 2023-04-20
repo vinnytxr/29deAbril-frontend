@@ -6,38 +6,17 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import "./accordion_list.css";
 
-function AccordionListCourse () { 
+function AccordionListCourse ({sessions}) { 
+    const {lessons} = sessions;
+
     const alertClicked = () => {
       alert('Você clicou em uma aula');
     };
 
-    const [data, setData] = useState({});
-    const [isFetched, setIsFetched] = useState(false);
-
-    useEffect(() => {
-      // fetch data
-      const dataFetch = async () => {
-        const data = await (
-          await fetch(
-            "http://portal-aulas-api.fly.dev/lessons/lessons"
-          )
-        ).json();
-        // set state when the data received
-        setData({ ...data});
-        console.log(data);
-        setIsFetched(true);
-      };
-      dataFetch();
-    }, []);
-
-    if (!isFetched || !data.results) {
-      return <p>Carregando...</p>;
-    }
-
     return (
-        <Accordion alwaysOpen>
-          {data.results.map(item => (
-            <Card>
+      <Accordion alwaysOpen>
+          {lessons?.map(item => (
+            <Card key={item.id}>
               <Accordion.Item eventKey={item.id.toString()} key={item.id}>
               <Accordion.Header>{item.title}</Accordion.Header>
               <Accordion.Body>

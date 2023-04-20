@@ -36,6 +36,7 @@ function CourseDetails() {
       setIsFetched(true);
     };
     dataFetch();
+
   }, []);
 
   return (
@@ -92,7 +93,7 @@ function CourseDetails() {
                 </div>
                 <div className="row">
                   <Card.Text className="my-2 ms-3">
-                    Descrição geral do curso, sem limite de linhas.....
+                    {data.content}
                   </Card.Text>
                 </div>
               </Card>
@@ -135,7 +136,7 @@ function CourseDetails() {
                     Conteúdo do curso:
                   </Card.Text>
                   <div>
-                    <AccordionListCourse />
+                    <AccordionListCourse sessions={data}/>
                   </div>
                 </div>
               </Card>
