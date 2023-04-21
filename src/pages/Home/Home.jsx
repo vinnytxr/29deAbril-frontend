@@ -50,8 +50,33 @@ function Home() {
         dataFetch();
     }, []);
 
+    useEffect(() => {
+        const registerUser = async (body) => {
+            console.log(body)
+            const url = `http://localhost:8080/user/`
 
+            const data = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then((response) => {
+                    console.log("user: ", response)
+                    return data
+                })
 
+        }
+        registerUser({
+            name: "Renam Sakashidastasasasa",
+            email: `sasaskdasashita${Date.now()}@gmail.com`,
+            password: "password",
+            about: "nothing",
+            role: [1]
+        })
+    }, [])
 
     return (
         <>

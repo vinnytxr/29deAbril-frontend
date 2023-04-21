@@ -21,7 +21,7 @@ section.box-course {
     color: #198754;
 }
 
-.container-new-course input, .container-new-course textarea, .container-course .submit-form {
+.container-course input, .container-new-course textarea, .container-course .submit-form {
     outline: none !important;
     box-shadow: none !important;
 }
@@ -61,11 +61,44 @@ section.box-course {
     height: calc(50vh + 60px)
 }
 
+.container-course .input-learning:focus {
+    border: 1px solid #ced4da;
+}
+
+.container-course .submit-form-learning {
+    font-weight: bold;
+}
+
+
 .container-course .submit-form-learning {
     margin-left: 5px;
     width: calc(20% - 5px);
     border: 2px solid #198754;
     background-color: #198754;
+}
+
+.container-course .submit-form-learning:active {
+    border: 2px solid white;
+    background-color: white;
+    color: #198754;
+}
+
+.container-course .remove-learning {
+    margin-left: 5px;
+    width: calc(10% - 5px);
+    border: 2px solid #dc3545;
+    background-color: #dc3545;
+}
+
+.container-course .remove-learning:active {
+    background-color: white;
+    color: #dc3545;
+    border: 2px solid white
+}
+
+.container-course .label-submit-learning span {
+    color: #198754;
+    font-weight: bold;
 }
 
 @media(max-width: 991.98px){

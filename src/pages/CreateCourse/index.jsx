@@ -42,6 +42,78 @@ const registerCourse = async (body) => {
             })
 
         console.log(data)
+        return { status: ContatoStatus.OK, data: data };
+
+    } catch (error) {
+        console.warn("Unexpect error on Contato: ", error);
+        return { status: ContatoStatus.ERROR, data: null };
+    }
+}
+
+const registerLearning = async (body) => {
+    console.log(body)
+    const url = `https://portal-aulas-api.fly.dev/courses/learnings`
+
+    const data = await fetch(url, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    })
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Something went wrong');
+        })
+
+    return data
+}
+
+const getCourse = async (id) => {
+    try {
+        const url = `https://portal-aulas-api.fly.dev/courses/courses/${id}`
+
+        const data = await fetch(url, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Something went wrong');
+            })
+
+        return { status: ContatoStatus.OK, data: data };
+    } catch (err) {
+        return { status: ContatoStatus.ERROR, data: null};
+    }
+}
+
+const deleteLearning = async (id) => {
+
+    try {
+
+        const url = `https://portal-aulas-api.fly.dev/courses/learnings/${id}`
+
+        const data = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                Accept: 'application/json',
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Something went wrong');
+            })
+
         return ContatoStatus.OK
 
     } catch (error) {
@@ -71,6 +143,8 @@ export const NewCourseScreen = () => {
         };
     };
 
+    const [id, setId] = useState();
+
     const [estado, setEstado] = useState({
         title: undefined,
         description: undefined,
@@ -81,6 +155,10 @@ export const NewCourseScreen = () => {
     const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL)
     const [editable, setEditable] = useState(true)
 
+    const [learnings, setLearnings] = useState([])
+    const [learningInput, setLearningInput] = useState("")
+    const [allowLearnings, setAllowLearnings] = useState(false)
+
     useEffect(
         () =>
             setEstado({
@@ -89,6 +167,8 @@ export const NewCourseScreen = () => {
             }),
         [formValores.files]
     );
+
+    useEffect(() => { refreshLearnings() }, [id]);
 
     const setDescription = (e) => {
         setEstado({ ...estado, description: undefined })
@@ -118,15 +198,19 @@ export const NewCourseScreen = () => {
         post.append("title", formValores.title);
         post.append("description", formValores.description);
         post.append("banner", formValores.files[0]);
-        post.append("professor", 1);
+        post.append("content", "Curso de C++ para iniciantes, neste curso você vai aprenser com a professora Luana conceitos fundamentais da programação em C++, como programação Orientada a Objetos, funções de iteração em C++, biblioteca padrão e muito mais");
+        post.append("professor", 2);
 
 
         registerCourse(post).then(response => {
             setEditable(false)
+            if (response.status === ContatoStatus.OK && !!response.data)
+                setId(response.data.id)
+
             setTimeout(() => {
-                setPostFormStatus(response === ContatoStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
-                if (response === ContatoStatus.ERROR) setEditable(false)
-            }, 1000)
+                setPostFormStatus(response.status === ContatoStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
+                setAllowLearnings(true)
+            }, 1500)
 
             // setFormValores(resetValores())
             setEstado({})
@@ -161,6 +245,34 @@ export const NewCourseScreen = () => {
         />
     );
 
+    const addLearning = async (json) => {
+        console.log(json)
+        if (!json.name || !json.name.length) return
+        try {
+            const data = await registerLearning(json)
+            console.log(data)
+            refreshLearnings()
+        } catch (error) { }
+    }
+
+    const rmLearning = async (id) => {
+        try {
+            const data = await deleteLearning(id)
+            console.log(data)
+            refreshLearnings()
+        } catch (error) { }
+    }
+
+    const refreshLearnings = async () => {
+        const response = await getCourse(id)
+        if(response.status === ContatoStatus.OK && !!response.data){
+            console.log('learnings: ', response.data)
+            const courses = response.data
+            setLearnings([...courses.learnings]);
+        }
+    }
+
+
     return (
         <section style={{ marginLeft: "15%" }} className="box-course">
             <Container fluid className="container-new-course container-course mb-5">
@@ -177,7 +289,7 @@ export const NewCourseScreen = () => {
                                             Titulo da aula
                                             <Form.Control
                                                 className="input-title"
-                                                spellcheck={false}
+                                                spellCheck={false}
                                                 required
                                                 type="text"
                                                 placeholder=""
@@ -195,7 +307,7 @@ export const NewCourseScreen = () => {
                                             Descrição do curso
                                             <Form.Control
                                                 className="input-description"
-                                                spellcheck="false"
+                                                spellCheck="false"
                                                 required
                                                 as="textarea"
                                                 value={formValores.description}
@@ -255,7 +367,60 @@ export const NewCourseScreen = () => {
                     </Row>
                 </Form>
             </Container>
-            
+            {allowLearnings &&
+                <Container fluid className="container-learnings-metadados container-course">
+                    <Row>
+                        <Col xs={12} lg={6}>
+                            <Container fluid className="pl0 pr0">
+                                <Col xs={12}>
+                                    <h2>Aprendizados</h2>
+                                </Col>
+                                <Row>
+                                    {learnings?.map((learning) => (
+                                        <Col xs={12} className="mt-2" style={{ display: "flex", flexDirection: "row" }} key={learning.id}>
+                                            <Form.Control
+                                                className="input-learning"
+                                                value={learning.name}
+                                                disabled={true}
+                                                style={{ width: "90%" }}
+                                            />
+                                            <Button className="remove-learning"
+                                                onClick={() => rmLearning(learning.id)}
+                                            >
+                                                -
+                                            </Button>
+                                        </Col>
+                                    ))}
+                                    <Col xs={12}>
+                                        <Form>
+                                            <Form.Label className="label-submit-learning mt-3" style={{ width: "80%" }}>
+                                                <span>Adicionar novo aprendizado</span>
+                                                <Form.Control
+                                                    className="input-learning w-100"
+                                                    spellCheck={false}
+                                                    required
+                                                    type="text"
+                                                    placeholder=""
+                                                    value={learningInput}
+                                                    onChange={(e) => setLearningInput(e?.target?.value ?? learningInput)}
+                                                />
+                                            </Form.Label>
+                                            <Button className="submit-form-learning"
+                                                onClick={() => {
+                                                    addLearning({ name: learningInput, course: id })
+                                                    setLearningInput("")
+                                                }}
+                                            >
+                                                +
+                                            </Button>
+                                        </Form>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Col>
+                    </Row>
+                </Container>
+            }
         </section >
     );
 }
