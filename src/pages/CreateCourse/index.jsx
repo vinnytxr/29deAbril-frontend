@@ -15,11 +15,7 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { Alert, FormLabel, ListGroup } from "react-bootstrap"
 
-import {
-    Card,
-    Input,
-}
-    from 'react-bootstrap';
+import { Card } from 'react-bootstrap'
 
 const registerCourse = async (body) => {
 

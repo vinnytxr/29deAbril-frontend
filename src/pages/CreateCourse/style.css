@@ -1,4 +1,4 @@
-section.box-course {
+/* section.box-course {
     padding-top: 5vh;
     padding-bottom: 5vh;
 }
@@ -7,6 +7,23 @@ section.box-course {
     background-color: #198754;
     border-color: #198754;
     font-weight: bold;
+
+} */
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background-color: rgb(248, 249, 250);
+}
+.formulario-cadastro {
+  box-shadow: 1px 1px 5px rgb(179, 179, 179);
+  margin-bottom: 10px;
+}
+
+.input-anotation {
+  font-size: 13px;
+  color: lightslategray;
 }
 
 .container-new-course .submit-form:active {
