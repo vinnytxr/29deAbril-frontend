@@ -25,7 +25,7 @@ function CardCourses({ teste }) {
         <p>Commodo do ullamco esse laborum.</p>
       </Card.Footer>
       <a
-        href="https://www.google.com"
+        href="/students/courses/1"
         target="_blank"
         class="stretched-link"
         rel="noreferrer"
