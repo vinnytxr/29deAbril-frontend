@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes, Outlet } from 'react-router-dom'
-import { Col, Row } from 'react-bootstrap'
+import { Container, Col, Row } from 'react-bootstrap'
 
 // Components
 import SideNav from '../components/NavBar'
@@ -11,15 +11,19 @@ import NewCourseScreen from '../pages/CreateCourse'
 import Home from '../pages/Home/Home'
 import UserProfileScreen from '../pages/UserProfile'
 
+import '../global.css'
+
 const SidebarLayout = () => (
   <>
     <SideNav />
-    <Row>
-      <div className="col-2" />
-      <Col>
-        <Outlet />
-      </Col>
-    </Row>
+    <Container>
+      <Row>
+        <div className="col-2" />
+        <Col>
+          <Outlet />
+        </Col>
+      </Row>
+    </Container>
   </>
 )
 
@@ -38,9 +42,11 @@ const DefaultRoutes = () => {
         <Route path="/register" element={<RegisterScreen />} />
         <Route element={<SidebarLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/novo-curso" element={<NewCourseScreen />} />
           <Route path="/perfil" element={<UserProfileScreen />} />
+          <Route path="/professor/courses/create" element={<NewCourseScreen />} />
+          <Route path="/professor/courses/:courseId/lessons/create" element={< h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Página de cadastro de aula.<br/> Implementação em andamento!</h2>} />
         </Route>
+        <Route path="*" element={< h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Ops! Você está perdido ?!<br />Esta rota não existe ;(</h2>} />
       </Routes>
     </BrowserRouter>
   )

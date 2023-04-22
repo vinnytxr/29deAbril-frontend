@@ -1,127 +1,13 @@
+/* eslint-disable no-mixed-operators */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/alt-text */
+
 import React, { useState, useEffect } from "react"
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/js/bootstrap.bundle'
+import { useNavigate } from "react-router";
+import { Container, Col, Row, Form, Button, Alert } from 'react-bootstrap';
+import { HttpStatus, CourseAPI } from "./api";
 import noImage from './no-image.png'
-
 import './style.css'
-
-//Bootstrap
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import { Alert, FormLabel, ListGroup } from "react-bootstrap"
-
-import { Card } from 'react-bootstrap'
-
-const registerCourse = async (body) => {
-
-    try {
-
-        const url = `https://portal-aulas-api.fly.dev/courses/courses`
-
-        const data = await fetch(url, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-            },
-            body: body
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Something went wrong');
-            })
-
-        console.log(data)
-        return { status: ContatoStatus.OK, data: data };
-
-    } catch (error) {
-        console.warn("Unexpect error on Contato: ", error);
-        return { status: ContatoStatus.ERROR, data: null };
-    }
-}
-
-const registerLearning = async (body) => {
-    console.log(body)
-    const url = `https://portal-aulas-api.fly.dev/courses/learnings`
-
-    const data = await fetch(url, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    })
-        .then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Something went wrong');
-        })
-
-    return data
-}
-
-const getCourse = async (id) => {
-    try {
-        const url = `https://portal-aulas-api.fly.dev/courses/courses/${id}`
-
-        const data = await fetch(url, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-            },
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Something went wrong');
-            })
-
-        return { status: ContatoStatus.OK, data: data };
-    } catch (err) {
-        return { status: ContatoStatus.ERROR, data: null};
-    }
-}
-
-const deleteLearning = async (id) => {
-
-    try {
-
-        const url = `https://portal-aulas-api.fly.dev/courses/learnings/${id}`
-
-        const data = await fetch(url, {
-            method: 'DELETE',
-            headers: {
-                Accept: 'application/json',
-            },
-        })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Something went wrong');
-            })
-
-        return ContatoStatus.OK
-
-    } catch (error) {
-        console.warn("Unexpect error on Contato: ", error);
-        return ContatoStatus.ERROR;
-    }
-}
-
-const ContatoStatus = {
-    OK: 200,
-    ERROR: 400
-}
 
 const PostFormStatus = {
     ENVIADO: 'ENVIADO',
@@ -130,12 +16,21 @@ const PostFormStatus = {
     NULL: 'NULL'
 }
 
+const getLoggedUser = async () => {
+    // need integration
+    // este função precisa retornar o usuário logado, um objeto com no minimo o id do usuário como atributo
+    return {
+        id: 2
+    }
+}
+
 export const NewCourseScreen = () => {
     const resetValores = () => {
         return {
             title: "",
             description: "",
             files: [],
+            content: "",
         };
     };
 
@@ -144,16 +39,20 @@ export const NewCourseScreen = () => {
     const [estado, setEstado] = useState({
         title: undefined,
         description: undefined,
-        files: undefined
-    })
+        files: undefined,
+        content: undefined
+    });
 
-    const [formValores, setFormValores] = useState(resetValores())
-    const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL)
-    const [editable, setEditable] = useState(true)
+    const [formValores, setFormValores] = useState(resetValores());
+    const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL);
+    const [editable, setEditable] = useState(true);
+    const [learnings, setLearnings] = useState([]);
+    const [learningInput, setLearningInput] = useState("");
+    const [allowLearnings, setAllowLearnings] = useState(false);
 
-    const [learnings, setLearnings] = useState([])
-    const [learningInput, setLearningInput] = useState("")
-    const [allowLearnings, setAllowLearnings] = useState(false)
+    const navigate = useNavigate();
+
+    useEffect(() => { setTimeout(() => window.alert("Usando professor.id = 2 até finalização da tarefa de login"), 1000) }, [])
 
     useEffect(
         () =>
@@ -176,11 +75,19 @@ export const NewCourseScreen = () => {
         setFormValores({ ...formValores, title: e?.target?.value })
     }
 
-    const enviarForm = () => {
+    const setContent = (e) => {
+        setEstado({ ...estado, content: undefined })
+        setFormValores({ ...formValores, content: e?.target?.value })
+    }
+
+    const sendForm = async () => {
+        const professor = await getLoggedUser()
+
         var estadoAux = {
-            title: formValores.title.length >= 3,
-            description: formValores.description.length >= 2,
+            title: formValores.title.trim().length >= 3,
+            description: formValores.description.trim().length >= 2,
             files: formValores.files.length > 0,
+            content: formValores.content.trim().length >= 3
         };
 
         setEstado({ ...estadoAux });
@@ -194,41 +101,38 @@ export const NewCourseScreen = () => {
         post.append("title", formValores.title);
         post.append("description", formValores.description);
         post.append("banner", formValores.files[0]);
-        post.append("content", "Curso de C++ para iniciantes, neste curso você vai aprenser com a professora Luana conceitos fundamentais da programação em C++, como programação Orientada a Objetos, funções de iteração em C++, biblioteca padrão e muito mais");
-        post.append("professor", 2);
+        post.append("content", formValores.content);
+        post.append("professor", professor.id);
 
 
-        registerCourse(post).then(response => {
+        CourseAPI.registerCourse(post).then(response => {
             setEditable(false)
-            if (response.status === ContatoStatus.OK && !!response.data)
+            if (response.status === HttpStatus.OK && !!response.data)
                 setId(response.data.id)
 
             setTimeout(() => {
-                setPostFormStatus(response.status === ContatoStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
-                setAllowLearnings(true)
+                setPostFormStatus(response.status === HttpStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
+                if (response.status === HttpStatus.OK && !!response.data) {
+                    setAllowLearnings(true)
+                    setTimeout(() => setPostFormStatus(PostFormStatus.NULL), 5000)
+                    setEstado({})
+                }
             }, 1500)
-
-            // setFormValores(resetValores())
-            setEstado({})
-
-            setTimeout(() => setPostFormStatus(PostFormStatus.NULL), 5000)
         })
     }
 
     const FileListToFileArray = (fileList) => {
         var files = []
-
         for (let idx = 0; idx < fileList.length; idx++) {
             files.push(fileList[idx])
         }
-
         return files
     }
 
     const InvisibleInputFile = () => (
         <input id='input-files-ftc'
             type="file"
-            style={{ visibility: "hidden" }}
+            style={{ display: 'none' }}
             onChange={(e) => {
                 setFormValores({
                     ...formValores,
@@ -244,33 +148,26 @@ export const NewCourseScreen = () => {
     const addLearning = async (json) => {
         console.log(json)
         if (!json.name || !json.name.length) return
-        try {
-            const data = await registerLearning(json)
-            console.log(data)
-            refreshLearnings()
-        } catch (error) { }
+        const response = await CourseAPI.registerLearning(json)
+        if (response.status === HttpStatus.OK) refreshLearnings()
     }
 
     const rmLearning = async (id) => {
-        try {
-            const data = await deleteLearning(id)
-            console.log(data)
+        const response = await CourseAPI.deleteLearning(id)
+        if (response.status === HttpStatus.OK)
             refreshLearnings()
-        } catch (error) { }
     }
 
     const refreshLearnings = async () => {
-        const response = await getCourse(id)
-        if(response.status === ContatoStatus.OK && !!response.data){
-            console.log('learnings: ', response.data)
-            const courses = response.data
-            setLearnings([...courses.learnings]);
+        const response = await CourseAPI.getCourse(id)
+        if (response.status === HttpStatus.OK && !!response.data) {
+            const course = response.data
+            setLearnings([...course.learnings]);
         }
     }
 
-
     return (
-        <section style={{ marginLeft: "15%" }} className="box-course">
+        <section className="box-course pb-1 pt-1">
             <Container fluid className="container-new-course container-course mb-5">
                 <Form>
                     <Row>
@@ -293,8 +190,8 @@ export const NewCourseScreen = () => {
                                                 onChange={setTitle}
                                                 isValid={estado.title}
                                                 disabled={!editable}
-                                                isInvalid={estado.title != undefined ? !estado.title : undefined}
-                                                onBlur={() => setEstado({ ...estado, title: formValores.title.length >= 3 })}
+                                                isInvalid={estado.title !== undefined ? !estado.title : undefined}
+                                                onBlur={() => setEstado({ ...estado, title: formValores.title.trim().length >= 3 })}
                                             />
                                         </Form.Label>
                                     </Col>
@@ -310,8 +207,25 @@ export const NewCourseScreen = () => {
                                                 onChange={setDescription}
                                                 isValid={estado.description}
                                                 disabled={!editable}
-                                                isInvalid={estado.description != undefined ? !estado.description : undefined}
-                                                onBlur={() => setEstado({ ...estado, description: formValores.description.length >= 3 })}
+                                                isInvalid={estado.description !== undefined ? !estado.description : undefined}
+                                                onBlur={() => setEstado({ ...estado, description: formValores.description.trim().length >= 3 })}
+                                            />
+                                        </Form.Label>
+                                    </Col>
+                                    <Col xs={12} className="pl0">
+                                        <Form.Label className="w-100 mt-3">
+                                            Conteudo do curso
+                                            <Form.Control
+                                                className="input-content"
+                                                spellCheck="false"
+                                                required
+                                                as="textarea"
+                                                value={formValores.content}
+                                                onChange={setContent}
+                                                isValid={estado.content}
+                                                disabled={!editable}
+                                                isInvalid={estado.content !== undefined ? !estado.content : undefined}
+                                                onBlur={() => setEstado({ ...estado, content: formValores.content.trim().length >= 3 })}
                                             />
                                         </Form.Label>
                                     </Col>
@@ -320,7 +234,7 @@ export const NewCourseScreen = () => {
                             </Container>
                         </Col>
                         <Col xs={12} lg={5}>
-                            <Container fluid>
+                            <Container fluid className="h-100 d-flex flex-column justify-content-between">
                                 <Row>
                                     <Col xs={12} className='mt-3 pr0'>
                                         <span >Imagem do curso</span>
@@ -328,7 +242,7 @@ export const NewCourseScreen = () => {
                                             <img
                                                 className={`image-for-input-file ${estado.files === false ? "error" : ""}`}
                                                 src={formValores.files.length ? URL.createObjectURL(formValores.files[0]) : noImage}
-                                                style={{ width: "100%", objectFit: "fill", objectPosition: "center", cursor: "pointer" }}
+                                                style={{ width: "100%", objectFit: "contain", objectPosition: "center", cursor: "pointer", backgroundColor: "white" }}
                                             />
                                         </label>
                                     </Col>
@@ -340,21 +254,21 @@ export const NewCourseScreen = () => {
                                     <InvisibleInputFile />
                                 </Row>
                                 <Row>
-                                    <Col lg={12} className="mt-3 itemBotao pr0" style={{ display: postFormSuccess !== PostFormStatus.NULL ? "none" : "block" }}>
-                                        <Button className="submit-form w-100"
-                                            onClick={() => enviarForm()}
+                                    <Col lg={12} className="mt-3 pr0" style={{ display: postFormSuccess !== PostFormStatus.NULL ? "none" : "block", paddingBottom: "5px" }}>
+                                        <Button className="submit-form register-btn w-100"
+                                            onClick={() => sendForm()}
                                             style={{ height: "60px" }}
                                             disabled={!editable}
                                         >
-                                            Salvar
+                                            {!editable && "Cadastrado" || "Cadastrar"}
                                         </Button>
                                     </Col>
                                     <Col lg={12} className="col-form-status pr0" style={{ display: postFormSuccess === PostFormStatus.NULL ? "none" : "block" }}>
                                         <Alert className="alert mt-3 form-status"
                                             variant={
                                                 postFormSuccess === PostFormStatus.ENVIADO ? 'success' : postFormSuccess === PostFormStatus.ENVIANDO ? 'primary' : 'danger'}>
-                                            {postFormSuccess === PostFormStatus.ENVIADO ? 'Formulário enviado com sucesso !' :
-                                                postFormSuccess === PostFormStatus.ENVIANDO ? 'Enviando ...' : 'Houve um erro ao enviar o formulário, por favor, tente novamente mais tarde!'}
+                                            {postFormSuccess === PostFormStatus.ENVIADO ? 'Curso cadastrado com sucesso !' :
+                                                postFormSuccess === PostFormStatus.ENVIANDO ? 'Enviando ...' : 'Houve um erro ao cadastrar curso, por favor, tente novamente mais tarde!'}
                                         </Alert>
                                     </Col>
                                 </Row>
@@ -412,6 +326,20 @@ export const NewCourseScreen = () => {
                                         </Form>
                                     </Col>
                                 </Row>
+                            </Container>
+                        </Col>
+                        <Col xs={12} style={{ paddingTop: '3rem' }}>
+                            <Container fluid className="pl0 pr0">
+                                <Col xs={12}>
+                                    <h2>Aulas</h2>
+                                </Col>
+                                <Col xs={12}>
+                                    <Button className="submit-add-lesson"
+                                        onClick={() => navigate(`/professor/courses/${id}/lessons/create`)}
+                                    >
+                                        +
+                                    </Button>
+                                </Col>
                             </Container>
                         </Col>
                     </Row>
