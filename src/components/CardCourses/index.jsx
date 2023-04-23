@@ -1,8 +1,5 @@
 import React from "react";
-import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 
 import './style.css'
 
@@ -27,7 +24,7 @@ function CardCourses({ teste }) {
             <Card.Footer className="cardAula-footer">
               <p>Commodo do ullamco esse laborum.</p>
             </Card.Footer>
-            <a href="https://www.google.com" target="_blank" class="stretched-link" />
+            <a href="https://www.google.com" target="_blank" class="stretched-link" rel="noreferrer" />
           </Card>
   
 

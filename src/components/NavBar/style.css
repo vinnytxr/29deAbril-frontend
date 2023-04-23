@@ -10,11 +10,8 @@
 
   transition: 0.5s;
   color: white;
-  
-
 
   box-shadow: 1px 1px 5px rgb(213, 213, 213);
-
 }
 
 .space {
@@ -53,10 +50,10 @@
 }
 
 .cardSide-img-top {
-    width: 75%;
-    height: 2.vw;
-    object-fit: contain;
-    border-top: 0px;
-    margin-top: 0px;
-    padding-top: 0px;
-}   
+  width: 75%;
+  height: 2vw;
+  object-fit: contain;
+  border-top: 0px;
+  margin-top: 0px;
+  padding-top: 0px;
+}
