@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faCirclePlus, faCheck } from '@fortawesome/free-solid-svg-icons'
@@ -12,10 +13,10 @@ export default function RegisterScreen() {
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
 
-  
+
 
     const handleChange = (e) => {
-       // console.log(e.target);
+        // console.log(e.target);
         const { name, value } = e.target;
 
         if (name === "cpf") {
@@ -54,6 +55,8 @@ export default function RegisterScreen() {
                         if (!response.ok) {
                          //console.log("OLHA O ERRO")
                          alert("Falha ao se comunicar com o servidor.");
+                        }else{
+                            alert("Registrado com sucesso!")
                         }
                         return response.json();
                       })
@@ -77,9 +80,9 @@ export default function RegisterScreen() {
     }, [formValues]);
 
     useEffect(() => {
-       // console.log(formErrors);
+        // console.log(formErrors);
         if (Object.keys(formErrors).length === 0 && isSubmit) {
-           // console.log(formErrors);
+            // console.log(formErrors);
         }
     }, [])
 
@@ -105,6 +108,7 @@ export default function RegisterScreen() {
                 .then((response) => {
                     if (!response.ok) {
                      //console.log("OLHA O ERRO")
+                     console.log(response)
                      alert("Falha ao se comunicar com o servidor.");
                     }
                     return response.json();
@@ -121,7 +125,6 @@ export default function RegisterScreen() {
            
         }
     }
-
     const handleUnfocus = (e) => {
         //setFormErrors(validate(formValues));
     }
@@ -167,15 +170,16 @@ export default function RegisterScreen() {
     return (
         <>
 
-         
+
 
             <div className="container-fluid p-5 col-sm-7 col-md-8 col-lg-10">
                 <div className="row">
                     <div className="col">
-                        <img style={{ width: "11em" }} src="https://i.ibb.co/DfGzNpM/logo.png" alt="logo" border="0" />
+                        <img style={{ width: "11em" }} src="https://i.ibb.co/r3QPmSt/logo.png" alt="logo" border="0" />
                     </div>
                     <div className="col d-flex justify-content-end">
-                        <p className="mt-3">Já tem conta? <a className="fw-bold link-termos" href="https://www.google.com.br">ENTRE AGORA!</a></p>
+                    <p className="mt-3">Já tem conta?&nbsp;<Link className="fw-bold link-termos" to="/login">ENTRE AGORA!</Link></p>
+                        
                     </div>
                     <p className="fw-bold fs-4 ms-1 mt-5">Estude Gratuitamente!</p>
                 </div>

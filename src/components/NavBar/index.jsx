@@ -7,7 +7,7 @@ import './style.css';
 import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBookBookmark, faBookmark, faCompass, faPen, faTag } from '@fortawesome/free-solid-svg-icons'
+import { faBookBookmark, faBookmark, faCompass, faDoorOpen, faPen, faRightFromBracket, faTag } from '@fortawesome/free-solid-svg-icons'
 
 
 class SideNav extends Component {
@@ -30,7 +30,7 @@ class SideNav extends Component {
         return (
             <Navbar className='home'>
                 <Card className='cardSide'>
-                    <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" src={'https://i.ibb.co/DfGzNpM/logo.png'} />
+                    <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" src={'https://i.ibb.co/r3QPmSt/logo.png'} />
 
                     <Card.Body style={{
                         paddingLeft: "0px",
@@ -118,9 +118,21 @@ class SideNav extends Component {
                                 </ListGroup>
                             </ListGroupItem>
                         </ListGroup>
-
-
                     </Card.Body>
+                    <Card.Footer>
+                        <ListGroup horizontal>
+                            <ListGroup.Item style={{
+                                paddingLeft: "1px",
+                                paddingRight: "0px",
+                                backgroundColor:"#f7f7f7"
+                            }} className='li'>
+                                <FontAwesomeIcon style={{ color: "#8a9094", fontSize: "18" }} icon={faRightFromBracket} className="me-2" />
+                            </ListGroup.Item>
+                            <ListGroup.Item className='li' style={{backgroundColor:"#f7f7f7"}}>
+                                <p style={{ color: "#8a9094" }}>Sair</p>
+                            </ListGroup.Item>
+                        </ListGroup>
+                    </Card.Footer>
                 </Card>
             </Navbar >
         );
