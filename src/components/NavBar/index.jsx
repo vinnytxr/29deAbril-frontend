@@ -1,45 +1,97 @@
-import React from 'react'
-import { Component } from 'react'
+import React from 'react';
+import { Component } from 'react';
 
-// Style
 import './style.css'
 
-import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap'
+import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faBookBookmark,
-  faBookmark,
-  faCompass,
-  faPen,
-  faTag,
-  faUser,
-} from '@fortawesome/free-solid-svg-icons'
+import { SiBookstack } from 'react-icons/si'
+import { FaUser } from 'react-icons/fa'
+import { ImBooks } from 'react-icons/im'
+import { GiArchiveRegister } from 'react-icons/gi'
+import { TbLogin } from 'react-icons/tb'
+import { AiFillHome } from 'react-icons/ai'
+import { BsKeyFill } from 'react-icons/bs'
+import { Link } from 'react-router-dom';
+import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
+import { Roles } from '../../api/default';
+
+
+const NavLinkTo = ({ href, title, icon }) => (
+  <ListGroup horizontal>
+    <ListGroup.Item
+      style={{
+        paddingLeft: '5px',
+        paddingRight: '0px',
+      }}
+      className="li"
+    >
+      {icon}
+    </ListGroup.Item>
+    <ListGroup.Item className="li">
+      <Link
+        className="hover-clic"
+        style={{ color: '#8a9094' }}
+        to={href}
+      >
+        {title}
+      </Link>
+    </ListGroup.Item>
+  </ListGroup>
+)
+
+const NavText = ({ text }) => (
+  <Navbar.Text
+    className="fw-bold"
+    style={{
+      fontSize: 'x-small',
+      color: '#b4bbbf',
+      paddingLeft: '16px',
+    }}
+  >
+    {text}
+  </Navbar.Text>
+)
+
+const NavGroupFlush = ({ children }) => (
+  <ListGroup variant="flush">
+    <ListGroupItem
+      className="list"
+      style={{
+        paddingLeft: '15px',
+        paddingRight: '0px',
+      }}
+    >
+      {children}
+    </ListGroupItem>
+  </ListGroup>
+)
+
+const FAIcon = ({ Icon }) => (
+  <Icon style={{ color: '#8a9094', fontSize: '18' }} className="me-2" />
+)
 
 class SideNav extends Component {
   constructor(props) {
-    super(props)
-    this.onSelect = this.onSelect.bind(this)
-    this.toggleNav = this.toggleNav.bind(this)
+    super(props);
+    this.onSelect = this.onSelect.bind(this);
+    this.toggleNav = this.toggleNav.bind(this);
   }
 
   onSelect(e) {
-    console.log('onSelect')
+    console.log('onSelect');
   }
 
   toggleNav() {
-    console.log('toggle..')
+    console.log('toggle..');
   }
 
   render() {
+
     return (
-      <Navbar className="home">
-        <Card className="cardSide">
-          <Card.Img
-            className="cardSide-img-top mx-auto mt-2"
-            variant="top"
-            src={'https://i.ibb.co/DfGzNpM/logo.png'}
-          />
+      <Navbar className='home'>
+        <Card className='cardSide'>
+          <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" src={'https://i.ibb.co/r3QPmSt/logo.png'} />
 
           <Card.Body
             style={{
@@ -47,205 +99,53 @@ class SideNav extends Component {
               paddingRRight: '0px',
             }}
           >
-            <Navbar.Text
-              className="fw-bold"
-              style={{
-                fontSize: 'x-small',
-                color: '#b4bbbf',
-                paddingLeft: '16px',
-              }}
-            >
-              ENSINO GRATUITO
-            </Navbar.Text>
-            <ListGroup variant="flush">
-              <ListGroupItem
-                className="list"
-                style={{
-                  paddingLeft: '15px',
-                  paddingRight: '0px',
-                }}
-              >
-                <ListGroup horizontal>
-                  <ListGroup.Item
-                    style={{
-                      paddingLeft: '5px',
-                      paddingRight: '0px',
-                    }}
-                    className="li"
-                  >
-                    <FontAwesomeIcon
-                      style={{ color: '#8a9094', fontSize: '18' }}
-                      icon={faUser}
-                      className="me-2"
-                    />
-                  </ListGroup.Item>
-                  <ListGroup.Item className="li">
-                    <a
-                      className="hover-clic"
-                      style={{ color: '#8a9094' }}
-                      href="/perfil"
-                    >
-                      Meu perfil
-                    </a>
-                  </ListGroup.Item>
-                </ListGroup>
-                <ListGroup horizontal>
-                  <ListGroup.Item
-                    style={{
-                      paddingLeft: '5px',
-                      paddingRight: '0px',
-                    }}
-                    className="li"
-                  >
-                    <FontAwesomeIcon
-                      style={{ color: '#8a9094', fontSize: '18' }}
-                      icon={faBookmark}
-                      className="me-2"
-                    />
-                  </ListGroup.Item>
-                  <ListGroup.Item className="li">
-                    <a
-                      className="hover-clic"
-                      style={{ color: '#8a9094' }}
-                      href="/"
-                    >
-                      Meus cursos
-                    </a>
-                  </ListGroup.Item>
-                </ListGroup>
-                <ListGroup horizontal>
-                  <ListGroup.Item
-                    style={{
-                      paddingLeft: '1px',
-                      paddingRight: '0px',
-                    }}
-                    className="li"
-                  >
-                    <FontAwesomeIcon
-                      style={{ color: '#8a9094', fontSize: '18' }}
-                      icon={faCompass}
-                      className="me-2"
-                    />
-                  </ListGroup.Item>
-                  <ListGroup.Item className="li">
-                    <a
-                      className="hover-clic"
-                      style={{ color: '#8a9094' }}
-                      href="/"
-                    >
-                      Explorar cursos
-                    </a>
-                  </ListGroup.Item>
-                </ListGroup>
-              </ListGroupItem>
-            </ListGroup>
+            <NavText text='GERAL' />
+            <NavGroupFlush>
+              <NavLinkTo title='Home' href='/' icon={<FAIcon Icon={AiFillHome} />} />
+              <StrictRoute roles={[Roles.STUDENT, Roles.ADMIN, Roles.PROFESSOR]}>
+                <NavLinkTo title='Meu Perfil' href='/perfil' icon={<FAIcon Icon={FaUser} />} />
+              </StrictRoute>
+              <OnlyNotLogged>
+                <NavLinkTo title='Cadastre-se' href='/register' icon={<FAIcon Icon={GiArchiveRegister} />} />
+                <NavLinkTo title='Logar-se' href='/login' icon={<FAIcon Icon={TbLogin} />} />
+              </OnlyNotLogged>
+            </NavGroupFlush>
 
-            <Navbar.Text
-              className="fw-bold"
-              style={{
-                fontSize: 'x-small',
-                color: '#b4bbbf',
-                paddingLeft: '16px',
-              }}
-            >
-              KULTIVI+
-            </Navbar.Text>
+            <StrictRoute roles={[Roles.STUDENT]}>
+              <NavText text='ALUNO' />
+              <NavGroupFlush>
+                <NavLinkTo title='Cursos' href='/student/courses' icon={<FAIcon Icon={ImBooks} />} />
+                <NavLinkTo title='Meus cursos' href='/student/enrolled-courses' icon={<FAIcon Icon={SiBookstack} />} />
+              </NavGroupFlush>
+            </StrictRoute>
 
-            <ListGroup variant="flush">
-              <ListGroupItem
-                className="list"
-                style={{
-                  paddingLeft: '15px',
-                  paddingRight: '0px',
-                }}
-              >
-                <ListGroup horizontal>
-                  <ListGroup.Item
-                    style={{
-                      paddingLeft: '5px',
-                      paddingRight: '0px',
-                    }}
-                    className="li"
-                  >
-                    <FontAwesomeIcon
-                      style={{ color: '#8a9094', fontSize: '18' }}
-                      icon={faBookBookmark}
-                      className="me-2"
-                    />
-                  </ListGroup.Item>
-                  <ListGroup.Item className="li">
-                    <p style={{ color: '#8a9094' }}>E-books</p>
-                  </ListGroup.Item>
-                </ListGroup>
 
-                <ListGroup horizontal>
-                  <ListGroup.Item
-                    style={{
-                      paddingLeft: '1px',
-                      paddingRight: '0px',
-                    }}
-                    className="li"
-                  >
-                    <FontAwesomeIcon
-                      style={{ color: '#8a9094', fontSize: '18' }}
-                      icon={faPen}
-                      className="me-2"
-                    />
-                  </ListGroup.Item>
-                  <ListGroup.Item className="li">
-                    <p style={{ color: '#8a9094' }}>Exercícios</p>
-                  </ListGroup.Item>
-                </ListGroup>
-                <ListGroup horizontal>
-                  <ListGroup.Item
-                    style={{
-                      paddingLeft: '1px',
-                      paddingRight: '0px',
-                    }}
-                    className="li"
-                  >
-                    <FontAwesomeIcon
-                      style={{ color: '#8a9094', fontSize: '18' }}
-                      icon={faTag}
-                      className="me-2"
-                    />
-                  </ListGroup.Item>
-                  <ListGroup.Item className="li">
-                    <p style={{ color: '#8a9094' }}>Clube de descontos</p>
-                  </ListGroup.Item>
-                </ListGroup>
-                <ListGroup horizontal>
-                  <ListGroup.Item
-                    style={{
-                      paddingLeft: '1px',
-                      paddingRight: '0px',
-                    }}
-                    className="li"
-                  >
-                    <FontAwesomeIcon
-                      style={{ color: '#8a9094', fontSize: '18' }}
-                      icon={faTag}
-                      className="me-2"
-                    />
-                  </ListGroup.Item>
-                  <ListGroup.Item className="li">
-                    <a
-                      style={{ color: '#8a9094' }}
-                      className="hover-clic"
-                      href="/novo-curso"
-                    >
-                      Novo curso
-                    </a>
-                  </ListGroup.Item>
-                </ListGroup>
-              </ListGroupItem>
-            </ListGroup>
+            <StrictRoute roles={[Roles.PROFESSOR]}>
+              <NavText text='PROFESSOR' />
+              <NavGroupFlush>
+                <NavLinkTo title='Meus cursos' href='/professor/courses' icon={<FAIcon Icon={ImBooks} />} />
+                <NavLinkTo title='Criar curso' href='/professor/courses/create' icon={<FAIcon Icon={SiBookstack} />} />
+              </NavGroupFlush>
+            </StrictRoute>
+
+            <StrictRoute roles={[Roles.ADMIN]}>
+              <NavText text='ADMIN' />
+              <NavGroupFlush>
+                <NavLinkTo title='Gerar Convite' href='/admin/generate-invite' icon={<FAIcon Icon={BsKeyFill} />} />
+              </NavGroupFlush>
+            </StrictRoute>
+
           </Card.Body>
+          <StrictRoute roles={[Roles.STUDENT, Roles.ADMIN, Roles.PROFESSOR]}>
+            <Card.Footer>
+              <NavLinkTo title='Sair' href='/logout' icon={<FAIcon Icon={TbLogin} />} />
+            </Card.Footer>
+          </StrictRoute>
         </Card>
-      </Navbar>
-    )
+      </Navbar >
+    );
   }
-  componentDidMount() {}
+  componentDidMount() { }
 }
 
-export default SideNav
+export default SideNav;

@@ -1,222 +1,345 @@
-import React, { useState } from 'react'
-import Avatar from 'react-avatar'
+/* eslint-disable no-mixed-operators */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable jsx-a11y/alt-text */
 
+import React, { useState, useEffect } from "react"
+import { useNavigate } from "react-router";
+import { Container, Col, Row, Form, Button, Alert } from 'react-bootstrap';
+import { HttpStatus, CourseAPI } from "./api";
+import noImage from './no-image.png'
 import './style.css'
+import { useAuthContext } from "../../contexts/AuthContext";
 
-//Bootstrap
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container'
-import Navbar from 'react-bootstrap/Navbar'
+const PostFormStatus = {
+    ENVIADO: 'ENVIADO',
+    ENVIANDO: 'ENVIANDO',
+    ERRO: 'ERRO',
+    NULL: 'NULL'
+}
 
-import { Card } from 'react-bootstrap'
+export const NewCourseScreen = () => {
+    const resetValores = () => {
+        return {
+            title: "",
+            description: "",
+            files: [],
+            content: "",
+        };
+    };
 
-//Font Awesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+    const [id, setId] = useState();
 
-function NewCourseScreen() {
-  const intialValues = { title: '', subtitle: '', description: '', img: '' }
-  const [formValues, setFormValues] = useState(intialValues)
-  const [formErrors, setFormErrors] = useState({})
-  var errorsC = 0
+    const { user } = useAuthContext();
 
-  const handleChange = (e) => {
-    console.log(e.target)
-    console.log(formValues)
-    const { name, value } = e.target
+    const [estado, setEstado] = useState({
+        title: undefined,
+        description: undefined,
+        files: undefined,
+        content: undefined
+    });
 
-    setFormValues({ ...formValues, [name]: value })
-  }
+    const [formValores, setFormValores] = useState(resetValores());
+    const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL);
+    const [editable, setEditable] = useState(true);
+    const [learnings, setLearnings] = useState([]);
+    const [learningInput, setLearningInput] = useState("");
+    const [allowLearnings, setAllowLearnings] = useState(false);
 
-  const handleSubmit = (e) => {
-    console.log('CHAMOU')
-    e.preventDefault()
-    setFormErrors(validate(formValues))
-    if (errorsC === 0) {
-      console.log('Válido') // CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
+    const navigate = useNavigate();
+
+    // useEffect(() => { setTimeout(() => window.alert("Usando professor.id = 2 até finalização da tarefa de login"), 1000) }, [])
+
+    useEffect(
+        () =>
+            setEstado({
+                ...estado,
+                files: formValores.files.length > 0 ? true : undefined,
+            }),
+        [formValores.files]
+    );
+
+    useEffect(() => { refreshLearnings() }, [id]);
+
+    const setDescription = (e) => {
+        setEstado({ ...estado, description: undefined })
+        setFormValores({ ...formValores, description: e?.target?.value })
     }
-  }
 
-  const validate = (values) => {
-    errorsC = 0
-    const errors = {}
-
-    if (!values.title) {
-      errors.title = 'Digite um título!'
+    const setTitle = (e) => {
+        setEstado({ ...estado, title: undefined })
+        setFormValores({ ...formValores, title: e?.target?.value })
     }
 
-    if (!values.subtitle) {
-      errors.subtitle = 'Digite um subtítulo!'
-    } else if (values.subtitle.length > 1120) {
-      errors.subtitle = 'Subtítulo não pode ter mais que 120 caracteres!'
+    const setContent = (e) => {
+        setEstado({ ...estado, content: undefined })
+        setFormValores({ ...formValores, content: e?.target?.value })
     }
 
-    if (!values.description) {
-      errors.description = 'Digite uma descricao!'
+    const sendForm = async () => {
+        var estadoAux = {
+            title: formValores.title.trim().length >= 3,
+            description: formValores.description.trim().length >= 2,
+            files: formValores.files.length > 0,
+            content: formValores.content.trim().length >= 3
+        };
+
+        setEstado({ ...estadoAux });
+
+        for (let [, value] of Object.entries(estadoAux)) if (!value) return;
+
+        setPostFormStatus(PostFormStatus.ENVIANDO);
+
+        var post = new FormData();
+
+        post.append("title", formValores.title);
+        post.append("description", formValores.description);
+        post.append("banner", formValores.files[0]);
+        post.append("content", formValores.content);
+        post.append("professor", 2);
+
+
+        CourseAPI.registerCourse(post).then(response => {
+            setEditable(false)
+            if (response.status === HttpStatus.OK && !!response.data)
+                setId(response.data.id)
+
+            setTimeout(() => {
+                setPostFormStatus(response.status === HttpStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
+                if (response.status === HttpStatus.OK && !!response.data) {
+                    setAllowLearnings(true)
+                    setTimeout(() => setPostFormStatus(PostFormStatus.NULL), 5000)
+                    setEstado({})
+                }
+            }, 1500)
+        })
     }
 
-    if (!values.img) {
-      errors.img = 'Selecione um banner para seu curso!'
+    const FileListToFileArray = (fileList) => {
+        var files = []
+        for (let idx = 0; idx < fileList.length; idx++) {
+            files.push(fileList[idx])
+        }
+        return files
     }
-    errorsC = Object.keys(errors).length
-    return errors
-  }
 
-  return (
-    <>
-      <Col>
-        <Navbar>
-          <Container fluid>
-            <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-              &#128075;&nbsp; Hey, CHRISTOFER!
-            </p>
-            <Navbar.Toggle />
-            <Navbar.Collapse className="justify-content-end">
-              <Navbar.Text>
-                <button
-                  style={{ color: '#1dbfb0' }}
-                  data-mdb-ripple-color="#1dbfb0"
-                  type="button"
-                  class="fw-bold btn btn-light"
-                >
-                  ASSINE KULTIVI+
-                </button>
-              </Navbar.Text>
-              <Navbar.Text>
-                <Avatar
-                  class
-                  name="Christofer"
-                  color="#0f5b7a"
-                  size={30}
-                  textSizeRatio={2}
-                  round={true}
-                />
-              </Navbar.Text>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-        <hr />
-        <h1 className="mt-3 ms-3 fs-5 fw-bold">
-          Que legal que voce quer dar aulas por aqui.
-        </h1>
-        <h1 className="mb-3 ms-3 fs-6">
-          Preencha o formulário abaixo para criar o seu curso.
-        </h1>
-        <div className="formulario-cadastro">
-          <Container fluid>
-            <Row className="d-flex justify-content-center align-items-center">
-              <Col lg="10" className="my-5">
-                <h1 class="text-black mb-4 fs-2">Página inicial do curso</h1>
-                <Card>
-                  <Form onSubmit={handleSubmit}>
-                    <Card.Body className="px-4">
-                      <Row className="align-items-center pt-4 pb-3">
-                        <Col md="3" className="ps-4">
-                          <h6 className="mb-4">Título do curso</h6>
-                        </Col>
-                        <Col md="9" className="pe-5 mt-2">
-                          <div className="mb-3">
-                            <input
-                              type="text"
-                              name="title"
-                              placeholder="Insira o título do seu curso."
-                              className="form-control"
-                              value={formValues.titulo}
-                              onChange={handleChange}
-                            />
-                            <p className="input-anotation mt-1 ms-1 mb-0">
-                              Pense em um título chamativo e informativo.
-                            </p>
-                            <p className="ps-2" style={{ color: 'red' }}>
-                              {formErrors.title}
-                            </p>
-                          </div>
-                        </Col>
-                      </Row>
-                      <hr className="mx-n3" />
-                      <Row className="align-items-center pt-4 pb-3">
-                        <Col md="3" className="ps-4">
-                          <h6 className="mb-4">Subtítulo do curso</h6>
-                        </Col>
-                        <Col md="9" className="pe-5 mt-2">
-                          <div className="mb-3">
-                            <input
-                              type="text"
-                              name="subtitle"
-                              placeholder="Insira o subtítulo do seu curso."
-                              className="form-control"
-                              value={formValues.subtitulo}
-                              onChange={handleChange}
-                            />
-                            <p className="input-anotation mt-1 ms-1 mb-0">
-                              Descreva de forma rápida o que seu aluno atingirá
-                              com seu curso
-                            </p>
-                            <p className="ps-2" style={{ color: 'red' }}>
-                              {formErrors.title}
-                            </p>
-                          </div>
-                        </Col>
-                      </Row>
-                      <hr className="mx-n3" />
-                      <Row className="align-items-center pt-4 pb-3">
-                        <Col md="3" className="ps-4">
-                          <h6 className="mb-0">Descrição do curso</h6>
-                        </Col>
-                        <Col md="9" className="pe-5">
-                          <Form.Control
-                            name="description"
-                            placeholder="Insira a descrição do seu curso. Descreva tópicos e assuntos abordados."
-                            as="textarea"
-                            rows={3}
-                            value={formValues.descricao}
-                            onChange={handleChange}
-                          />
-                          <p className="ps-2" style={{ color: 'red' }}>
-                            {formErrors.description}
-                          </p>
-                        </Col>
-                      </Row>
-                      <hr className="mx-n3" />
-                      <Row className="align-items-center pt-4 pb-3">
-                        <Col md="3" className="ps-4">
-                          <h6 className="mb-0">Imagem do curso</h6>
-                        </Col>
-                        <Col md="9" className="pe-5">
-                          <Form.Control
-                            type="file"
-                            name="img"
-                            onChange={handleChange}
-                            rows={3}
-                          />
-                          <p className="ps-2" style={{ color: 'red' }}>
-                            {formErrors.img}
-                          </p>
-                        </Col>
-                      </Row>
-                      <hr className="mx-n3" />
+    const InvisibleInputFile = () => (
+        <input id='input-files-ftc'
+            type="file"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+                setFormValores({
+                    ...formValores,
+                    files: FileListToFileArray(e.target.files ?? new FileList())
+                })
+                setEstado({ ...estado, files: true })
+            }}
+            accept='.png,.jpeg,.jpg,.webp'
+            disabled={!editable}
+        />
+    );
 
-                      <Button
-                        className="my-4 btn-success"
-                        type="submit"
-                        size="lg"
-                      >
-                        Cadastrar curso&nbsp;{' '}
-                        <FontAwesomeIcon icon={faPaperPlane} />
-                      </Button>
-                    </Card.Body>
-                  </Form>
-                </Card>
-              </Col>
-            </Row>
-          </Container>
-        </div>
-      </Col>
-    </>
-  )
+    const addLearning = async (json) => {
+        console.log(json)
+        if (!json.name || !json.name.length) return
+        const response = await CourseAPI.registerLearning(json)
+        if (response.status === HttpStatus.OK) refreshLearnings()
+    }
+
+    const rmLearning = async (id) => {
+        const response = await CourseAPI.deleteLearning(id)
+        if (response.status === HttpStatus.OK)
+            refreshLearnings()
+    }
+
+    const refreshLearnings = async () => {
+        const response = await CourseAPI.getCourse(id)
+        if (response.status === HttpStatus.OK && !!response.data) {
+            const course = response.data
+            setLearnings([...course.learnings]);
+        }
+    }
+
+    return (
+        <section className="box-course pb-1 pt-1">
+            <Container fluid className="container-new-course container-course mb-5">
+                <Form>
+                    <Row>
+                        <Col lg={12} className="mt-2">
+                            <h2>Criar novo curso</h2>
+                        </Col>
+                        <Col xs={12} lg={7}>
+                            <Container fluid>
+                                <Row>
+                                    <Col xs={12} className="pl0">
+                                        <Form.Label className="w-100 mt-3">
+                                            Titulo da aula
+                                            <Form.Control
+                                                className="input-title"
+                                                spellCheck={false}
+                                                required
+                                                type="text"
+                                                placeholder=""
+                                                value={formValores.title}
+                                                onChange={setTitle}
+                                                isValid={estado.title}
+                                                disabled={!editable}
+                                                isInvalid={estado.title !== undefined ? !estado.title : undefined}
+                                                onBlur={() => setEstado({ ...estado, title: formValores.title.trim().length >= 3 })}
+                                            />
+                                        </Form.Label>
+                                    </Col>
+                                    <Col xs={12} className="pl0">
+                                        <Form.Label className="w-100 mt-3">
+                                            Descrição do curso
+                                            <Form.Control
+                                                className="input-description"
+                                                spellCheck="false"
+                                                required
+                                                as="textarea"
+                                                value={formValores.description}
+                                                onChange={setDescription}
+                                                isValid={estado.description}
+                                                disabled={!editable}
+                                                isInvalid={estado.description !== undefined ? !estado.description : undefined}
+                                                onBlur={() => setEstado({ ...estado, description: formValores.description.trim().length >= 3 })}
+                                            />
+                                        </Form.Label>
+                                    </Col>
+                                    <Col xs={12} className="pl0">
+                                        <Form.Label className="w-100 mt-3">
+                                            Conteudo do curso
+                                            <Form.Control
+                                                className="input-content"
+                                                spellCheck="false"
+                                                required
+                                                as="textarea"
+                                                value={formValores.content}
+                                                onChange={setContent}
+                                                isValid={estado.content}
+                                                disabled={!editable}
+                                                isInvalid={estado.content !== undefined ? !estado.content : undefined}
+                                                onBlur={() => setEstado({ ...estado, content: formValores.content.trim().length >= 3 })}
+                                            />
+                                        </Form.Label>
+                                    </Col>
+
+                                </Row>
+                            </Container>
+                        </Col>
+                        <Col xs={12} lg={5}>
+                            <Container fluid className="h-100 d-flex flex-column justify-content-between">
+                                <Row>
+                                    <Col xs={12} className='mt-3 pr0'>
+                                        <span >Imagem do curso</span>
+                                        <label htmlFor="input-files-ftc" style={{ width: "100%" }}>
+                                            <img
+                                                className={`image-for-input-file ${estado.files === false ? "error" : ""}`}
+                                                src={formValores.files.length ? URL.createObjectURL(formValores.files[0]) : noImage}
+                                                style={{ width: "100%", objectFit: "contain", objectPosition: "center", cursor: "pointer", backgroundColor: "white" }}
+                                            />
+                                        </label>
+                                    </Col>
+                                    <Col xs={12} className='file-input-span mb-3'>
+                                        <span className={`${!!estado.files ? 'ok' : estado.files === false ? 'error' : ''}`}>
+                                            {formValores.files.length > 0 ? `${formValores.files.length} ${formValores.files.length > 1 ? 'imagens selecionadas' : 'imagem selecionada'}` : 'Nenhuma imagem selecionada'}
+                                        </span>
+                                    </Col>
+                                    <InvisibleInputFile />
+                                </Row>
+                                <Row>
+                                    <Col lg={12} className="mt-3 pr0" style={{ display: postFormSuccess !== PostFormStatus.NULL ? "none" : "block", paddingBottom: "5px" }}>
+                                        <Button className="submit-form register-btn w-100"
+                                            onClick={() => sendForm()}
+                                            style={{ height: "60px" }}
+                                            disabled={!editable}
+                                        >
+                                            {!editable && "Cadastrado" || "Cadastrar"}
+                                        </Button>
+                                    </Col>
+                                    <Col lg={12} className="col-form-status pr0" style={{ display: postFormSuccess === PostFormStatus.NULL ? "none" : "block" }}>
+                                        <Alert className="alert mt-3 form-status"
+                                            variant={
+                                                postFormSuccess === PostFormStatus.ENVIADO ? 'success' : postFormSuccess === PostFormStatus.ENVIANDO ? 'primary' : 'danger'}>
+                                            {postFormSuccess === PostFormStatus.ENVIADO ? 'Curso cadastrado com sucesso !' :
+                                                postFormSuccess === PostFormStatus.ENVIANDO ? 'Enviando ...' : 'Houve um erro ao cadastrar curso, por favor, tente novamente mais tarde!'}
+                                        </Alert>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Col>
+                    </Row>
+                </Form>
+            </Container>
+            {allowLearnings &&
+                <Container fluid className="container-learnings-metadados container-course">
+                    <Row>
+                        <Col xs={12} lg={6}>
+                            <Container fluid className="pl0 pr0">
+                                <Col xs={12}>
+                                    <h2>Aprendizados</h2>
+                                </Col>
+                                <Row>
+                                    {learnings?.map((learning) => (
+                                        <Col xs={12} className="mt-2" style={{ display: "flex", flexDirection: "row" }} key={learning.id}>
+                                            <Form.Control
+                                                className="input-learning"
+                                                value={learning.name}
+                                                disabled={true}
+                                                style={{ width: "90%" }}
+                                            />
+                                            <Button className="remove-learning"
+                                                onClick={() => rmLearning(learning.id)}
+                                            >
+                                                -
+                                            </Button>
+                                        </Col>
+                                    ))}
+                                    <Col xs={12}>
+                                        <Form>
+                                            <Form.Label className="label-submit-learning mt-3" style={{ width: "80%" }}>
+                                                <span>Adicionar novo aprendizado</span>
+                                                <Form.Control
+                                                    className="input-learning w-100"
+                                                    spellCheck={false}
+                                                    required
+                                                    type="text"
+                                                    placeholder=""
+                                                    value={learningInput}
+                                                    onChange={(e) => setLearningInput(e?.target?.value ?? learningInput)}
+                                                />
+                                            </Form.Label>
+                                            <Button className="submit-form-learning"
+                                                onClick={() => {
+                                                    addLearning({ name: learningInput, course: id })
+                                                    setLearningInput("")
+                                                }}
+                                            >
+                                                +
+                                            </Button>
+                                        </Form>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Col>
+                        <Col xs={12} style={{ paddingTop: '3rem' }}>
+                            <Container fluid className="pl0 pr0">
+                                <Col xs={12}>
+                                    <h2>Aulas</h2>
+                                </Col>
+                                <Col xs={12}>
+                                    <Button className="submit-add-lesson"
+                                        onClick={() => navigate(`/professor/courses/${id}/lessons/create`)}
+                                    >
+                                        +
+                                    </Button>
+                                </Col>
+                            </Container>
+                        </Col>
+                    </Row>
+                </Container>
+            }
+        </section >
+    );
 }
 
 export default NewCourseScreen
