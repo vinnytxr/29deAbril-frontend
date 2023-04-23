@@ -5,3 +5,7 @@
 .font-weight-bold-important {
   font-weight: bold !important;
 }
+
+a {
+  text-decoration: none !important;
+}

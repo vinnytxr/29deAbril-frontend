@@ -8,20 +8,13 @@ import { Container, Col, Row, Form, Button, Alert } from 'react-bootstrap';
 import { HttpStatus, CourseAPI } from "./api";
 import noImage from './no-image.png'
 import './style.css'
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const PostFormStatus = {
     ENVIADO: 'ENVIADO',
     ENVIANDO: 'ENVIANDO',
     ERRO: 'ERRO',
     NULL: 'NULL'
-}
-
-const getLoggedUser = async () => {
-    // need integration
-    // este função precisa retornar o usuário logado, um objeto com no minimo o id do usuário como atributo
-    return {
-        id: 2
-    }
 }
 
 export const NewCourseScreen = () => {
@@ -35,6 +28,8 @@ export const NewCourseScreen = () => {
     };
 
     const [id, setId] = useState();
+
+    const { user } = useAuthContext();
 
     const [estado, setEstado] = useState({
         title: undefined,
@@ -52,7 +47,7 @@ export const NewCourseScreen = () => {
 
     const navigate = useNavigate();
 
-    useEffect(() => { setTimeout(() => window.alert("Usando professor.id = 2 até finalização da tarefa de login"), 1000) }, [])
+    // useEffect(() => { setTimeout(() => window.alert("Usando professor.id = 2 até finalização da tarefa de login"), 1000) }, [])
 
     useEffect(
         () =>
@@ -81,8 +76,6 @@ export const NewCourseScreen = () => {
     }
 
     const sendForm = async () => {
-        const professor = await getLoggedUser()
-
         var estadoAux = {
             title: formValores.title.trim().length >= 3,
             description: formValores.description.trim().length >= 2,
@@ -102,7 +95,7 @@ export const NewCourseScreen = () => {
         post.append("description", formValores.description);
         post.append("banner", formValores.files[0]);
         post.append("content", formValores.content);
-        post.append("professor", professor.id);
+        post.append("professor", 2);
 
 
         CourseAPI.registerCourse(post).then(response => {
