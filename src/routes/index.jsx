@@ -12,6 +12,7 @@ import { AuthProvider, useAuthContext } from '../contexts/AuthContext';
 import { StrictRoute } from '../contexts/StrictRoute';
 import { Roles } from '../api/default';
 import UserProfileScreen from '../pages/UserProfile'
+import AdministrationPage from '../pages/AdminPage';
 
 import "../global.css"
 
@@ -46,8 +47,9 @@ function DefaultRoutes() {
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterScreen />} />
           <Route element={<SidebarLayout />}>
-            <Route path='/' element={<Home />} />
+            <Route path='/' element={ <Home />} />
             <Route path="/perfil" element={<UserProfileScreen />} />
+            <Route path="/admin/generate-invite" element={<AdministrationPage />} />
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><PageLessonRegister /></StrictRoute>} />
             <Route path='/test/student' element={<StrictRoute roles={[Roles.STUDENT]} children={<PageForStudent />} />} />
@@ -72,6 +74,7 @@ const Logout = () => {
   useEffect(() => {
     const exec = async () => {
       localStorage.removeItem('token');
+      localStorage.removeItem('userData');
       await setToken(null);
       navigate('/');
     }

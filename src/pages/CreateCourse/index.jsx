@@ -50,6 +50,7 @@ export const NewCourseScreen = () => {
     // useEffect(() => { setTimeout(() => window.alert("Usando professor.id = 2 até finalização da tarefa de login"), 1000) }, [])
 
     useEffect(
+        
         () =>
             setEstado({
                 ...estado,
@@ -90,12 +91,13 @@ export const NewCourseScreen = () => {
         setPostFormStatus(PostFormStatus.ENVIANDO);
 
         var post = new FormData();
-
+        
+        const professor = JSON.parse(localStorage.getItem('userData')).id
         post.append("title", formValores.title);
         post.append("description", formValores.description);
         post.append("banner", formValores.files[0]);
         post.append("content", formValores.content);
-        post.append("professor", 2);
+        post.append("professor", professor);
 
 
         CourseAPI.registerCourse(post).then(response => {
