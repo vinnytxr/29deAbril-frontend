@@ -12,6 +12,7 @@ import CheckCourseInformation from "../../components/CheckCourseInformation/chec
 import StarRating from "../../components/StarRating/star_rating";
 import AccordionListCourse from "../../components/AccordionList/accordion_list";
 import { useParams, useNavigate } from "react-router-dom";
+import { Container } from "react-bootstrap";
 
 // Icons
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -24,8 +25,6 @@ function CourseDetails() {
 
   const navigate = useNavigate();
   const { id } = useParams(); //Alterar o curso que deseja visualizar, quando for integrar vou deixar direto na função
-
-
 
   useEffect(() => {
     // fetch data
@@ -45,18 +44,14 @@ function CourseDetails() {
         navigate("/404-not-found")
       }
     }
-
-
+    console.log(data);
     dataFetch();
 
   }, []);
 
   return (
-    <div className="container-fluid body">
+    <Container flex>
       <div className="row">
-        <div className="col-2">
-          {/* SideBar */}
-        </div>
         <div className="col mt-5">
           <Card className="custom-bg">
             <div className="row">
@@ -90,7 +85,7 @@ function CourseDetails() {
               </div>
 
               <div className="col d-flex justify-content-center align-items-center my-2">
-                <CardDetails image={data.banner} />
+                <CardDetails image={data.banner} students={data.students} />
               </div>
             </div>
           </Card>
@@ -103,8 +98,8 @@ function CourseDetails() {
                     Sobre o curso:
                   </Card.Text>
                 </div>
-                <div className="row">
-                  <Card.Text className="my-2 ms-3">
+                <div className="row mx-1">
+                  <Card.Text className="my-2">
                     {data.content}
                   </Card.Text>
                 </div>
@@ -156,7 +151,7 @@ function CourseDetails() {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

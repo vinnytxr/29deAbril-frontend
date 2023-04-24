@@ -39,14 +39,14 @@ class SideNav extends Component {
             className="cardSide-img-top mx-auto mt-2"
             variant="top"
             src={'https://i.ibb.co/DfGzNpM/logo.png'}
-          />
+            />
 
           <Card.Body
             style={{
               paddingLeft: '0px',
               paddingRRight: '0px',
             }}
-          >
+            >
             <Navbar.Text
               className="fw-bold"
               style={{
@@ -54,7 +54,7 @@ class SideNav extends Component {
                 color: '#b4bbbf',
                 paddingLeft: '16px',
               }}
-            >
+              >
               ENSINO GRATUITO
             </Navbar.Text>
             <ListGroup variant="flush">
@@ -64,7 +64,7 @@ class SideNav extends Component {
                   paddingLeft: '15px',
                   paddingRight: '0px',
                 }}
-              >
+                >
                 <ListGroup horizontal>
                   <ListGroup.Item
                     style={{
@@ -72,19 +72,19 @@ class SideNav extends Component {
                       paddingRight: '0px',
                     }}
                     className="li"
-                  >
+                    >
                     <FontAwesomeIcon
                       style={{ color: '#8a9094', fontSize: '18' }}
                       icon={faUser}
                       className="me-2"
-                    />
+                      />
                   </ListGroup.Item>
                   <ListGroup.Item className="li">
                     <a
                       className="hover-clic"
                       style={{ color: '#8a9094' }}
                       href="/perfil"
-                    >
+                      >
                       Meu perfil
                     </a>
                   </ListGroup.Item>
@@ -96,19 +96,19 @@ class SideNav extends Component {
                       paddingRight: '0px',
                     }}
                     className="li"
-                  >
+                    >
                     <FontAwesomeIcon
                       style={{ color: '#8a9094', fontSize: '18' }}
                       icon={faBookmark}
                       className="me-2"
-                    />
+                      />
                   </ListGroup.Item>
                   <ListGroup.Item className="li">
                     <a
                       className="hover-clic"
                       style={{ color: '#8a9094' }}
                       href="/"
-                    >
+                      >
                       Meus cursos
                     </a>
                   </ListGroup.Item>
@@ -120,7 +120,7 @@ class SideNav extends Component {
                       paddingRight: '0px',
                     }}
                     className="li"
-                  >
+                    >
                     <FontAwesomeIcon
                       style={{ color: '#8a9094', fontSize: '18' }}
                       icon={faCompass}
@@ -132,7 +132,7 @@ class SideNav extends Component {
                       className="hover-clic"
                       style={{ color: '#8a9094' }}
                       href="/"
-                    >
+                      >
                       Explorar cursos
                     </a>
                   </ListGroup.Item>
@@ -147,7 +147,7 @@ class SideNav extends Component {
                 color: '#b4bbbf',
                 paddingLeft: '16px',
               }}
-            >
+              >
               KULTIVI+
             </Navbar.Text>
 
@@ -158,7 +158,7 @@ class SideNav extends Component {
                   paddingLeft: '15px',
                   paddingRight: '0px',
                 }}
-              >
+                >
                 <ListGroup horizontal>
                   <ListGroup.Item
                     style={{
@@ -166,12 +166,12 @@ class SideNav extends Component {
                       paddingRight: '0px',
                     }}
                     className="li"
-                  >
+                    >
                     <FontAwesomeIcon
                       style={{ color: '#8a9094', fontSize: '18' }}
                       icon={faBookBookmark}
                       className="me-2"
-                    />
+                      />
                   </ListGroup.Item>
                   <ListGroup.Item className="li">
                     <p style={{ color: '#8a9094' }}>E-books</p>
@@ -185,12 +185,12 @@ class SideNav extends Component {
                       paddingRight: '0px',
                     }}
                     className="li"
-                  >
+                    >
                     <FontAwesomeIcon
                       style={{ color: '#8a9094', fontSize: '18' }}
                       icon={faPen}
                       className="me-2"
-                    />
+                      />
                   </ListGroup.Item>
                   <ListGroup.Item className="li">
                     <p style={{ color: '#8a9094' }}>Exercícios</p>
@@ -203,12 +203,12 @@ class SideNav extends Component {
                       paddingRight: '0px',
                     }}
                     className="li"
-                  >
+                    >
                     <FontAwesomeIcon
                       style={{ color: '#8a9094', fontSize: '18' }}
                       icon={faTag}
                       className="me-2"
-                    />
+                      />
                   </ListGroup.Item>
                   <ListGroup.Item className="li">
                     <p style={{ color: '#8a9094' }}>Clube de descontos</p>
@@ -221,19 +221,19 @@ class SideNav extends Component {
                       paddingRight: '0px',
                     }}
                     className="li"
-                  >
+                    >
                     <FontAwesomeIcon
                       style={{ color: '#8a9094', fontSize: '18' }}
                       icon={faTag}
                       className="me-2"
-                    />
+                      />
                   </ListGroup.Item>
                   <ListGroup.Item className="li">
                     <a
                       style={{ color: '#8a9094' }}
                       className="hover-clic"
                       href="/novo-curso"
-                    >
+                      >
                       Novo curso
                     </a>
                   </ListGroup.Item>
