@@ -14,7 +14,7 @@ function CardCourses({ teste }) {
 
   return (
           <Card className="m-2 cardAula" style={{ width: '15rem' }}>
-            <Card.Img className="cardAula-img-top" variant="top" src={teste.thumbnail} />
+            <Card.Img className="cardAula-img-top" variant="top" src={teste.banner} />
             <Card.Body>
               <Card.Title className="cardAula-title">{teste.title}</Card.Title>
               <Card.Text className="cardAula-description">

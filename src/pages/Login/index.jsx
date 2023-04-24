@@ -26,6 +26,17 @@ const LoginPage = () => {
         localStorage.setItem('token', token);
     }
 
+    const saveUserDataOnLocalStorage = () => {
+        const jwt = localStorage.getItem('token')
+        AuthAPI.getUserInfo(jwt).then((response) => {
+            if (response.status == HttpStatus.OK) {
+                localStorage.setItem('userData', JSON.stringify(response.data));
+            }
+        });
+        //console.log(data)
+        //localStorage.setItem('userData', data);
+    }
+
 
 
     useEffect(() => {
@@ -47,10 +58,15 @@ const LoginPage = () => {
         setFormErrors(validate(formValues));
         setIsSubmit(true);
         if (errorsC == 0) {
+            console.log(formValues)
             const responseLogin = await AuthAPI.login(formValues.email, formValues.password)
             saveTokenOnLocalStorage(responseLogin.data.token)
             const ok = await setToken(responseLogin.data.token);
-            if (ok) navigate("/")
+            if (ok) {
+                saveUserDataOnLocalStorage()
+                navigate("/")
+            }
+
         }
     }
 
