@@ -49,7 +49,7 @@ function DefaultRoutes() {
           <Route element={<SidebarLayout />}>
             <Route path='/' element={ <Home />} />
             <Route path="/perfil" element={<UserProfileScreen />} />
-//             <Route path="/admin/generate-invite" element={<AdministrationPage />} />
+            {/* <Route path="/admin/generate-invite" element={<AdministrationPage />} /> */}
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><PageLessonRegister /></StrictRoute>} />
             <Route path='/test/student' element={<StrictRoute roles={[Roles.STUDENT]} children={<PageForStudent />} />} />
