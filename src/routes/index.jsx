@@ -6,6 +6,8 @@ import { Container, Row, Col} from 'react-bootstrap';
 import LoginPage from "../pages/Login";
 import RegisterScreen from "../pages/Register";
 import NewCourseScreen from "../pages/CreateCourse";
+import NewLessonScreen from '../pages/CreateLesson';
+import EditCourseScreen from '../pages/EditCourse';
 import Home from "../pages/Home/Home";
 import SideNav from '../components/NavBar';
 import { AuthProvider, useAuthContext } from '../contexts/AuthContext';
@@ -50,8 +52,10 @@ function DefaultRoutes() {
             <Route path='/' element={ <Home />} />
             <Route path="/perfil" element={<UserProfileScreen />} />
             {/* <Route path="/admin/generate-invite" element={<AdministrationPage />} /> */}
+            <Route path="/professor/courses/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
-            <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><PageLessonRegister /></StrictRoute>} />
+            <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewLessonScreen /></StrictRoute>} />
+            <Route path="/professor/lessons/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><LessonEditScreen /></StrictRoute>} />
             <Route path='/test/student' element={<StrictRoute roles={[Roles.STUDENT]} children={<PageForStudent />} />} />
             <Route path='/test/professor' element={<StrictRoute roles={[Roles.PROFESSOR]} children={<PageForProfessor />} />} />
             <Route path='/test/admin' element={<StrictRoute roles={[Roles.ADMIN]} children={<PageForAdmin />} />} />
@@ -66,6 +70,8 @@ function DefaultRoutes() {
 }
 
 export default DefaultRoutes
+
+const LessonEditScreen = () => < h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Ops! Pagina de edição de aula!<br />Recurso em implementação</h2>;
 
 const Logout = () => {
   const { setToken } = useAuthContext();
@@ -83,8 +89,6 @@ const Logout = () => {
 
   return <></>
 }
-
-const PageLessonRegister = () => <h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Página de cadastro de aula.<br /> Implementação em andamento!</h2>
 
 const PageForProfessor = () => {
   const { logged, user } = useAuthContext();
