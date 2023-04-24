@@ -30,7 +30,7 @@ function CardDetails({ image , students }) {
         console.log(student);
         return student !== undefined;
     }
-    
+
     useEffect(() => {
         const isStudentInscrito = verificaInsc();
         setButtonDisabled(isStudentInscrito ? true : false);
