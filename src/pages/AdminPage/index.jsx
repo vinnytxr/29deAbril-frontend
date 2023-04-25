@@ -4,14 +4,8 @@ import './style.css'
 
 import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupItem } from 'react-bootstrap'
 import Avatar from 'react-avatar'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen } from '@fortawesome/free-solid-svg-icons'
-import { AuthAPI } from "../../api/auth-api";
-import { HttpStatus } from '../CreateCourse/api'
 
 const AdministrationPage = () => {
-
-    var count = 4;
 
     const [newCode, setNewCode] = useState("Clique no botão abaixo para gerar o código.")
     const [codes, setCodes] = useState([]);
@@ -19,8 +13,8 @@ const AdministrationPage = () => {
 
     useEffect(() => {
         const userData = localStorage.getItem('userData')
-        console.log(JSON.parse(userData))
         setUserData(JSON.parse(userData))
+        requestCodes()
     }, []);
 
     const fetchCodes = async () => {
@@ -36,7 +30,6 @@ const AdministrationPage = () => {
 
         if (response.ok) {
             const data = await response.json()
-            console.log(data)
             return data
         } else {
             return []
@@ -45,7 +38,6 @@ const AdministrationPage = () => {
 
     const createCode = async () => {
         const jwt = localStorage.getItem('token')
-        console.log(jwt)
         var myHeaders = new Headers();
         myHeaders.append("jwt", jwt);
         myHeaders.append("Content-Type", "application/json");
@@ -62,10 +54,14 @@ const AdministrationPage = () => {
             redirect: 'follow'
         };
 
-        fetch("https://portal-aulas-api.fly.dev/invitation/", requestOptions)
-            .then(response => response.text())
-            .then(result => {return result})
-            .catch(error => console.log('error', error));
+        const response = await fetch("https://portal-aulas-api.fly.dev/invitation/", requestOptions)
+        if (response.ok) {
+            const data = await response.json()
+            return data.code
+        } else {
+            return ""
+        }
+        
     }
 
     const requestCodes = async () => {
@@ -81,18 +77,9 @@ const AdministrationPage = () => {
     }
 
     const createNewCode = () => {
-        count = count + 1;
         handleClick()
 
     }
-
-    useEffect(() => {
-        requestCodes()
-    }, [])
-
-    useEffect(() => {
-        console.log(codes)
-    }, [codes])
 
 
     return (
@@ -100,24 +87,14 @@ const AdministrationPage = () => {
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
                     <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                        &#128075;&nbsp; Hey, CHRISTOFER!
+                        &#128075;&nbsp; Hey, Administrador!
                     </p>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text>
-                            <button
-                                style={{ color: '#1dbfb0' }}
-                                data-mdb-ripple-color="#1dbfb0"
-                                type="button"
-                                class="fw-bold btn btn-light"
-                            >
-                                ASSINE KULTIVI+
-                            </button>
-                        </Navbar.Text>
-                        <Navbar.Text>
                             <Avatar
                                 class
-                                name="Christofer"
+                                name="Administrador"
                                 color="#0f5b7a"
                                 size={30}
                                 textSizeRatio={2}
@@ -128,7 +105,7 @@ const AdministrationPage = () => {
                 </Container>
             </Navbar>
 
-            <Container>
+            <Container fluid className='mb-3'>
                 <Row className="d-flex justify-content-center gap-4">
 
                     <Col>
@@ -171,7 +148,7 @@ const AdministrationPage = () => {
                                     <Col>
                                         <ListGroup>
                                             <div>
-                                                {codes.map(code => <ListGroupItem key={code.id}>Código: {code.code} Professor: {code.professor}</ListGroupItem>)}
+                                                {codes.map(code => <ListGroupItem key={code.id}>Código: {code.code} &nbsp; | &nbsp; Professor: {code.professor == null ? "Não atribuído":code.professor}</ListGroupItem>)}
                                             </div>
                                         </ListGroup>
                                     </Col>
