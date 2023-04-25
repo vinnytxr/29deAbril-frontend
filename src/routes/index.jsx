@@ -13,7 +13,7 @@ import { StrictRoute } from '../contexts/StrictRoute';
 import { Roles } from '../api/default';
 import UserProfileScreen from '../pages/UserProfile'
 import CourseDetails from '../pages/CourseDetails/course_details';
-// import AdministrationPage from '../pages/AdminPage';
+import AdministrationPage from '../pages/AdminPage';
 
 import "../global.css"
 
@@ -49,7 +49,7 @@ function DefaultRoutes() {
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
             <Route path="/perfil" element={<UserProfileScreen />} />
-            {/* <Route path="/admin/generate-invite" element={<AdministrationPage />} /> */}
+            <Route path="/admin/generate-invite" element={<AdministrationPage />} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT]}><CourseDetails /></StrictRoute>} />
             <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT]}><PageLessonStudent /></StrictRoute>} />
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
