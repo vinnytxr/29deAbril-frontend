@@ -74,7 +74,6 @@ export const NewLessonScreen = () => {
 
         var post = new FormData();
         
-        const professor = JSON.parse(localStorage.getItem('userData')).id
         post.append("title", formValores.title);
         post.append("banner", formValores.files[0]);
         post.append("content", formValores.content);
@@ -89,7 +88,7 @@ export const NewLessonScreen = () => {
                     setTimeout(() => {
                         setPostFormStatus(PostFormStatus.NULL)
                         navigate(`/professor/courses/edit/${courseId}`)
-                    }, 2500)
+                    }, 2000)
                     setEstado({})
                     
                 }

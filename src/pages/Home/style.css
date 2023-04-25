@@ -13,3 +13,12 @@ body, html {
     max-width: '70%'
 }
 
+.home-card .cardAula {
+    width: 100% !important;
+    cursor: pointer;
+}
+
+.home-card a {
+    text-decoration: none !important;
+    color: black;
+}

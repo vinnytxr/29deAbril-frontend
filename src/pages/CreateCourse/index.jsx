@@ -29,7 +29,7 @@ export const NewCourseScreen = () => {
 
     const [id, setId] = useState();
 
-    const { user } = useAuthContext();
+    const { logged, user } = useAuthContext();
 
     const [estado, setEstado] = useState({
         title: undefined,
@@ -46,8 +46,6 @@ export const NewCourseScreen = () => {
     const [allowLearnings, setAllowLearnings] = useState(false);
 
     const navigate = useNavigate();
-
-    // useEffect(() => { setTimeout(() => window.alert("Usando professor.id = 2 até finalização da tarefa de login"), 1000) }, [])
 
     useEffect(
         
@@ -92,12 +90,11 @@ export const NewCourseScreen = () => {
 
         var post = new FormData();
         
-        const professor = JSON.parse(localStorage.getItem('userData')).id
         post.append("title", formValores.title);
         post.append("description", formValores.description);
         post.append("banner", formValores.files[0]);
         post.append("content", formValores.content);
-        post.append("professor", professor);
+        post.append("professor", user.id);
 
 
         CourseAPI.registerCourse(post).then(response => {
@@ -161,7 +158,7 @@ export const NewCourseScreen = () => {
         }
     }
 
-    return (
+    return logged && !!user ? (
         <section className="box-course pb-1 pt-1">
             <Container fluid className="container-new-course container-course mb-5">
                 <Form>
@@ -341,7 +338,7 @@ export const NewCourseScreen = () => {
                 </Container>
             }
         </section >
-    );
+    ) : <></>;
 }
 
 export default NewCourseScreen

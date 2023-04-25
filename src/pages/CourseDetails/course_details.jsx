@@ -111,18 +111,22 @@ function CourseDetails() {
             </div>
           </div>
 
-          <div className="row">
-            <div className="col mt-3">
-              <Card className="body-card">
-                <div className="row">
-                  <Card.Text className="my-2 ms-3 fw-bold">
-                    O que você aprenderá:
-                  </Card.Text>
-                </div>
-                <CheckDetails cdetails={data} />
-              </Card>
-            </div>
-          </div>
+
+          {data?.learnings?.length ?
+            <div className="row">
+              <div className="col mt-3">
+                <Card className="body-card">
+                  <div className="row">
+                    <Card.Text className="my-2 ms-3 fw-bold">
+                      O que você aprenderá:
+                    </Card.Text>
+                  </div>
+                  <CheckDetails cdetails={data} />
+                </Card>
+              </div>
+            </div> : <></>
+          }
+
 
           <div className="row">
             <div className="col mt-3">
@@ -141,16 +145,18 @@ function CourseDetails() {
 
           <div className="row">
             <div className="col mt-3">
-              <Card className="body-card ">
-                <div className="row">
-                  <Card.Text className="my-2 ms-3 fw-bold">
-                    Conteúdo do curso:
-                  </Card.Text>
-                  <div>
-                    <AccordionListCourse sessions={data} />
+              {data?.lessons?.length ?
+                <Card className="body-card ">
+                  <div className="row">
+                    <Card.Text className="my-2 ms-3 fw-bold">
+                      Aulas do curso:
+                    </Card.Text>
+                    <div>
+                      <AccordionListCourse sessions={data} />
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card> : <></>
+              }
             </div>
           </div>
         </div>
