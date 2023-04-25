@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
 
-import './style.css'
-
 import { Col, Container, Navbar, Row, Pagination } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { AuthAPI } from '../../api/auth-api'
@@ -49,6 +47,7 @@ const ProfessorCoursesPage = () => {
             const responseCourses = await AuthAPI.getProfessorCourses(id, activePage, pageSize)
             if (responseCourses.status === HttpStatus.OK) {
                 setData(responseCourses.data)
+                console.log(responseCourses.data)
                 setIsFetched(true)
             }
         }
