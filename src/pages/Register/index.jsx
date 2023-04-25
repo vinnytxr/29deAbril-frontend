@@ -8,7 +8,7 @@ import './style.css'
 import { Form, Row, Toast, ToastHeader, ToastBody } from "react-bootstrap";
 
 export default function RegisterScreen() {
-    const intialValues = { name: "", email: "", password: "", cpf: "", about: "nothing", photo: "null", role: [2] };
+    const intialValues = { name: "", email: "", password: "", cpf: "", about: "nothing", photo: "null", role: [1] };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
@@ -95,8 +95,8 @@ export default function RegisterScreen() {
            // console.log("TEM ERROS");
         }
         if (Object.keys(formErrors).length === 0 && isSubmit) {
-           // console.log("FOI"); // CAHAMAR A FUNÇÃO DE CADASTRO AQUI E AQUI TAMBÉM ======================================================================================
-           
+            console.log("submit: ", formValues);
+            
             fetch('https://portal-aulas-api.fly.dev/user/', {
                 method: 'POST',
                 body: JSON.stringify(
@@ -125,9 +125,6 @@ export default function RegisterScreen() {
                 });
             
         }
-    }
-    const handleUnfocus = (e) => {
-        //setFormErrors(validate(formValues));
     }
 
     const validate = (values) => {

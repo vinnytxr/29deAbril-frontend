@@ -26,7 +26,6 @@ import { HttpResponse, HttpStatus } from '../../api/default'
 import { useAuthContext } from '../../contexts/AuthContext'
 
 function Home() {
-    const [userData, setUserData] = useState({ name: "" });
     const [data, setData] = useState({})
     const [isFetched, setIsFetched] = useState(false)
 
@@ -42,12 +41,7 @@ function Home() {
 
 
     useEffect(() => {
-        // fetch data
         getCourses()
-        const userData = localStorage.getItem('userData')
-        if (userData != null)
-            setUserData(JSON.parse(userData))
-        
     }, [])
 
     return (
@@ -66,13 +60,15 @@ function Home() {
                         <Navbar.Collapse className="justify-content-end">
 
                             <Navbar.Text>
-                                <Avatar
-                                    name="Christofer"
+                                {   user && 
+                                    <Avatar
+                                    name={user.name}
                                     color="#0f5b7a"
                                     size={30}
                                     textSizeRatio={2}
                                     round={true}
                                 />
+                                }
                             </Navbar.Text>
                         </Navbar.Collapse>
                     </Container>

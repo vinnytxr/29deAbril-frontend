@@ -14,6 +14,11 @@
   box-shadow: 1px 1px 5px rgb(213, 213, 213);
 }
 
+.home a {
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
 .space {
   height: 10rem;
 }
