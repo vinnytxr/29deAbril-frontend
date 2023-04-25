@@ -12,6 +12,7 @@ import { AuthProvider, useAuthContext } from '../contexts/AuthContext';
 import { StrictRoute } from '../contexts/StrictRoute';
 import { Roles } from '../api/default';
 import UserProfileScreen from '../pages/UserProfile'
+import ProfessorCoursesPage from '../pages/ProfessorCourses';
 // import AdministrationPage from '../pages/AdminPage';
 
 import "../global.css"
@@ -51,6 +52,7 @@ function DefaultRoutes() {
             <Route path="/perfil" element={<UserProfileScreen />} />
             {/* <Route path="/admin/generate-invite" element={<AdministrationPage />} /> */}
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
+            <Route path="/professor/courses" element={<StrictRoute roles={[Roles.PROFESSOR]}><ProfessorCoursesPage /></StrictRoute>} />
             <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><PageLessonRegister /></StrictRoute>} />
             <Route path='/test/student' element={<StrictRoute roles={[Roles.STUDENT]} children={<PageForStudent />} />} />
             <Route path='/test/professor' element={<StrictRoute roles={[Roles.PROFESSOR]} children={<PageForProfessor />} />} />
