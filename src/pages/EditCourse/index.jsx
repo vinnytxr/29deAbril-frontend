@@ -3,8 +3,9 @@
 /* eslint-disable jsx-a11y/alt-text */
 
 import React, { useState, useEffect } from "react"
-import { useNavigate } from "react-router";
-import { Container, Col, Row, Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router-dom";
+import { Container, Col, Row, Form, Button, Alert, Card } from 'react-bootstrap';
 import { HttpStatus, CourseAPI } from "./api";
 import noImage from './no-image.png'
 import './style.css'
@@ -17,7 +18,9 @@ const PostFormStatus = {
     NULL: 'NULL'
 }
 
-export const NewCourseScreen = () => {
+export const EditCourseScreen = () => {
+    const [courseExists, setCourseExists] = useState(undefined)
+
     const resetValores = () => {
         return {
             title: "",
@@ -27,9 +30,9 @@ export const NewCourseScreen = () => {
         };
     };
 
-    const [id, setId] = useState();
+    const { id } = useParams();
 
-    const { logged, user } = useAuthContext();
+    const { user } = useAuthContext();
 
     const [estado, setEstado] = useState({
         title: undefined,
@@ -40,15 +43,18 @@ export const NewCourseScreen = () => {
 
     const [formValores, setFormValores] = useState(resetValores());
     const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL);
-    const [editable, setEditable] = useState(true);
+    const [editable, setEditable] = useState(false);
     const [learnings, setLearnings] = useState([]);
+    const [lessons, setLessons] = useState([]);
     const [learningInput, setLearningInput] = useState("");
     const [allowLearnings, setAllowLearnings] = useState(false);
 
     const navigate = useNavigate();
 
+    // useEffect(() => { setTimeout(() => window.alert("Usando professor.id = 2 até finalização da tarefa de login"), 1000) }, [])
+
     useEffect(
-        
+
         () =>
             setEstado({
                 ...estado,
@@ -57,7 +63,7 @@ export const NewCourseScreen = () => {
         [formValores.files]
     );
 
-    useEffect(() => { refreshLearnings() }, [id]);
+    useEffect(() => { if (id) refreshLearnings() }, [id]);
 
     const setDescription = (e) => {
         setEstado({ ...estado, description: undefined })
@@ -89,7 +95,7 @@ export const NewCourseScreen = () => {
         setPostFormStatus(PostFormStatus.ENVIANDO);
 
         var post = new FormData();
-        
+
         post.append("title", formValores.title);
         post.append("description", formValores.description);
         post.append("banner", formValores.files[0]);
@@ -99,8 +105,6 @@ export const NewCourseScreen = () => {
 
         CourseAPI.registerCourse(post).then(response => {
             setEditable(false)
-            if (response.status === HttpStatus.OK && !!response.data)
-                setId(response.data.id)
 
             setTimeout(() => {
                 setPostFormStatus(response.status === HttpStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
@@ -154,17 +158,26 @@ export const NewCourseScreen = () => {
         const response = await CourseAPI.getCourse(id)
         if (response.status === HttpStatus.OK && !!response.data) {
             const course = response.data
+            setFormValores({
+                title: course.title,
+                description: course.description,
+                content: course.content,
+                files: [course.banner]
+            })
             setLearnings([...course.learnings]);
-        }
+            setLessons([...course.lessons])
+            setAllowLearnings(true);
+            setCourseExists(true)
+        } else setCourseExists(false)
     }
 
-    return logged && !!user ? (
+    return (courseExists === false) ? <CourseNotFound /> : courseExists && !!user ? (
         <section className="box-course pb-1 pt-1">
             <Container fluid className="container-new-course container-course mb-5">
                 <Form>
                     <Row>
                         <Col lg={12} className="mt-2">
-                            <h2>Criar novo curso</h2>
+                            <h2>Editar curso</h2>
                         </Col>
                         <Col xs={12} lg={7}>
                             <Container fluid>
@@ -233,15 +246,10 @@ export const NewCourseScreen = () => {
                                         <label htmlFor="input-files-ftc" style={{ width: "100%" }}>
                                             <img
                                                 className={`image-for-input-file ${estado.files === false ? "error" : ""}`}
-                                                src={formValores.files.length ? URL.createObjectURL(formValores.files[0]) : noImage}
+                                                src={formValores.files.length ? formValores.files[0] : noImage}
                                                 style={{ width: "100%", objectFit: "contain", objectPosition: "center", cursor: "pointer", backgroundColor: "white" }}
                                             />
                                         </label>
-                                    </Col>
-                                    <Col xs={12} className='file-input-span mb-3'>
-                                        <span className={`${!!estado.files ? 'ok' : estado.files === false ? 'error' : ''}`}>
-                                            {formValores.files.length > 0 ? `${formValores.files.length} ${formValores.files.length > 1 ? 'imagens selecionadas' : 'imagem selecionada'}` : 'Nenhuma imagem selecionada'}
-                                        </span>
                                     </Col>
                                     <InvisibleInputFile />
                                 </Row>
@@ -322,16 +330,25 @@ export const NewCourseScreen = () => {
                         </Col>
                         <Col xs={12} style={{ paddingTop: '3rem' }}>
                             <Container fluid className="pl0 pr0">
-                                <Col xs={12}>
-                                    <h2>Aulas</h2>
-                                </Col>
-                                <Col xs={12}>
-                                    <Button className="submit-add-lesson"
-                                        onClick={() => navigate(`/professor/courses/${id}/lessons/create`)}
-                                    >
-                                        +
-                                    </Button>
-                                </Col>
+                                <Row>
+                                    <Col xs={12}>
+                                        <h2>Aulas</h2>
+                                    </Col>
+                                    {
+                                        lessons.map((lesson, idx) => (
+                                            <Col xs={12} lg={4} key={idx} className="mb-3">
+                                                <Lesson data={lesson} />
+                                            </Col>
+                                        ))
+                                    }
+                                    <Col xs={12}>
+                                        <Button className="submit-add-lesson"
+                                            onClick={() => navigate(`/professor/courses/${id}/lessons/create`)}
+                                        >
+                                            +
+                                        </Button>
+                                    </Col>
+                                </Row>
                             </Container>
                         </Col>
                     </Row>
@@ -341,4 +358,21 @@ export const NewCourseScreen = () => {
     ) : <></>;
 }
 
-export default NewCourseScreen
+export default EditCourseScreen;
+
+const CourseNotFound = () => < h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Ops! Você está perdido?<br />Este curso não existe</h2>;
+
+const Lesson = ({ data }) => {
+
+    return <Link to={`/professor/lessons/edit/${data.id}`} style={{textDecoration: "none", color: "black"}}>
+        <Card style={{ width: '100%' }}>
+            <Card.Img variant="left" src={data.banner} style={{ height: "30vh", objectFit: "fill" }} />
+            <Card.Body>
+                <Card.Title>{data.title}</Card.Title>
+                <Card.Text style={{ height: "20vh", objectFit: "fill", overflow: "hidden" }}>{data.content}</Card.Text>
+                {/* <Button variant="primary">Go somewhere</Button> */}
+            </Card.Body>
+        </Card>
+    </Link>
+
+}
