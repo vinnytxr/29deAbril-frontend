@@ -370,7 +370,7 @@ const Lesson = ({ data }) => {
             <Card.Img variant="left" src={data.banner} style={{ height: "30vh", objectFit: "fill" }} />
             <Card.Body>
                 <Card.Title>{data.title}</Card.Title>
-                <Card.Text style={{ height: "20vh", objectFit: "fill" }}>{data.content}</Card.Text>
+                <Card.Text style={{ height: "20vh", objectFit: "fill", overflow: "hidden" }}>{data.content}</Card.Text>
                 {/* <Button variant="primary">Go somewhere</Button> */}
             </Card.Body>
         </Card>
