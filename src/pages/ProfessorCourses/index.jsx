@@ -12,23 +12,34 @@ const ProfessorCoursesPage = () => {
     const [data, setData] = useState({})
     const [isFetched, setIsFetched] = useState(false)
     const [activePage, setActivePage] = useState(1);
-    const [pageSize, setPageSize] = useState(4);
     const [amountPages, setAmountPages] = useState(4)
+
+    const pageSize = 4;
 
     const renderPagination = () => {
         let items = []
         for(let i = 1; i <= amountPages; i++){
-            items.push(
-                <Pagination.Item key={i} active={i === activePage} onClick={() => setActivePage(i)}>{i}</Pagination.Item>
-            )
+            if(!isFetched){
+                items.push(
+                    <Pagination.Item key={i} active={i === activePage} disabled onClick={() => setActivePage(i)}>{i}</Pagination.Item>
+                )
+            }else {
+                items.push(
+                    <Pagination.Item key={i} active={i === activePage} onClick={() => setActivePage(i)}>{i}</Pagination.Item>
+                )
+            }
         }
 
         return (
             <div>
                 <Pagination>
-                    <Pagination.Prev />
+                    {isFetched ? 
+                        <Pagination.Prev onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)}/>
+                        : <Pagination.Prev disabled onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)}/>
+                    }
                     {items}
-                    <Pagination.Next />
+                    {isFetched ? <Pagination.Next onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)}/>
+                    : <Pagination.Next disabled onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)}/>}
                 </Pagination>
             </div>
         )
@@ -36,28 +47,29 @@ const ProfessorCoursesPage = () => {
 
     useEffect(() => {
         const userData = localStorage.getItem('userData')
-        console.log(userData)
         if (userData != null)
             setUserData(JSON.parse(userData))
     }, [])
 
     useEffect(() => {
         const getProfessorCourses = async () => {
-            const {id} = userData;
-            const responseCourses = await AuthAPI.getProfessorCourses(id, activePage, pageSize)
-            if (responseCourses.status === HttpStatus.OK) {
-                setData(responseCourses.data)
-                console.log(responseCourses.data)
-                setIsFetched(true)
+            setIsFetched(false)
+            try {
+                const {id} = userData;
+                const responseCourses = await AuthAPI.getProfessorCourses(id, activePage, pageSize)
+                if (responseCourses.status === HttpStatus.OK) {
+                    setData(responseCourses.data)
+                    const pages = Math.ceil(responseCourses.data.count / pageSize)
+                    setAmountPages(pages)
+                    setIsFetched(true)
+                }
+            } catch(err){
+                console.log(err)
             }
         }
 
         getProfessorCourses();
     }, [userData, activePage, pageSize])
-
-    useEffect(() => {
-        
-    },[])
 
     return (
         <>
