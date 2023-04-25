@@ -11,7 +11,7 @@ function CardDetails({ image, course }) {
     const { logged, user } = useAuthContext();
 
     const alertClicked = () => {
-        alert('Erro ao realizar inscrição!');
+        alert('Erro ao realizar inscrição, tente novamente mais tarde!');
     };
 
     const [dados, setDados] = useState('');
@@ -46,13 +46,15 @@ function CardDetails({ image, course }) {
         fetch(url, requestOptions)
             .then(response => response.json())
             .then(data => {
-                alertClicked();
                 setButtonDisabled(true);
                 setcardText('Oba! As aula estão disponíveis!');
                 setcardText2('Aproveite!');
                 setButtonText('Inscrito');
             })
-            .catch(error => alertClicked());
+            .catch(error => {
+                console.log(error);
+                alertClicked();
+            });
     };
 
     return logged && !!user && courseId ? (
