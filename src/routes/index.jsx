@@ -51,6 +51,7 @@ function DefaultRoutes() {
           <Route path='/register' element={<RegisterScreen />} />
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
+            <Route path="/courses/:id" element={<CourseDetails />} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT]}><CourseDetails /></StrictRoute>} />
             <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT]}><PageLessonStudent /></StrictRoute>} />
             <Route path="/student/enrolled-courses" element={<StrictRoute roles={[Roles.STUDENT]}><StudentCoursesPage /></StrictRoute>} />

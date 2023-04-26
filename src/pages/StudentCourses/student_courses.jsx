@@ -3,17 +3,18 @@ import React, { useEffect, useState } from 'react'
 
 import { Col, Container, Navbar, Row, Pagination } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import Avatar from 'react-avatar'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
+import { useAuthContext } from '../../contexts/AuthContext';
 import CardCourses from '../../components/CardCourses'
 
 const StudentCoursesPage = () => {
     const [userData, setUserData] = useState({ name: "" });
-    const [data, setData] = useState({})
-    const [isFetched, setIsFetched] = useState(false)
+    const [data, setData] = useState({});
+    const [isFetched, setIsFetched] = useState(false);
+    const { logged, user } = useAuthContext();
     const [activePage, setActivePage] = useState(1);
-    const [amountPages, setAmountPages] = useState(6)
+    const [amountPages, setAmountPages] = useState(6);
 
     const pageSize = 6;
 
@@ -77,34 +78,12 @@ const StudentCoursesPage = () => {
     }, [userData, activePage, pageSize])
 
     return (
-        <>
-            <Navbar style={{ marginBottom: '50px' }}>
-                <Container fluid>
-                <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                    &#128075;&nbsp; Hey, {JSON.parse(localStorage.getItem('userData')).name.split(' ')[0]}!
-                </p>
-                <Navbar.Toggle />
-                <Navbar.Collapse className="justify-content-end">
-                    <Navbar.Text>
-                    <Avatar
-                        class
-                        name="Christofer"
-                        color="#0f5b7a"
-                        size={30}
-                        textSizeRatio={2}
-                        round={true}
-                    />
-                    </Navbar.Text>
-                </Navbar.Collapse>
-                </Container>
-            </Navbar>
-
-            <Row className="home-card">
-
+        <Row>
+            <Row className="home-card mt-5">
                     <div className="col">
                         <h1 className="mb-3 fs-5 fw-bold">Meus cursos</h1>
 
-                        {isFetched ? (
+                        {isFetched && logged && !!user ? (
                             <Row className="g-4">
                                 {data.results.map((course) => (
                                     <Col xs={12} lg={4} key={course.id}>
@@ -122,7 +101,7 @@ const StudentCoursesPage = () => {
                     {renderPagination()}
                 </Col>
             </Row>
-        </>
+        </Row>
     )
 }
 
