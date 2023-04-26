@@ -137,7 +137,7 @@ class SideNav extends Component {
 
           </Card.Body>
           <StrictRoute roles={[Roles.STUDENT, Roles.ADMIN, Roles.PROFESSOR]}>
-            <Card.Footer>
+            <Card.Footer style={{backgroundColor: "white"}}>
               <NavLinkTo title='Sair' href='/logout' icon={<FAIcon Icon={TbLogin} />} />
             </Card.Footer>
           </StrictRoute>

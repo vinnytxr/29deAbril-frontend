@@ -6,15 +6,17 @@ import Avatar from 'react-avatar'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
 import CardCourses from '../../components/CardCourses'
+import { Link } from 'react-router-dom'
+import "./index.css"
 
 const ProfessorCoursesPage = () => {
     const [userData, setUserData] = useState({ name: "" });
     const [data, setData] = useState({})
     const [isFetched, setIsFetched] = useState(false)
     const [activePage, setActivePage] = useState(1);
-    const [amountPages, setAmountPages] = useState(4)
+    const [amountPages, setAmountPages] = useState(6)
 
-    const pageSize = 4;
+    const pageSize = 6;
 
     const renderPagination = () => {
         let items = []
@@ -33,13 +35,17 @@ const ProfessorCoursesPage = () => {
         return (
             <div>
                 <Pagination>
-                    {isFetched ? 
-                        <Pagination.Prev onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)}/>
-                        : <Pagination.Prev disabled onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)}/>
-                    }
-                    {items}
-                    {isFetched ? <Pagination.Next onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)}/>
-                    : <Pagination.Next disabled onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)}/>}
+                    {amountPages > 1 && (
+                        <>
+                        {isFetched ? 
+                            <Pagination.Prev onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)}/>
+                            : <Pagination.Prev disabled onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)}/>
+                        }
+                        {items}
+                        {isFetched ? <Pagination.Next onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)}/>
+                        : <Pagination.Next disabled onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)}/>}
+                        </>
+                    )}
                 </Pagination>
             </div>
         )
@@ -94,14 +100,14 @@ const ProfessorCoursesPage = () => {
                 </Container>
             </Navbar>
 
-            <div className="col">
+            <div className="col home-card mt-5">
                 <h1 className="mt-3 mb-3 fs-5 fw-bold">Meus cursos</h1>
                 {isFetched ? (
                     <Row xs={1} md={3} lg={4} className="g-4">
-                        {data.results.map((aula) => (
-                            <Col key={aula.id}>
-                                <CardCourses teste={aula} />
-                            </Col>
+                        {data.results.map((course) => (
+                            <Link to={`/student/courses/${course.id}`}>
+                                <CardCourses teste={course} />
+                            </Link>
                         ))}
                     </Row>
                 ) : (
