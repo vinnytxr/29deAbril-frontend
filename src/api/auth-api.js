@@ -76,6 +76,32 @@ const getCoursesData = async (jwt) => {
     }
 }
 
+const getProfessorCourses = async(professorId, page = 1, size = 10) => {
+    const url = `${BASE_URL}/courses/courses?page=${page}&size=${size}&professor=${professorId}`
+    try {
+        const options = {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                // jwt: jwt,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            }
+        }
+
+        const response = await fetch(url, options);
+
+        if (response.ok) {
+            const data = await response.json();
+            AUTH_DEBUG && console.log("AuthAPI::getProfessorCourses(): ", data);
+            return new HttpResponse(HttpStatus.OK, data);
+        } else throw new Error("Error on getProfessorCourses()");
+     } catch (error) {
+            console.warn(error)
+            return new HttpResponse(HttpStatus.ERROR, null);
+     }
+}
+
 const putInvite = async (userId, invite, jwt) => {
     const url = `${BASE_URL}/invitation/`;
     try {
@@ -133,6 +159,7 @@ export const AuthAPI = {
     getUserInfo,
     login,
     getCoursesData,
+    getProfessorCourses,
     getStudentCourses,
     putInvite
 }

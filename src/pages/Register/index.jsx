@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faCirclePlus, faCheck } from '@fortawesome/free-solid-svg-icons'
@@ -13,7 +13,7 @@ export default function RegisterScreen() {
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
 
-
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         // console.log(e.target);
@@ -56,6 +56,7 @@ export default function RegisterScreen() {
                          //console.log("OLHA O ERRO")
                          alert("Falha ao se comunicar com o servidor.");
                         }else{
+                            navigate('/login')
                             alert("Registrado com sucesso!")
                         }
                         return response.json();
@@ -114,6 +115,7 @@ export default function RegisterScreen() {
                     return response.json();
                   })
                 .then((data) => {
+
                    // console.log("erro 400", data);
                     //setToast(true)
                 })
@@ -122,7 +124,6 @@ export default function RegisterScreen() {
                     //setToast(true)
                 });
             
-           
         }
     }
 
