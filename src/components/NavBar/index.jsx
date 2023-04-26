@@ -114,7 +114,7 @@ class SideNav extends Component {
             <StrictRoute roles={[Roles.STUDENT]}>
               <NavText text='ALUNO' />
               <NavGroupFlush>
-                <NavLinkTo title='Cursos' href='/student/courses' icon={<FAIcon Icon={ImBooks} />} />
+                {/* <NavLinkTo title='Cursos' href='/student/courses' icon={<FAIcon Icon={ImBooks} />} /> */}
                 <NavLinkTo title='Meus cursos' href='/student/enrolled-courses' icon={<FAIcon Icon={SiBookstack} />} />
               </NavGroupFlush>
             </StrictRoute>

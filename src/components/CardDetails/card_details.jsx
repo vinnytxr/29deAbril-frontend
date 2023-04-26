@@ -13,6 +13,10 @@ function CardDetails({ image, course }) {
     const alertClicked = () => {
         alert('Erro ao realizar inscrição, tente novamente mais tarde!');
     };
+    const alertClickedLooged = () => {
+        setButtonDisabled(true);
+        alert('Para realizar inscrição é necessário efetuar login!');
+    };
 
     const [dados, setDados] = useState('');
     const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -74,7 +78,24 @@ function CardDetails({ image, course }) {
                 </Card.Body>
             </Card>
         </div>
-    ) : <></>;
+    ) : <>
+        <div className="card-css text-center">
+            <Card style={{ width: '14rem' }}>
+                    <Card.Img variant="top" src={image} />
+                    <Card.Body>
+                        <Card.Title className='text-color'>
+                            Gostou do conteúdo do curso?
+                        </Card.Title>
+                        <Card.Text className='text-color'>
+                            inscreva-se ja!
+                        </Card.Text>
+                        <Button onClick={alertClickedLooged} disabled={buttonDisabled} className="btn-success">
+                            Inscreva-se
+                        </Button>
+                    </Card.Body>
+            </Card>
+        </div>
+    </>;
 };
 
 export default CardDetails;

@@ -17,6 +17,7 @@ import UserProfileScreen from '../pages/UserProfile'
 import ProfessorCoursesPage from '../pages/ProfessorCourses';
 import CourseDetails from '../pages/CourseDetails/course_details';
 import AdministrationPage from '../pages/AdminPage';
+import StudentCoursesPage from '../pages/StudentCourses/student_courses';
 
 import "../global.css"
 
@@ -51,9 +52,11 @@ function DefaultRoutes() {
           <Route path='/register' element={<RegisterScreen />} />
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
+            <Route path="/courses/:id" element={<CourseDetails />} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT]}><CourseDetails /></StrictRoute>} />
             <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT]}><PageLessonStudent /></StrictRoute>} />
             <Route path="/professor/courses" element={<StrictRoute roles={[Roles.PROFESSOR]}><ProfessorCoursesPage /></StrictRoute>} />
+            <Route path="/student/enrolled-courses" element={<StrictRoute roles={[Roles.STUDENT]}><StudentCoursesPage /></StrictRoute>} />
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewLessonScreen /></StrictRoute>} />
