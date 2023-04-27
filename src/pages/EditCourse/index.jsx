@@ -10,6 +10,7 @@ import { HttpStatus, CourseAPI } from "./api";
 import noImage from './no-image.png'
 import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
+import { cut } from "../../tools/string";
 
 const PostFormStatus = {
     ENVIADO: 'ENVIADO',
@@ -312,7 +313,7 @@ export const EditCourseScreen = () => {
                                                     type="text"
                                                     placeholder=""
                                                     value={learningInput}
-                                                    onChange={(e) => setLearningInput(e?.target?.value ?? learningInput)}
+                                                    onChange={(e) => setLearningInput(cut(e?.target?.value ?? learningInput, 128))}
                                                 />
                                             </Form.Label>
                                             <Button className="submit-form-learning"
@@ -368,11 +369,21 @@ const Lesson = ({ data }) => {
         <Card style={{ width: '100%' }}>
             <Card.Img variant="left" src={data.banner} style={{ height: "30vh", objectFit: "fill" }} />
             <Card.Body>
-                <Card.Title>{data.title}</Card.Title>
-                <Card.Text style={{ height: "20vh", objectFit: "fill", overflow: "hidden" }}>{data.content}</Card.Text>
+                <Card.Title style={{display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", lineHeight: "22px", height: "calc(3 * 22px)", fontSize: "18px", marginBottom: "1rem"}} >{data.title}</Card.Title>
+                <Card.Text style={{display: "-webkit-box", WebkitLineClamp: 10, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", lineHeight: "20px", height: "calc(10 * 20px)", fontSize: "16px"}}>{data.content}</Card.Text>
                 {/* <Button variant="primary">Go somewhere</Button> */}
             </Card.Body>
         </Card>
     </Link>
 
 }
+
+/*
+display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 20px;
+    height: calc(3 * 20px);
+*/

@@ -9,6 +9,7 @@ import { HttpStatus, CourseAPI } from "./api";
 import noImage from './no-image.png'
 import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
+import { cut } from "../../tools/string";
 
 const PostFormStatus = {
     ENVIADO: 'ENVIADO',
@@ -61,17 +62,17 @@ export const NewCourseScreen = () => {
 
     const setDescription = (e) => {
         setEstado({ ...estado, description: undefined })
-        setFormValores({ ...formValores, description: e?.target?.value })
+        setFormValores({ ...formValores, description: cut(e?.target?.value ?? "", 256) })
     }
 
     const setTitle = (e) => {
         setEstado({ ...estado, title: undefined })
-        setFormValores({ ...formValores, title: e?.target?.value })
+        setFormValores({ ...formValores, title: cut(e?.target?.value ?? "", 64) })
     }
 
     const setContent = (e) => {
         setEstado({ ...estado, content: undefined })
-        setFormValores({ ...formValores, content: e?.target?.value })
+        setFormValores({ ...formValores, content: cut(e?.target?.value ?? "", 1024) })
     }
 
     const sendForm = async () => {
@@ -304,7 +305,7 @@ export const NewCourseScreen = () => {
                                                     type="text"
                                                     placeholder=""
                                                     value={learningInput}
-                                                    onChange={(e) => setLearningInput(e?.target?.value ?? learningInput)}
+                                                    onChange={(e) => setLearningInput(cut(e?.target?.value ?? learningInput, 128))}
                                                 />
                                             </Form.Label>
                                             <Button className="submit-form-learning"
