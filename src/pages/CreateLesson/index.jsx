@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router";
 import { Container, Col, Row, Form, Button, Alert } from 'react-bootstrap';
 import { HttpStatus, LessonAPI } from "./api";
+import { cut } from "../../tools/string";
 import noImage from './no-image.png'
 import './style.css'
 
@@ -51,12 +52,12 @@ export const NewLessonScreen = () => {
 
     const setTitle = (e) => {
         setEstado({ ...estado, title: undefined })
-        setFormValores({ ...formValores, title: e?.target?.value })
+        setFormValores({ ...formValores, title: cut(e?.target?.value ?? "", 64) })
     }
 
     const setContent = (e) => {
         setEstado({ ...estado, content: undefined })
-        setFormValores({ ...formValores, content: e?.target?.value })
+        setFormValores({ ...formValores, content: cut(e?.target?.value, 1024) })
     }
 
     const sendForm = async () => {

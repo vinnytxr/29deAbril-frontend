@@ -106,7 +106,7 @@ const ProfessorCoursesPage = () => {
                     <Row className="g-4">
                         {data.results.map((course) => (
                             <Col xs={12} lg={4} key={course.id}>
-                                <Link to={`/student/courses/${course.id}`}>
+                                <Link to={`/professor/courses/edit/${course.id}`}>
                                     <CardCourses teste={course} />
                                 </Link>
                             </Col>
