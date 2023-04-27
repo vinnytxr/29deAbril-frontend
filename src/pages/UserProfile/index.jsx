@@ -181,42 +181,7 @@ const UserProfileScreen = () => {
               </Card>
             </Row>
 
-            <Row>
-              <Card
-                style={{
-                  padding: '16px',
-                }}
-              >
-                <Row className="mb-4">
-                  <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
-                    Meus cursos
-                  </h1>
-                </Row>
-                <Row className="d-flex justify-content-center align-items-center">
-                  <p
-                    className="mt-0 mb-0 fs-5 fw-bold"
-                    style={{ color: '#505050', textAlign: 'center' }}
-                  >
-                    Você ainda não se matriculou em nenhum curso
-                  </p>
-
-                  <p
-                    className="mt-2 mb-0 fs-6 "
-                    style={{ color: '#505050', textAlign: 'center' }}
-                  >
-                    Aproveite e comece a estudar agora mesmo! 😃
-                  </p>
-
-                  <Button
-                    variant="outline-success"
-                    className="mt-4 w-25"
-                    onClick={() => { navigate("/") }}
-                  >
-                    Explorar cursos
-                  </Button>
-                </Row>
-              </Card>
-            </Row>
+           
           </Col>
         </Row>
       </Container>
