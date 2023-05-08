@@ -8,7 +8,7 @@ import './style.css'
 import { Form, Row, Toast, ToastHeader, ToastBody } from "react-bootstrap";
 
 export default function RegisterScreen() {
-    const intialValues = { name: "", email: "", password: "", cpf: "", about: "Conte algo sobre você!", photo: "null", role: [1] };
+    const intialValues = { name: "", email: "", password: "", cpf: "", about: "Conte algo sobre você!", photo: "null", role: [1], date: ""};
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
@@ -196,6 +196,17 @@ export default function RegisterScreen() {
             errors.password = "Senha não pode ter mais que 16 caracteres!";
         }
 
+        if(!values.date){
+            errors.date = "Selecione uma data!";
+        }else {
+            let date1 = new Date(values.date)
+            const yearsAgo = new Date();
+            yearsAgo.setFullYear(yearsAgo.getFullYear() - 13);
+            if(date1>yearsAgo){
+                errors.date = "O usuário precisa ter mais de 13 anos para realizar o cadastro."
+            }
+        }
+
         if (!values.cpf) {
             errors.cpf = "Digite um cpf!";
         } else if (!regexcpf.test(values.cpf)) {
@@ -273,6 +284,15 @@ export default function RegisterScreen() {
                             />
                         </div>
                         <p className="ps-2" style={{ color: "red" }}>{formErrors.cpf}</p>
+                        <div className="mt-3">
+                            <input
+                            type="date"
+                                name="date"
+                                className="form-control"
+                                value={formValues.date}
+                                onChange={handleChange} />
+                        </div>
+                        <p className="ps-2" style={{ color: "red" }}>{formErrors.date}</p>
                         <p className="ps-1" style={{ fontSize: "13px" }}>Ao me cadastrar, concordo com os <a href="http://www.google.com.br" className="link-termos">Termos de uso e Política de privacidade</a></p>
 
 
