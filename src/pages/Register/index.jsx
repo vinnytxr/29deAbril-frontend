@@ -8,7 +8,7 @@ import './style.css'
 import { Form, Row, Toast, ToastHeader, ToastBody } from "react-bootstrap";
 
 export default function RegisterScreen() {
-    const intialValues = { name: "", email: "", password: "", cpf: "", about: "nothing", photo: "null", role: [1] };
+    const intialValues = { name: "", email: "", password: "", cpf: "", about: "nothing", photo: "null", role: [1], date:"" };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
@@ -156,6 +156,17 @@ export default function RegisterScreen() {
             errors.cpf = "Digite um cpf com formato válido!";
         }
 
+        if(!values.date){
+            errors.date = "Selecione uma data!";
+        }else {
+            let date1 = new Date(values.date)
+            const threeYearsAgo = new Date();
+            threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 5);
+            if(date1>threeYearsAgo){
+                errors.date = "O usuário precisa ter mais de 5 anos para realizar o cadastro."
+            }
+        }
+
         return errors;
     }
 
@@ -224,6 +235,15 @@ export default function RegisterScreen() {
                             />
                         </div>
                         <p className="ps-2" style={{ color: "red" }}>{formErrors.cpf}</p>
+                        <div className="mt-3">
+                            <input
+                            type="date"
+                                name="date"
+                                className="form-control"
+                                value={formValues.date}
+                                onChange={handleChange} />
+                        </div>
+                        <p className="ps-2" style={{ color: "red" }}>{formErrors.date}</p>
                         <p className="ps-1" style={{ fontSize: "13px" }}>Ao me cadastrar, concordo com os <a href="http://www.google.com.br" className="link-termos">Termos de uso e Política de privacidade</a></p>
 
 

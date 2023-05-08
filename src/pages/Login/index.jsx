@@ -22,7 +22,7 @@ const LoginPage = () => {
     var errorsC = 0;
 
     const saveTokenOnLocalStorage = (token) => {
-        console.log("LoginPage::saveTokenOnLocalStorage(): ", token)
+        //console.log("LoginPage::saveTokenOnLocalStorage(): ", token)
         localStorage.setItem('token', token);
     }
 
@@ -58,15 +58,18 @@ const LoginPage = () => {
         setFormErrors(validate(formValues));
         setIsSubmit(true);
         if (errorsC == 0) {
-            console.log(formValues)
+            //console.log(formValues)
             const responseLogin = await AuthAPI.login(formValues.email, formValues.password)
-            saveTokenOnLocalStorage(responseLogin.data.token)
-            const ok = await setToken(responseLogin.data.token);
-            if (ok) {
-                saveUserDataOnLocalStorage()
-                navigate("/")
+            if (responseLogin.status == HttpStatus.OK) {
+                saveTokenOnLocalStorage(responseLogin.data.token)
+                const ok = await setToken(responseLogin.data.token);
+                if (ok) {
+                    saveUserDataOnLocalStorage()
+                    navigate("/")
+                }
+            }else{
+                alert("Falha ao executar login.")
             }
-
         }
     }
 
@@ -75,7 +78,7 @@ const LoginPage = () => {
         errorsC = 0;
 
         if (!values.email) {
-            errors.email = "Digite um usuário";
+            errors.email = "Digite um e-mail.";
         }
 
         if (!values.password) {
