@@ -9,6 +9,10 @@ import CardCourses from '../../components/CardCourses'
 import { Link } from 'react-router-dom'
 import "./index.css"
 
+const NotFound = () => (
+    <h1>Nenhum curso cadastrado por este professor !</h1>
+)
+
 const ProfessorCoursesPage = () => {
     const [userData, setUserData] = useState({ name: "" });
     const [data, setData] = useState({})
@@ -65,6 +69,7 @@ const ProfessorCoursesPage = () => {
                 const responseCourses = await AuthAPI.getProfessorCourses(id, activePage, pageSize)
                 if (responseCourses.status === HttpStatus.OK) {
                     setData(responseCourses.data)
+                    console.log(responseCourses.data)
                     const pages = Math.ceil(responseCourses.data.count / pageSize)
                     setAmountPages(pages)
                     setIsFetched(true)
