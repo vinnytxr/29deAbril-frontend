@@ -5,12 +5,17 @@ import './style.css'
 import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupItem } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPen, faShare } from '@fortawesome/free-solid-svg-icons'
+import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 
 const AdministrationPage = () => {
     const { user, token } = useAuthContext();
-    const [newCode, setNewCode] = useState("Clique no botão abaixo para gerar o código.")
+    const [newCode, setNewCode] = useState("")
+    const [email, setEmail] = useState("")
     const [codes, setCodes] = useState([]);
     const [enableBtn, setEnableBtn] = useState(true)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         requestCodes()
@@ -59,6 +64,62 @@ const AdministrationPage = () => {
             return ""
         }
 
+    }
+
+    const validate = (values) => {
+        const errors = {};
+        const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
+        if (newCode == "") {
+            errors.codigo = "Selecione um código para ser enviado."
+        }
+
+        if (email == "") {
+            errors.email = "Digite um email!";
+        } else if (!regexemail.test(email)) {
+            errors.email = "Digite um email com formato válido!";
+        }
+        setErrors(errors)
+        return Object.keys(errors).length
+    }
+
+    const sendCode = async () => {
+        if (validate() == 0) {
+            console.log("Válido")
+            const url = `${BASE_URL}/user/send-email/`
+            try {
+                const options = {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json'
+                    },
+                    body: JSON.stringify({ email: email, code: newCode })
+                }
+
+                const response = await fetch(url, options);
+                if (response.ok) {
+                    const data = await response.json();
+                    AUTH_DEBUG && console.log("AuthAPI::send code(): ", data.token);
+                    alert("E-mail enviado com sucesso!")
+                    return new HttpResponse(HttpStatus.OK, data);
+                } else {
+                    alert("Falha ao enviar e-mail!")
+                    throw new Error("Error on send code()");
+                }
+            } catch (error) {
+                console.warn(error)
+                return new HttpResponse(HttpStatus.ERROR, null);
+            }
+        }
+        console.log(errors)
+        console.log(email)
+    }
+
+    const selectCode = (code) => {
+        console.log("Código selecionado:", code)
+        setNewCode(code)
     }
 
     const requestCodes = async () => {
@@ -123,8 +184,24 @@ const AdministrationPage = () => {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <Form.Control readOnly type="text" value={newCode} />
-                                        <Button disabled={!enableBtn} className='mt-3 btn-success' onClick={() => { createNewCode() }}>Gerar Código</Button>
+                                        <Form.Control readOnly type="text" placeholder='Clique no botão abaixo para gerar o código.' value={newCode} />
+                                        <Button disabled={!enableBtn} className='mt-2 btn-success' onClick={() => { createNewCode() }}>Gerar Código</Button>
+                                    </Col>
+                                </Row>
+                                <div className='pt-4'></div>
+                                <Row>
+                                    <Col>
+                                        <p className='mb-1'>Enviar o código por e-mail</p>
+                                        <input
+                                            type="text"
+                                            name="email"
+                                            placeholder="Email"
+                                            className="form-control"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)} />
+                                        <Button className='mt-2 mb-1 btn-success' onClick={() => { sendCode() }}>Enviar</Button>
+                                        <p className="ps-2 mb-0" style={{ color: "red" }}>{errors.email}</p>
+                                        <p className="ps-2  mb-0" style={{ color: "red" }}>{errors.codigo}</p>
                                     </Col>
                                 </Row>
                             </Card>
@@ -147,9 +224,15 @@ const AdministrationPage = () => {
                                     <Row>
                                         <Col>
                                             <ListGroup>
-                                                {codes.map(code => <ListGroupItem key={code.id} style={{display: "flex"}}>
-                                                    <span className="code-span">{code.code}</span>
-                                                    <span className={`flag ${code.professor !== null ? "flag-used" : "flag-not-used"}`}>{code.professor !== null ? "utilizado" : "livre"}</span>
+                                                {codes.map(code => <ListGroupItem key={code.id} style={{ display: "flex" }}>
+                                                    <span className="code-span box">{code.code}</span>
+                                                    <span className='box'>
+                                                        <span className={`flag ${code.professor !== null ? "flag-used" : "flag-not-used"}`}>{code.professor !== null ? "utilizado" : "livre"}</span>
+                                                    </span>
+                                                    {code.professor === null &&<span onClick={() => selectCode(code.code)} className='share'>Selecionar <FontAwesomeIcon
+                                                        style={{ color: 'white', fontSize: '16' }}
+                                                        icon={faShare}
+                                                    /></span>}
                                                 </ListGroupItem>)}
                                             </ListGroup>
                                         </Col>
