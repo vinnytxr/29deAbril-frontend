@@ -8,7 +8,7 @@ import './style.css'
 import { Form, Row, Toast, ToastHeader, ToastBody } from "react-bootstrap";
 
 export default function RegisterScreen() {
-    const intialValues = { name: "", email: "", password: "", cpf: "", about: "nothing", photo: "null", role: [1], date:"" };
+    const intialValues = { name: "", email: "", password: "", cpf: "", about: "Conte algo sobre você!", photo: "null", role: [1], date: ""};
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
@@ -127,6 +127,52 @@ export default function RegisterScreen() {
         }
     }
 
+    const validarCPF = (cpf) => {
+        console.log(cpf)
+        // Elimina CPFs inválidos conhecidos
+        if (
+          cpf.length !== 11 ||
+          cpf === "00000000000" ||
+          cpf === "11111111111" ||
+          cpf === "22222222222" ||
+          cpf === "33333333333" ||
+          cpf === "44444444444" ||
+          cpf === "55555555555" ||
+          cpf === "66666666666" ||
+          cpf === "77777777777" ||
+          cpf === "88888888888" ||
+          cpf === "99999999999"
+        ) {
+          return false;
+        }
+      
+        // Valida o primeiro dígito verificador
+        let soma = 0;
+        for (let i = 0; i < 9; i++) {
+          soma += parseInt(cpf.charAt(i)) * (10 - i);
+        }
+        let resto = 11 - (soma % 11);
+        let digitoVerificador1 = resto === 10 || resto === 11 ? 0 : resto;
+        if (digitoVerificador1 !== parseInt(cpf.charAt(9))) {
+          return false;
+        }
+      
+        // Valida o segundo dígito verificador
+        soma = 0;
+        for (let i = 0; i < 10; i++) {
+          soma += parseInt(cpf.charAt(i)) * (11 - i);
+        }
+        resto = 11 - (soma % 11);
+        let digitoVerificador2 = resto === 10 || resto === 11 ? 0 : resto;
+        if (digitoVerificador2 !== parseInt(cpf.charAt(10))) {
+          return false;
+        }
+      
+        // CPF é válido
+        return true;
+      }
+      
+
     const validate = (values) => {
         const errors = {};
         const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -150,22 +196,25 @@ export default function RegisterScreen() {
             errors.password = "Senha não pode ter mais que 16 caracteres!";
         }
 
-        if (!values.cpf) {
-            errors.cpf = "Digite um cpf!";
-        } else if (!regexcpf.test(values.cpf)) {
-            errors.cpf = "Digite um cpf com formato válido!";
-        }
-
         if(!values.date){
             errors.date = "Selecione uma data!";
         }else {
             let date1 = new Date(values.date)
-            const threeYearsAgo = new Date();
-            threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 5);
-            if(date1>threeYearsAgo){
-                errors.date = "O usuário precisa ter mais de 5 anos para realizar o cadastro."
+            const yearsAgo = new Date();
+            yearsAgo.setFullYear(yearsAgo.getFullYear() - 13);
+            if(date1>yearsAgo){
+                errors.date = "O usuário precisa ter mais de 13 anos para realizar o cadastro."
             }
         }
+
+        if (!values.cpf) {
+            errors.cpf = "Digite um cpf!";
+        } else if (!regexcpf.test(values.cpf)) {
+            errors.cpf = "Digite um cpf com formato válido!";
+        } else if (!validarCPF(formValues.cpf.replace(/\D/g, ''))){
+            errors.cpf = "Número do cpf é inválido!";
+        }
+        console.log("CPF:", validarCPF(formValues.cpf.replace(/\D/g, '')))
 
         return errors;
     }
