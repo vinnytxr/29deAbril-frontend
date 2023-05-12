@@ -16,7 +16,7 @@ import './style.css'
 const UserProfileScreen = () => {
   const navigate = useNavigate()
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFileTmp, setSelectedFile] = useState(null);
   const [editando, setEditando] = useState(false)
   const [aboutText, setAboutText] = useState();
   const [newName, setNewName] = useState();
@@ -64,6 +64,38 @@ const UserProfileScreen = () => {
     setAboutText(user.about)
     setEditando(true)
   }
+
+  const fetchPicture = async (selectedFile) => {
+
+    var formdata = new FormData();
+    formdata.append("photo", selectedFile);
+    const url = `${BASE_URL}/user/${user.id}/`
+    try {
+        const options = {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: formdata
+        }
+
+        const response = await fetch(url, options);
+        console.log("Response: ", response)
+        if (response.ok) {
+            const data = await response.json();
+            AUTH_DEBUG && console.log("AuthAPI::sendPhoto(): ", data.token);
+            return new HttpResponse(HttpStatus.OK, data);
+        } else{
+          console.log("Data: ", await response.json())
+          throw new Error("Error on sendPhoto()");
+        }
+    } catch (error) {
+        console.warn(error)
+        return new HttpResponse(HttpStatus.ERROR, null);
+    }
+}
 
   const fetchEdit = async () => {
     const url = `${BASE_URL}/user/${user.id}/`
@@ -133,12 +165,12 @@ const UserProfileScreen = () => {
 
     setFormErrors(errors)
     return errors;
-
   }
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
+    setSelectedFile(file)
+    fetchPicture(file)
   };
 
 
@@ -199,9 +231,9 @@ const UserProfileScreen = () => {
                         />
                       </div>
                     </OverlayTrigger>
-                    {selectedFile && (
+                    {selectedFileTmp && (
                       <div>
-                        <p>Selected file: {selectedFile.name}</p>
+                        <p>Selected file: {selectedFileTmp.name}</p>
                       </div>
                     )}
                   </div>

@@ -20,6 +20,7 @@ import AdministrationPage from '../pages/AdminPage';
 import StudentCoursesPage from '../pages/StudentCourses/student_courses';
 
 import "../global.css"
+import PasswordRecoveryPage from '../pages/RecoverPassword';
 
 const SidebarLayout = () => (
   <>
@@ -50,6 +51,7 @@ function DefaultRoutes() {
         <Routes>
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterScreen />} />
+          <Route path='/recuperar-senha' element={<PasswordRecoveryPage/>} />
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
             <Route path="/courses/:id" element={<CourseDetails />} />

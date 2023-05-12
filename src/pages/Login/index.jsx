@@ -137,6 +137,7 @@ const LoginPage = () => {
                                 <button className="btn btn-info"><FontAwesomeIcon icon={faCheck} className="me-2" />Entrar</button>
                             </div>
                         </div>
+                        <p className="ps-1 fw-bold mt-1" style={{ color: "#1dbfb0", cursor:"pointer" }} onClick={() => navigate('/recuperar-senha')}>Esqueci minha senha</p>
                     </Form>
                     {/* / <button className="btn btn-info" onClick={userinfo}><FontAwesomeIcon icon={faCheck} className="me-2" />Testar</button> */}
                 </div>
