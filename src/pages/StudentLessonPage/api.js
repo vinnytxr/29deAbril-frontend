@@ -12,6 +12,13 @@ const getLesson = async (id) => {
         const response = await fetch(url, options)
         if (response.ok) {
             const data = await response.json()
+
+            if(data.prev && data.prev.banner)
+                data.prev.banner = BASE_URL + data.prev.banner
+
+            if(data.next && data.next.banner)
+                data.next.banner = BASE_URL + data.next.banner
+
             return new HttpResponse(HttpStatus.OK, data)
         }
         throw new Error("LessonAPI::getLesson()")
