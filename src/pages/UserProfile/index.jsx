@@ -22,11 +22,45 @@ const UserProfileScreen = () => {
   const [newName, setNewName] = useState();
   const [formErrors, setFormErrors] = useState({});
 
-  const { logged, user, token, setToken } = useAuthContext();
+  const { logged, user, token, setToken, refreshUserOnContext } = useAuthContext();
 
   const [authorizationCode, setAuthorizationCode] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showModalNotification, setShowModalNotification] = useState(false);
+
+  const [imagesToUpdate, setImagesToUpdate] = useState()
+
+  useEffect(() => {
+    if (imagesToUpdate && imagesToUpdate.length)
+      updateUserPicture(imagesToUpdate[0]);
+  }, [imagesToUpdate])
+
+  const updateUserPicture = async (userImageToUpdate) => {
+    var body = new FormData();
+    body.append("photo", userImageToUpdate);
+
+    const url = `${BASE_URL}/user/${user.id}/`
+    try {
+      const options = {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json'
+        },
+        body: body
+      }
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        refreshUserOnContext()
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        throw new Error("Error on sendPhoto()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, null);
+    }
+  }
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
@@ -65,77 +99,45 @@ const UserProfileScreen = () => {
     setEditando(true)
   }
 
-  const fetchPicture = async (selectedFile) => {
-
-    var formdata = new FormData();
-    formdata.append("photo", selectedFile);
-    const url = `${BASE_URL}/user/${user.id}/`
-    try {
-        const options = {
-            method: 'PATCH',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json'
-            },
-            body: formdata
-        }
-
-        const response = await fetch(url, options);
-        console.log("Response: ", response)
-        if (response.ok) {
-            const data = await response.json();
-            AUTH_DEBUG && console.log("AuthAPI::sendPhoto(): ", data.token);
-            return new HttpResponse(HttpStatus.OK, data);
-        } else{
-          console.log("Data: ", await response.json())
-          throw new Error("Error on sendPhoto()");
-        }
-    } catch (error) {
-        console.warn(error)
-        return new HttpResponse(HttpStatus.ERROR, null);
-    }
-}
-
   const fetchEdit = async () => {
     const url = `${BASE_URL}/user/${user.id}/`
     try {
-        const options = {
-            method: 'PATCH',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json'
-            },
-            body: JSON.stringify({ about: aboutText, name: newName})
-        }
+      const options = {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({ about: aboutText, name: newName })
+      }
 
-        const response = await fetch(url, options);
-        if (response.ok) {
-            const data = await response.json();
-            AUTH_DEBUG && console.log("AuthAPI::edit(): ", data.token);
-            return new HttpResponse(HttpStatus.OK, data);
-        } else throw new Error("Error on edit()");
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        AUTH_DEBUG && console.log("AuthAPI::edit(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else throw new Error("Error on edit()");
     } catch (error) {
-        console.warn(error)
-        return new HttpResponse(HttpStatus.ERROR, null);
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, null);
     }
-}
+  }
 
   const salvarAlteracoes = async () => {
 
-    
+
     if (Object.keys(validateEditing()).length == 0 && editando) {
       setEditando(false)
       if (user.name != newName || aboutText != user.about) {
         console.log("Válidado, enviar para o banco.")
         const response = await fetchEdit()
         console.log(response)
-        if(response.status == HttpStatus.OK){
+        if (response.status == HttpStatus.OK) {
           console.log("RECARREGAR")
           navigate(0)
         }
-        
+
       } else {
         console.log("Nenhuma mudança, não fazer requisição.")
       }
@@ -167,11 +169,24 @@ const UserProfileScreen = () => {
     return errors;
   }
 
-  const handleFileSelect = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file)
-    fetchPicture(file)
-  };
+  const FileListToFileArray = (fileList) => {
+    var files = []
+    for (let idx = 0; idx < fileList.length; idx++) {
+      files.push(fileList[idx])
+    }
+    return files
+  }
+
+  const InvisibleInputFile = () => (
+    <input id='input-files-user-photo-update'
+      type="file"
+      style={{ display: 'none' }}
+      onChange={(e) => {
+        setImagesToUpdate(FileListToFileArray(e.target.files ?? new FileList()))
+      }}
+      accept='.png,.jpeg,.jpg,.webp'
+    />
+  );
 
 
   return logged && user ? (
@@ -208,28 +223,22 @@ const UserProfileScreen = () => {
               <Row>
                 <Col className="d-flex justify-content-center align-items-center flex-column">
                   <div style={{ position: 'relative' }}>
+                    <InvisibleInputFile />
                     <OverlayTrigger
                       placement="bottom"
                       overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
                     >
-                      <div
-                        onClick={() => {
-                          const fileInput = document.createElement('input');
-                          fileInput.type = 'file';
-                          fileInput.accept = 'image/*';
-                          fileInput.onchange = handleFileSelect;
-                          fileInput.click();
-                        }}
-                      >
-                        <Avatar
-                          name={user.name && user.name.split(' ')[0]}
-                          color="#0f5b7a"
-                          size={150}
-                          textSizeRatio={2}
-                          round={true}
-                          style={{ cursor: 'pointer' }}
-                        />
-                      </div>
+                      <label htmlFor="input-files-user-photo-update" style={{ width: 'fit-content' }}>
+                        {user.photo ? <img src={user.photo} style={{ width: '100%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} />
+                          : <Avatar
+                            name={user.name && user.name.split(' ')[0]}
+                            color="#0f5b7a"
+                            size={150}
+                            textSizeRatio={2}
+                            round={true}
+                            style={{ cursor: 'pointer' }}
+                          />}
+                      </label>
                     </OverlayTrigger>
                     {selectedFileTmp && (
                       <div>
