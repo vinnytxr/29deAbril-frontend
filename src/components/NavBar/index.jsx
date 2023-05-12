@@ -12,7 +12,7 @@ import { GiArchiveRegister } from 'react-icons/gi'
 import { TbLogin } from 'react-icons/tb'
 import { AiFillHome } from 'react-icons/ai'
 import { BsKeyFill } from 'react-icons/bs'
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
 import { Roles } from '../../api/default';
 
@@ -71,27 +71,22 @@ const FAIcon = ({ Icon }) => (
   <Icon style={{ color: '#8a9094', fontSize: '18' }} className="me-2" />
 )
 
-class SideNav extends Component {
-  constructor(props) {
-    super(props);
-    this.onSelect = this.onSelect.bind(this);
-    this.toggleNav = this.toggleNav.bind(this);
-  }
+const SideNav = () => {
 
-  onSelect(e) {
+  const navigate = useNavigate();
+
+  const onSelect = (e) => {
     console.log('onSelect');
   }
 
-  toggleNav() {
+  const toggleNav = () => {
     console.log('toggle..');
   }
 
-  render() {
-
-    return (
+  return (
       <Navbar className='home'>
         <Card className='cardSide'>
-          <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" src={'https://i.ibb.co/r3QPmSt/logo.png'} />
+          <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" onClick={()=> navigate("/")} src={'https://i.ibb.co/r3QPmSt/logo.png'} />
 
           <Card.Body
             style={{
@@ -145,7 +140,5 @@ class SideNav extends Component {
       </Navbar >
     );
   }
-  componentDidMount() { }
-}
 
-export default SideNav;
+  export default SideNav;
