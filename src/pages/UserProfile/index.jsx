@@ -214,10 +214,10 @@ const UserProfileScreen = () => {
 
       <Container>
         <Row className="d-flex justify-content-center gap-4">
-          <Col xs={3}>
+          <Col className='pe-0' xs={3}>
             <Card
               style={{
-                paddingTop: '16px',
+                paddingTop: '16px',width: '90%'
               }}
             >
               <Row>
@@ -228,8 +228,8 @@ const UserProfileScreen = () => {
                       placement="bottom"
                       overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
                     >
-                      <label htmlFor="input-files-user-photo-update" style={{ width: 'fit-content' }}>
-                        {user.photo ? <img src={user.photo} style={{ width: '100%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} />
+                      <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
+                        {user.photo ? <img src={user.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} />
                           : <Avatar
                             name={user.name && user.name.split(' ')[0]}
                             color="#0f5b7a"
@@ -288,7 +288,7 @@ const UserProfileScreen = () => {
               user?.role?.includes(Roles.STUDENT)
               && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
               && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
-              <Card style={{ cursor: 'pointer' }} className='mt-1' onClick={handleShowModal}>
+              <Card style={{ cursor: 'pointer', width:'90%' }} className='mt-1' onClick={handleShowModal}>
                 <Col style={{ backgroundColor: "#198754", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
                   <p className="m-1">Tornar-me professor!</p>
                 </Col>
