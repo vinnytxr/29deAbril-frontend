@@ -8,3 +8,8 @@
 .body-card {
     background-color: #FFFFFF; /* Cor de fundo desejada */
 }
+
+.lesson-accordion .accordion-header button {
+    background-color: white;
+    color: black;
+}
