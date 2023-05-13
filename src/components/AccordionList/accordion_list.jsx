@@ -20,12 +20,12 @@ function AccordionListCourse({ sessions }) {
       {lessons?.map(item => (
         <Card key={item.id}>
           <Accordion.Item eventKey={item.id.toString()} key={item.id}>
-            <Accordion.Header>{item.title}</Accordion.Header>
+            <Accordion.Header className='accordion-header'>{item.title}</Accordion.Header>
             <Accordion.Body>
               <ListGroup>
                 <ListGroupItem action onClick={() => navigate(`/student/lessons/${item.id}`)}>
                   <Row>
-                    <Col className="col-2">
+                    <Col className="col-2  d-flex flex-column justify-content-center">
                       <img src={item.banner} alt="" className="expanded-image" />
                     </Col>
                     <Col className="col-10">

@@ -18,6 +18,7 @@ import ProfessorCoursesPage from '../pages/ProfessorCourses';
 import CourseDetails from '../pages/CourseDetails/course_details';
 import AdministrationPage from '../pages/AdminPage';
 import StudentCoursesPage from '../pages/StudentCourses/student_courses';
+import { StudentLessonPage } from '../pages/StudentLessonPage';
 
 import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
@@ -55,8 +56,8 @@ function DefaultRoutes() {
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
             <Route path="/courses/:id" element={<CourseDetails />} />
+            <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><StudentLessonPage /></StrictRoute>} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseDetails /></StrictRoute>} />
-            <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><PageLessonStudent /></StrictRoute>} />
             <Route path="/professor/courses" element={<StrictRoute roles={[Roles.PROFESSOR]}><ProfessorCoursesPage /></StrictRoute>} />
             <Route path="/student/enrolled-courses" element={<StrictRoute roles={[Roles.STUDENT]}><StudentCoursesPage /></StrictRoute>} />
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
@@ -93,25 +94,4 @@ const Logout = () => {
   }, [])
 
   return <></>
-}
-
-const PageLessonStudent = () => <h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Página de aula do aluno.<br /> Implementação em andamento!</h2>
-
-const PageForProfessor = () => {
-  const { logged, user } = useAuthContext();
-  return <h1>Pagina de Professor - {user?.name}</h1>
-}
-
-const PageForStudent = () => {
-  const { logged, user } = useAuthContext();
-  return <h1>Pagina de Aluno - {user?.name}</h1>
-}
-
-const PageForAdmin = () => {
-  const { logged, user } = useAuthContext();
-  return <h1>Pagina de Admin - {user?.name}</h1>
-}
-
-const PageForNotLogged = () => {
-  return <h1>Pagina geral, não precisa estar logado</h1>
 }
