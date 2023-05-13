@@ -66,7 +66,7 @@ const AdministrationPage = () => {
 
     }
 
-    const validate = (values) => {
+    const validate = () => {
         const errors = {};
         const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
