@@ -5,6 +5,7 @@ import './style.css'
 import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupItem } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
+import { BASE_URL } from '../../api/default'
 
 const AdministrationPage = () => {
     const { user, token } = useAuthContext();
@@ -17,7 +18,7 @@ const AdministrationPage = () => {
     }, []);
 
     const fetchCodes = async () => {
-        const response = await fetch('https://portal-aulas-api.fly.dev/invitation/', {
+        const response = await fetch(`${BASE_URL}/invitation/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ const AdministrationPage = () => {
             redirect: 'follow'
         };
 
-        const response = await fetch("https://portal-aulas-api.fly.dev/invitation/", requestOptions)
+        const response = await fetch(`${BASE_URL}/invitation/`, requestOptions)
         if (response.ok) {
             const data = await response.json()
             return data.code

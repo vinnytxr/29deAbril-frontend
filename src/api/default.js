@@ -17,7 +17,7 @@ export class HttpResponse {
   data = null;
 
   constructor(status, data) {
-    this.status = status;
+    this.status = status; 
     this.data = data;
   }
 }

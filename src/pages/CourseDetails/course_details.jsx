@@ -13,6 +13,7 @@ import StarRating from "../../components/StarRating/star_rating";
 import AccordionListCourse from "../../components/AccordionList/accordion_list";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
+import { BASE_URL } from "../../api/default";
 
 // Icons
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -32,7 +33,7 @@ function CourseDetails() {
     if (id) {
       const dataFetch = async () => {
         try {
-          const response = await fetch(`https://portal-aulas-api.fly.dev/courses/courses/${id}`)
+          const response = await fetch(`${BASE_URL}/courses/courses/${id}`)
           if (response.status < 200 || response.status >= 300) throw new Error(`Curso não encontrado ${id}`)
           console.log(response)
           const data = await response.json();

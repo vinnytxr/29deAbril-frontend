@@ -6,6 +6,7 @@ import { faTrash, faCirclePlus, faCheck } from '@fortawesome/free-solid-svg-icon
 
 import './style.css'
 import { Form, Row, Toast, ToastHeader, ToastBody } from "react-bootstrap";
+import { BASE_URL } from "../../api/default";
 
 export default function RegisterScreen() {
     const intialValues = { name: "", email: "", password: "", cpf: "", about: "Conte algo sobre você!", photo: "null", role: [1], date: ""};
@@ -42,7 +43,7 @@ export default function RegisterScreen() {
         if (Object.keys(formErrors).length === 0 && isSubmit) {
             //console.log(JSON.stringify(formValues))// CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
             
-                fetch('https://portal-aulas-api.fly.dev/user/', {
+                fetch(`${BASE_URL}/user/`, {
                     method: 'POST',
                     body: JSON.stringify(
                         formValues

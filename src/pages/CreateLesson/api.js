@@ -1,3 +1,5 @@
+import { BASE_URL } from "../../api/default";
+
 export const HttpStatus = {
   OK: 200,
   ERROR: 400
@@ -12,8 +14,6 @@ export class HttpResponse {
     this.data = data;
   }
 }
-
-const BASE_URL = `https://portal-aulas-api.fly.dev`
 
 const registerLesson = async (body) => {
   try {
