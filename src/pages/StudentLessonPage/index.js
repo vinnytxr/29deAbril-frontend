@@ -5,6 +5,7 @@ import { LessonAPI } from './api';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { Button } from 'react-bootstrap';
+import ReactPlayer from 'react-player'
 
 import './styles.css'
 
@@ -12,6 +13,10 @@ export const StudentLessonPage = () => {
 
     const { id } = useParams();
     const [lesson, setLesson] = React.useState()
+    const [videoPlayer, setVideoPlayer] = React.useState({
+      playing: false,
+      started: false
+    })
 
     const navigate = useNavigate();
 
@@ -28,6 +33,9 @@ export const StudentLessonPage = () => {
         if (id) getLesson();
     }, [id]);
 
+    const handleVideoOnPlay = () => setVideoPlayer({...videoPlayer, playing: true, started: true})
+    const handleVideoOnPause = () => setVideoPlayer({...videoPlayer, playing: false})
+
     return lesson ? (
         <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
             <Row>
@@ -36,8 +44,9 @@ export const StudentLessonPage = () => {
                 </Col>
                 <Col xs={12}>
                     <section style={{ position: 'relative' }}>
-                        <img src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} />
-                        <BsFillPlayFill style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />
+                        { lesson.banner && !videoPlayer.started && <img src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} /> }
+                        { lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} onPause={handleVideoOnPause}/> }
+                        { !videoPlayer.playing && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} /> }
                     </section>
                 </Col>
                 <Col xs={12}>
