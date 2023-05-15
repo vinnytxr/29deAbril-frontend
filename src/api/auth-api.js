@@ -17,6 +17,10 @@ const getUserInfo = async (jwt) => {
         const response = await fetch(url, options);
         if (response.ok) {
             const data = await response.json();
+
+            if(data.photo && data.photo.length > 0 && !data.photo.includes('http'))
+                data.photo = BASE_URL + data.photo
+                
             AUTH_DEBUG && console.log("AuthAPI::getUserInfo(): ", data);
             return new HttpResponse(HttpStatus.OK, data);
         } else throw new Error("Error on getUserInfo()");

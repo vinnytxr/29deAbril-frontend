@@ -1,6 +1,7 @@
-export const BASE_URL = 'https://portal-aulas-api.fly.dev';
+// export const BASE_URL = 'https://portal-aulas-api.fly.dev';
+export const BASE_URL = 'http://localhost:8080';
 
-export const AUTH_DEBUG = false
+export const AUTH_DEBUG = true
 
 /*
   HttpStatus e HttpResponse são utilizados em várias partes
