@@ -86,13 +86,12 @@ function Home() {
                                 <FontAwesomeIcon icon={faMagnifyingGlass}  className="me-2" />
                             </Button>
                         </InputGroup> */}
-
                         {isFetched ? (
-                            data.results.length ? (
+                            data.length ? (
                                 <Row className="g-4">
                                     {data.results.map((course) => (
                                         <Col xs={12} lg={4} key={course.id}>
-                                            <Link to={`/student/courses/${course.id}`}>
+                                            <Link to={`/courses/${course.id}`}>
                                                 <CardCourses teste={course} />
                                             </Link>
                                         </Col>
@@ -104,8 +103,6 @@ function Home() {
                         ) : (
                             <p>Carregando...</p>
                         )}
-
-
                     </div>
                 </Row>
             </Col>
