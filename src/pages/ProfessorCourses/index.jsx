@@ -11,6 +11,10 @@ import "./index.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
 
+const NotFound = () => (
+    <h1>Nenhum curso cadastrado por este professor !</h1>
+)
+
 const ProfessorCoursesPage = () => {
     const [userData, setUserData] = useState({ name: "" });
     const [data, setData] = useState({})
@@ -67,6 +71,7 @@ const ProfessorCoursesPage = () => {
                 const responseCourses = await AuthAPI.getProfessorCourses(id, activePage, pageSize)
                 if (responseCourses.status === HttpStatus.OK) {
                     setData(responseCourses.data)
+                    console.log(responseCourses.data)
                     const pages = Math.ceil(responseCourses.data.count / pageSize)
                     setAmountPages(pages)
                     setIsFetched(true)

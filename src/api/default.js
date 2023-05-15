@@ -1,6 +1,6 @@
-export const BASE_URL = 'http://25.68.205.229:8080';
+export const BASE_URL = 'http://portal-aulas-api.fly.dev';
 
-export const AUTH_DEBUG = false
+export const AUTH_DEBUG = true
 
 /*
   HttpStatus e HttpResponse são utilizados em várias partes

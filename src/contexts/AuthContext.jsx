@@ -10,7 +10,8 @@ const AuthContext = React.createContext({
     logged: false,
     user: null,
     token: null,
-    setToken: async () => {}
+    setToken: async () => {},
+    refreshUserOnContext: () => {console.log("Access refreshUserOnContext before inicialization")}
 });
 
 export const AuthProvider = React.FC = ({ children }) => {
@@ -25,7 +26,8 @@ export const AuthProvider = React.FC = ({ children }) => {
                         up: true,
                         user: response.data,
                         logged: true,
-                        token: token
+                        token: token,
+                        refreshUserOnContext
                     })
                     return true;
                 } else throw Error("token is not valid!")
@@ -36,22 +38,28 @@ export const AuthProvider = React.FC = ({ children }) => {
                 up: true,
                 user: null, 
                 logged: false, 
-                token: null
+                token: null,
+                refreshUserOnContext,
             })
             return false;
         }
+    }
+
+    const refreshUserOnContext = () => {
+        const token = localStorage.getItem("token")
+        if(token) setToken(token)
     }
 
     const [context, setContext] = React.useState({
         logged: false,
         user: null,
         token: null,
-        setToken
+        setToken,
+        refreshUserOnContext
     })
 
     React.useEffect(() => {
-        const token = localStorage.getItem("token")
-        if(token) setToken(token)
+        refreshUserOnContext()
     }, [])
 
     React.useEffect(() => {
