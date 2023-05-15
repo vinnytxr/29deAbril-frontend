@@ -3,6 +3,10 @@
   text-align: left;
 }
 
+.box{
+  width: 10rem;
+}
+
 .flag {
   border-radius: 10px;
   padding: 2px 10px;
@@ -15,4 +19,12 @@
 
 .flag-not-used {
   background-color: rgb(209, 209, 9);
+}
+
+.share {
+  padding: 2px 10px;
+  background-color: #2d3d94;
+  border-radius: 10px;
+  text-align: right;
+  color: white;
 }
