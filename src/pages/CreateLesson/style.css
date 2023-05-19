@@ -128,6 +128,31 @@ body {
     margin-bottom: 5px;
 }
 
+.container-new-lesson input[type="checkbox"] {
+  accent-color: #198754;
+}
+
+#use-frame-as-banner-checkbox {
+  border: 1px solid #198754;
+  background-color: white;
+}
+
+#use-frame-as-banner-checkbox:checked {
+  background-color: #198754;
+}
+
+.label-to-use-frame-as-banner-input {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #198754;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
+
 @media (max-width: 991.98px) {
   .container-lesson .pl0,
   .container-lesson .pr0 {
