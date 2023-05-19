@@ -86,32 +86,23 @@ function Home() {
                                 <FontAwesomeIcon icon={faMagnifyingGlass}  className="me-2" />
                             </Button>
                         </InputGroup> */}
-
-                        {isFetched && logged && !!user ? (
-                            <Row className="g-4">
-                                {data.results.map((course) => (
-                                    <Col xs={12} lg={4} key={course.id}>
-                                        <Link to={`/student/courses/${course.id}`}>
-                                            <CardCourses teste={course} />
-                                        </Link>
-                                    </Col>
-                                ))}
-                            </Row>
-                        ) : <></>}
-
-                        {isFetched && !logged ? (
-                            <Row className="g-4">
-                                {data.results.map((course) => (
-                                    <Col xs={12} lg={4} key={course.id}>
-                                        <Link to={`/courses/${course.id}`}>
-                                            <CardCourses teste={course} />
-                                        </Link>
-                                    </Col>
-                             ))}
-                            </Row>
-                        )
-                        : <></>
-                        }
+                        {isFetched ? (
+                            data.length ? (
+                                <Row className="g-4">
+                                    {data.results.map((course) => (
+                                        <Col xs={12} lg={4} key={course.id}>
+                                            <Link to={`/courses/${course.id}`}>
+                                                <CardCourses teste={course} />
+                                            </Link>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            ) : (
+                                <p>Não há cursos disponíveis.</p>
+                            )
+                        ) : (
+                            <p>Carregando...</p>
+                        )}
                     </div>
                 </Row>
             </Col>
