@@ -22,7 +22,7 @@ const AdministrationPage = () => {
     }, []);
 
     const fetchCodes = async () => {
-        const response = await fetch('https://portal-aulas-api.fly.dev/invitation/', {
+        const response = await fetch(`${BASE_URL}/invitation/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ const AdministrationPage = () => {
             redirect: 'follow'
         };
 
-        const response = await fetch("https://portal-aulas-api.fly.dev/invitation/", requestOptions)
+        const response = await fetch(`${BASE_URL}/invitation/`, requestOptions)
         if (response.ok) {
             const data = await response.json()
             return data.code

@@ -1,4 +1,5 @@
-export const BASE_URL = 'http://portal-aulas-api.fly.dev';
+export const BASE_URL = 'https://portal-aulas-api.fly.dev';
+// export const BASE_URL = 'http://localhost:8080';
 
 export const AUTH_DEBUG = true
 
@@ -16,7 +17,7 @@ export class HttpResponse {
   data = null;
 
   constructor(status, data) {
-    this.status = status;
+    this.status = status; 
     this.data = data;
   }
 }

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 
 import "./card_details.css"
 import { useAuthContext } from '../../contexts/AuthContext';
+import { BASE_URL } from '../../api/default';
 
 function CardDetails({ image, course }) {
 
@@ -43,7 +44,7 @@ function CardDetails({ image, course }) {
     }, [user]);
 
     const inscricaoCursoAPI = () => {
-        const url = `https://portal-aulas-api.fly.dev/courses/courses/enroll-student/${courseId}/${user.id}`;
+        const url = `${BASE_URL}/courses/courses/enroll-student/${courseId}/${user.id}`;
         const requestOptions = {
             method: 'POST'
         };
