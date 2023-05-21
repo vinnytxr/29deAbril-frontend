@@ -87,7 +87,7 @@ function Home() {
                             </Button>
                         </InputGroup> */}
                         {isFetched ? (
-                            data.length ? (
+                            data.results ? (
                                 <Row className="g-4">
                                     {data.results.map((course) => (
                                         <Col xs={12} lg={4} key={course.id}>

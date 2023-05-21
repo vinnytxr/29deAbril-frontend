@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Navbar, Row, Card, Button, Modal, Form } from 'react-bootstrap'
+import { Col, Container, Navbar, Row, Card, Button, Modal, Form, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faGear, faHamburger, faLinesLeaning, faPen } from '@fortawesome/free-solid-svg-icons'
 import { AuthAPI } from "../../api/auth-api";
 import { HttpStatus, HttpResponse, BASE_URL } from "../../api/default";
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -12,6 +12,8 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { AUTH_DEBUG } from '../../api/default';
 
 import './style.css'
+import DropdownMenu from 'react-bootstrap/esm/DropdownMenu'
+import DropdownToggle from 'react-bootstrap/esm/DropdownToggle'
 
 const UserProfileScreen = () => {
   const navigate = useNavigate()
@@ -93,6 +95,10 @@ const UserProfileScreen = () => {
     }
   }
 
+  const changePass = () => {
+    navigate('/alterar-senha')
+  }
+
   const editar = () => {
     setNewName(user.name)
     setAboutText(user.about)
@@ -130,16 +136,14 @@ const UserProfileScreen = () => {
     if (Object.keys(validateEditing()).length == 0 && editando) {
       setEditando(false)
       if (user.name != newName || aboutText != user.about) {
-        console.log("Válidado, enviar para o banco.")
+        //console.log("Válidado, enviar para o banco.")
         const response = await fetchEdit()
-        console.log(response)
+        //console.log(response)
         if (response.status == HttpStatus.OK) {
-          console.log("RECARREGAR")
+          //console.log("RECARREGAR")
           navigate(0)
         }
 
-      } else {
-        console.log("Nenhuma mudança, não fazer requisição.")
       }
     }
   }
@@ -198,16 +202,36 @@ const UserProfileScreen = () => {
           </p>
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
-            <Navbar.Text>
-              <Avatar
-                class
-                name={user.name}
-                color="#0f5b7a"
-                size={30}
-                textSizeRatio={2}
-                round={true}
-              />
-            </Navbar.Text>
+            <Row className='align-items-center'>
+              <Col>
+                <Navbar.Text>
+                    <Dropdown>
+                      <DropdownToggle className='gear' style={{ color: '#3f3f3f', fontSize: '20', backgroundColor: 'white' }}>
+                        <FontAwesomeIcon
+                          style={{ color: '#3f3f3f', fontSize: '20' }}
+                          icon={faBars}
+                        />
+                      </DropdownToggle>
+                      <DropdownMenu>
+                        <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
+                        <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
+                      </DropdownMenu>
+
+                    </Dropdown>
+                </Navbar.Text>
+              </Col>
+              <Col>
+                <Navbar.Text className='pb-1'>
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={34}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                </Navbar.Text>
+              </Col>
+            </Row>
           </Navbar.Collapse>
         </Container>
       </Navbar>
@@ -217,7 +241,7 @@ const UserProfileScreen = () => {
           <Col className='pe-0' xs={3}>
             <Card
               style={{
-                paddingTop: '16px',width: '90%'
+                paddingTop: '16px', width: '90%'
               }}
             >
               <Row>
@@ -269,12 +293,7 @@ const UserProfileScreen = () => {
                     )}
 
 
-                    <Button onClick={() => editar()} variant="outline-light">
-                      <FontAwesomeIcon
-                        style={{ color: '#8a9094', fontSize: '16' }}
-                        icon={faPen}
-                      />
-                    </Button>
+                   
                   </Col>
                 </Col>
               </Row>
@@ -288,7 +307,7 @@ const UserProfileScreen = () => {
               user?.role?.includes(Roles.STUDENT)
               && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
               && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
-              <Card style={{ cursor: 'pointer', width:'90%' }} className='mt-1' onClick={handleShowModal}>
+              <Card style={{ cursor: 'pointer', width: '90%' }} className='mt-1' onClick={handleShowModal}>
                 <Col style={{ backgroundColor: "#198754", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
                   <p className="m-1">Tornar-me professor!</p>
                 </Col>
@@ -344,12 +363,6 @@ const UserProfileScreen = () => {
                     <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
                       Sobre mim
                     </h1>
-                    <Button onClick={() => editar()} variant="outline-light">
-                      <FontAwesomeIcon
-                        style={{ color: '#8a9094', fontSize: '16' }}
-                        icon={faPen}
-                      />
-                    </Button>
                   </Col>
                 </Row>
                 <Row>
