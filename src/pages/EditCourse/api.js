@@ -73,7 +73,7 @@ const getCourse = async (id) => {
     if (response.ok) {
       const data = await response.json()
 
-      if(data.lessons && data.lessons.length){
+      if (data.lessons && data.lessons.length) {
         data.lessons = data.lessons.sort((lessonA, lessonB) => lessonA.id < lessonB.id ? -1 : 1);
       }
 
