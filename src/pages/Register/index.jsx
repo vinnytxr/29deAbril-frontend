@@ -43,7 +43,7 @@ export default function RegisterScreen() {
         if (Object.keys(formErrors).length === 0 && isSubmit) {
             //console.log(JSON.stringify(formValues))// CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
             
-                fetch(`http://25.4.94.234:8080/user/`, {
+                fetch(`${BASE_URL}/user/`, {
                     method: 'POST',
                     body: JSON.stringify(
                         formValues
@@ -98,7 +98,7 @@ export default function RegisterScreen() {
         if (Object.keys(formErrors).length === 0 && isSubmit) {
             console.log("submit: ", formValues);
             
-            fetch('http://25.4.94.234:8080/user/', {
+            fetch(`${BASE_URL}/user/`, {
                 method: 'POST',
                 body: JSON.stringify(
                     formValues
