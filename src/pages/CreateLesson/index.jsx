@@ -23,6 +23,8 @@ export const NewLessonScreen = () => {
             title: "",
             files: [],
             content: "",
+            videos: [],
+            useBannerFromVideo: false
         };
     };
 
@@ -31,7 +33,8 @@ export const NewLessonScreen = () => {
     const [estado, setEstado] = useState({
         title: undefined,
         files: undefined,
-        content: undefined
+        content: undefined,
+        videos: undefined,
     });
 
     const [formValores, setFormValores] = useState(resetValores());
@@ -41,7 +44,7 @@ export const NewLessonScreen = () => {
     const navigate = useNavigate();
 
     useEffect(
-        
+
         () =>
             setEstado({
                 ...estado,
@@ -63,8 +66,9 @@ export const NewLessonScreen = () => {
     const sendForm = async () => {
         var estadoAux = {
             title: formValores.title.trim().length >= 3,
-            files: formValores.files.length > 0,
-            content: formValores.content.trim().length >= 3
+            files: formValores.files.length > 0 || formValores.useBannerFromVideo,
+            content: formValores.content.trim().length >= 3,
+            videos: formValores.videos.length > 0 || (formValores.files.length > 0 && !formValores.useBannerFromVideo),
         };
 
         setEstado({ ...estadoAux });
@@ -74,11 +78,16 @@ export const NewLessonScreen = () => {
         setPostFormStatus(PostFormStatus.ENVIANDO);
 
         var post = new FormData();
-        
+
         post.append("title", formValores.title);
-        post.append("banner", formValores.files[0]);
         post.append("content", formValores.content);
         post.append("course", courseId);
+
+        if(!formValores.useBannerFromVideo)
+            post.append("banner", formValores.files[0]);
+
+        if(formValores.videos.length)
+            post.append("video", formValores.videos[0]);
 
 
         LessonAPI.registerLesson(post).then(response => {
@@ -91,7 +100,7 @@ export const NewLessonScreen = () => {
                         navigate(`/professor/courses/edit/${courseId}`)
                     }, 2000)
                     setEstado({})
-                    
+
                 }
             }, 1500)
         })
@@ -117,6 +126,22 @@ export const NewLessonScreen = () => {
                 setEstado({ ...estado, files: true })
             }}
             accept='.png,.jpeg,.jpg,.webp'
+            disabled={!editable}
+        />
+    );
+
+    const InvisibleVideoInputFile = () => (
+        <input id='input-files-video-ftc'
+            type="file"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+                setFormValores({
+                    ...formValores,
+                    videos: FileListToFileArray(e.target.files ?? new FileList())
+                })
+                setEstado({ ...estado, videos: true })
+            }}
+            accept='.mp4,.webm'
             disabled={!editable}
         />
     );
@@ -175,7 +200,7 @@ export const NewLessonScreen = () => {
                             <Container fluid className="h-100 d-flex flex-column justify-content-between">
                                 <Row>
                                     <Col xs={12} className='mt-3 pr0'>
-                                        <span >Imagem banner da aula</span>
+                                        <span >Thumbnail da aula</span>
                                         <label htmlFor="input-files-ftc" style={{ width: "100%" }}>
                                             <img
                                                 className={`image-for-input-file ${estado.files === false ? "error" : ""}`}
@@ -189,7 +214,30 @@ export const NewLessonScreen = () => {
                                             {formValores.files.length > 0 ? `${formValores.files.length} ${formValores.files.length > 1 ? 'imagens selecionadas' : 'imagem selecionada'}` : 'Nenhuma imagem selecionada'}
                                         </span>
                                     </Col>
+                                    <Col xs={12} className='mt-3 pr0'>
+                                        <Form.Check
+                                            type="checkbox"
+                                            id='use-frame-as-banner-checkbox'
+                                            aria-label="radio 2"
+                                            label="Usar 1º frame do video como thumbnail"
+                                            onChange={(e) => {
+                                                setFormValores({ ...formValores, useBannerFromVideo: e.target.checked })
+                                            }}
+                                            checked={formValores.useBannerFromVideo}
+                                        />
+                                    </Col>
+                                    <Col xs={12} className='mt-3 pr0'>
+                                        <label htmlFor="input-files-video-ftc" className='label-to-use-frame-as-banner-input'>
+                                            <span>Selecionar video</span>
+                                        </label>
+                                    </Col>
+                                    <Col xs={12} className='file-input-span mb-3'>
+                                        <span className={`${!!estado.videos ? 'ok' : estado.videos === false ? 'error' : ''}`}>
+                                            {formValores.videos.length > 0 ? `${formValores.videos.length} ${formValores.videos.length > 1 ? 'videos selecionados' : 'video selecionado'}` : 'Nenhum video selecionado'}
+                                        </span>
+                                    </Col>
                                     <InvisibleInputFile />
+                                    <InvisibleVideoInputFile />
                                 </Row>
                                 <Row>
                                     <Col lg={12} className="mt-3 pr0" style={{ display: postFormSuccess !== PostFormStatus.NULL ? "none" : "block", paddingBottom: "5px" }}>

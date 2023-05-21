@@ -40,6 +40,9 @@ function Home() {
         }
     }
 
+    useEffect(() => {
+        console.log('data home: ', data, logged, user)
+    }, [data, logged, user])
 
     useEffect(() => {
         getCourses()
@@ -80,12 +83,12 @@ function Home() {
                     <div className="col">
                         <h1 className="mt-3 mb-3 fs-5 fw-bold">Todos os cursos</h1>
 
-                        {/* <InputGroup className="mb-3">
+                        <InputGroup className="mb-3">
                             <Form.Control placeholder="Buscar cursos" disabled={true}/>
                             <Button variant="outline-secondary" id="button-addon2" disabled={true}>
                                 <FontAwesomeIcon icon={faMagnifyingGlass}  className="me-2" />
                             </Button>
-                        </InputGroup> */}
+                        </InputGroup>
                         {isFetched ? (
                             data.results ? (
                                 <Row className="g-4">

@@ -38,6 +38,9 @@ function CourseDetails() {
           console.log(response)
           const data = await response.json();
           // set state when the data received
+          if (data.lessons && data.lessons.length) {
+            data.lessons = data.lessons.sort((lessonA, lessonB) => lessonA.id < lessonB.id ? -1 : 1);
+          }
           console.log(data)
           setData({ ...data });
           setIsFetched(true);
