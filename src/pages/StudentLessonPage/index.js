@@ -9,14 +9,16 @@ import ReactPlayer from 'react-player'
 
 import './styles.css'
 
+const DEFAULT_VIDEO_PLAYER_STATE = {
+  playing: false,
+  started: false
+}
+
 export const StudentLessonPage = () => {
 
   const { id } = useParams();
   const [lesson, setLesson] = React.useState()
-  const [videoPlayer, setVideoPlayer] = React.useState({
-    playing: false,
-    started: false
-  })
+  const [videoPlayer, setVideoPlayer] = React.useState(DEFAULT_VIDEO_PLAYER_STATE)
 
   const navigate = useNavigate();
 
@@ -25,6 +27,7 @@ export const StudentLessonPage = () => {
   }, [lesson])
 
   React.useEffect(() => {
+    setVideoPlayer(DEFAULT_VIDEO_PLAYER_STATE)
     const getLesson = async () => {
       const response = await LessonAPI.getLesson(id);
       setLesson(response.data);
@@ -34,7 +37,7 @@ export const StudentLessonPage = () => {
   }, [id]);
 
   const handleVideoOnPlay = () => setVideoPlayer({ ...videoPlayer, playing: true, started: true })
-  const handleVideoOnPause = () => setVideoPlayer({ ...videoPlayer, playing: false })
+  // const handleVideoOnPause = () => setVideoPlayer({ ...videoPlayer, playing: false })
 
   return lesson ? (
     <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
@@ -44,12 +47,12 @@ export const StudentLessonPage = () => {
         </Col>
         <Col xs={12}>
           {(lesson.banner || lesson.video) && <section style={{ position: 'relative' }}>
-            {lesson.banner && (!videoPlayer.started|| !lesson.video)  && <img src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} />}
-            {lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} onPause={handleVideoOnPause} />}
+            {lesson.banner && (!videoPlayer.started || !lesson.video) && <img src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} />}
+            {lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} /* onPause={handleVideoOnPause} */ />}
             {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
           </section>}
         </Col>
-        <Col xs={12} style={{marginTop: '1rem', marginBottom: '1rem'}}>
+        <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
         </Col>
         <Col xs={12}>

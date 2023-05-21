@@ -72,8 +72,14 @@ const getCourse = async (id) => {
     const response = await fetch(url, options)
     if (response.ok) {
       const data = await response.json()
+
+      if(data.lessons && data.lessons.length){
+        data.lessons = data.lessons.sort((lessonA, lessonB) => lessonA.id < lessonB.id ? -1 : 1);
+      }
+
       return new HttpResponse(HttpStatus.OK, data)
     }
+
     throw new Error("CourseAPI::getCourse()")
   } catch (error) {
     console.warn(error);
