@@ -12,8 +12,11 @@ import CheckCourseInformation from "../../components/CheckCourseInformation/chec
 import StarRating from "../../components/StarRating/star_rating";
 import AccordionListCourse from "../../components/AccordionList/accordion_list";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container } from "react-bootstrap";
-import { BASE_URL } from "../../api/default";
+import { Button, Container } from "react-bootstrap";
+import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from "../../api/default";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark } from "@fortawesome/free-solid-svg-icons";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 // Icons
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -21,6 +24,7 @@ import { BASE_URL } from "../../api/default";
 
 function CourseDetails() {
 
+  const { token, logged } = useAuthContext();
   const [data, setData] = useState({});
   const [isFetched, setIsFetched] = useState(false);
 
@@ -35,10 +39,10 @@ function CourseDetails() {
         try {
           const response = await fetch(`${BASE_URL}/courses/courses/${id}`)
           if (response.status < 200 || response.status >= 300) throw new Error(`Curso não encontrado ${id}`)
-          console.log(response)
+          //console.log(response)
           const data = await response.json();
           // set state when the data received
-          console.log(data)
+          //console.log(data)
           setData({ ...data });
           setIsFetched(true);
         } catch (err) {
@@ -46,11 +50,36 @@ function CourseDetails() {
           navigate("/404-not-found")
         }
       }
-      console.log(data);
+     // console.log(data);
       dataFetch();
     }
 
   }, [id]);
+
+  const saveBookmark = async () => {
+    const url = `${BASE_URL}/courses/favorites/${data.id}`
+    try {
+      const options = {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'jwt': token
+        }
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        //AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else throw new Error("Error on ChangePassword()");
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, null);
+    }
+  }
 
   return (
     <Container flex className="mb-4">
@@ -60,9 +89,14 @@ function CourseDetails() {
             <div className="row">
               <div className="col-8">
                 <div className="row mt-4 mx-2 fw-bold">
+
                   <Card.Title>
-                    {data.title}
+                   { logged && <Button onClick={() => saveBookmark()} variant="outline-light" className="mb-2">
+                      <FontAwesomeIcon style={{ fontSize: '18px' }} icon={faBookmark} />
+                    </Button> }
+                    <p>{data.title}</p>
                   </Card.Title>
+
                 </div>
                 <div className="row mt-5 mx-2">
                   <Card.Text>

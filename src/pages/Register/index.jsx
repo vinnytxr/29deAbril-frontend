@@ -16,6 +16,11 @@ export default function RegisterScreen() {
 
     const navigate = useNavigate();
 
+    function formatCPF(cpf) {
+        const formattedValue = cpf.replace(/\D/g, '');
+        return formattedValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    }
+
     const handleChange = (e) => {
         // console.log(e.target);
         const { name, value } = e.target;
@@ -27,11 +32,8 @@ export default function RegisterScreen() {
             }
             const formattedValue = value.replace(/\D/g, '');
 
-            // Adiciona pontos e traço nos locais corretos
-            function formatCPF(cpf) {
-                return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            }
-            setFormValues({ ...formValues, [name]: formatCPF(formattedValue) });
+        
+            setFormValues({ ...formValues, [name]: formattedValue });
         } else {
             setFormValues({ ...formValues, [name]: value });
         }
@@ -41,9 +43,9 @@ export default function RegisterScreen() {
     useEffect(() => {
         //console.log(formValues);
         if (Object.keys(formErrors).length === 0 && isSubmit) {
+            const url = `${BASE_URL}/user/`
             //console.log(JSON.stringify(formValues))// CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
-            
-                fetch(`http://25.4.94.234:8080/user/`, {
+                fetch(url, {
                     method: 'POST',
                     body: JSON.stringify(
                         formValues
@@ -53,6 +55,7 @@ export default function RegisterScreen() {
                     },
                 })
                     .then((response) => {
+                        console.log(response)
                         if (!response.ok) {
                          //console.log("OLHA O ERRO")
                          alert("Falha ao se comunicar com o servidor.");
@@ -63,6 +66,7 @@ export default function RegisterScreen() {
                         return response.json();
                       })
                     .then((data) => {
+                        console.log("data:", data)
                         //console.log("erro 400", data);
                         //setToast(true)
                     })
@@ -92,13 +96,10 @@ export default function RegisterScreen() {
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmit(true);
-        if (Object.keys(formErrors).length !== 0 && isSubmit) {
-           // console.log("TEM ERROS");
-        }
+      
         if (Object.keys(formErrors).length === 0 && isSubmit) {
-            console.log("submit: ", formValues);
-            
-            fetch('http://25.4.94.234:8080/user/', {
+            const url = `${BASE_URL}/user/`
+            fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(
                     formValues
@@ -116,7 +117,7 @@ export default function RegisterScreen() {
                     return response.json();
                   })
                 .then((data) => {
-
+                    console.log("data:", data)
                    // console.log("erro 400", data);
                     //setToast(true)
                 })
@@ -175,6 +176,7 @@ export default function RegisterScreen() {
       
 
     const validate = (values) => {
+        console.log("Validade date:", values.birth)
         const errors = {};
         const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
         const regexcpf = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
@@ -197,20 +199,20 @@ export default function RegisterScreen() {
             errors.password = "Senha não pode ter mais que 16 caracteres!";
         }
 
-        if(!values.date){
-            errors.date = "Selecione uma data!";
+        if(!values.birth){
+            errors.birth = "Selecione uma data!";
         }else {
-            let date1 = new Date(values.date)
+            let date1 = new Date(values.birth)
             const yearsAgo = new Date();
             yearsAgo.setFullYear(yearsAgo.getFullYear() - 13);
             if(date1>yearsAgo){
-                errors.date = "O usuário precisa ter mais de 13 anos para realizar o cadastro."
+                errors.birth = "O usuário precisa ter mais de 13 anos para realizar o cadastro."
             }
         }
 
         if (!values.cpf) {
             errors.cpf = "Digite um cpf!";
-        } else if (!regexcpf.test(values.cpf)) {
+        } else if (!regexcpf.test(formatCPF(values.cpf))) {
             errors.cpf = "Digite um cpf com formato válido!";
         } else if (!validarCPF(formValues.cpf.replace(/\D/g, ''))){
             errors.cpf = "Número do cpf é inválido!";
@@ -237,7 +239,7 @@ export default function RegisterScreen() {
                         <img style={{ width: "11em" }} src="https://i.ibb.co/r3QPmSt/logo.png" alt="logo" border="0" />
                     </div>
                     <div className="col d-flex justify-content-end">
-                    <p className="mt-3">Já tem conta?&nbsp;<Link className="fw-bold link-termos" to="/login">ENTRE AGORA!</Link></p>
+                    <p className="mt-3">Já tem conta? <Link className="fw-bold link-termos" to="/login">ENTRE AGORA!</Link></p>
                         
                     </div>
                     <p className="fw-bold fs-4 ms-1 mt-5">Estude Gratuitamente!</p>
@@ -280,7 +282,7 @@ export default function RegisterScreen() {
                                 name="cpf"
                                 placeholder="CPF *"
                                 className="form-control"
-                                value={formValues.cpf}
+                                value={formatCPF(formValues.cpf)}
                                 onChange={handleChange}
                             />
                         </div>
@@ -288,12 +290,12 @@ export default function RegisterScreen() {
                         <div className="mt-3">
                             <input
                             type="date"
-                                name="date"
+                                name="birth"
                                 className="form-control"
-                                value={formValues.date}
+                                value={formValues.birth}
                                 onChange={handleChange} />
                         </div>
-                        <p className="ps-2" style={{ color: "red" }}>{formErrors.date}</p>
+                        <p className="ps-2" style={{ color: "red" }}>{formErrors.birth}</p>
                         <p className="ps-1" style={{ fontSize: "13px" }}>Ao me cadastrar, concordo com os <a href="http://www.google.com.br" className="link-termos">Termos de uso e Política de privacidade</a></p>
 
 

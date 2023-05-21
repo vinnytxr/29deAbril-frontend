@@ -6,12 +6,12 @@ import './style.css'
 import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
 
 import { SiBookstack } from 'react-icons/si'
-import { FaUser } from 'react-icons/fa'
+import { FaBookmark, FaUser } from 'react-icons/fa'
 import { ImBooks } from 'react-icons/im'
-import { GiArchiveRegister } from 'react-icons/gi'
+import { GiArchiveRegister, GiBookmark } from 'react-icons/gi'
 import { TbLogin } from 'react-icons/tb'
 import { AiFillHome } from 'react-icons/ai'
-import { BsKeyFill } from 'react-icons/bs'
+import { BsBookmark, BsKeyFill } from 'react-icons/bs'
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
 import { Roles } from '../../api/default';
@@ -110,6 +110,7 @@ const SideNav = () => {
               <NavText text='ALUNO' />
               <NavGroupFlush>
                 {/* <NavLinkTo title='Cursos' href='/student/courses' icon={<FAIcon Icon={ImBooks} />} /> */}
+                <NavLinkTo title='Bookmarks' href='/student/marked-courses' icon={<FAIcon Icon={FaBookmark} />} />
                 <NavLinkTo title='Meus cursos' href='/student/enrolled-courses' icon={<FAIcon Icon={SiBookstack} />} />
               </NavGroupFlush>
             </StrictRoute>
