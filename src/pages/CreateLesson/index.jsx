@@ -200,7 +200,7 @@ export const NewLessonScreen = () => {
                             <Container fluid className="h-100 d-flex flex-column justify-content-between">
                                 <Row>
                                     <Col xs={12} className='mt-3 pr0'>
-                                        <span >Imagem banner da aula</span>
+                                        <span >Thumbnail da aula</span>
                                         <label htmlFor="input-files-ftc" style={{ width: "100%" }}>
                                             <img
                                                 className={`image-for-input-file ${estado.files === false ? "error" : ""}`}
@@ -219,10 +219,9 @@ export const NewLessonScreen = () => {
                                             type="checkbox"
                                             id='use-frame-as-banner-checkbox'
                                             aria-label="radio 2"
-                                            label="Usar  frame do video como banner"
+                                            label="Usar 1º frame do video como thumbnail"
                                             onChange={(e) => {
                                                 setFormValores({ ...formValores, useBannerFromVideo: e.target.checked })
-                                                console.log("usar banner da imagem: ", e)
                                             }}
                                             checked={formValores.useBannerFromVideo}
                                         />
