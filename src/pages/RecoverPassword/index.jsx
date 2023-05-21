@@ -4,39 +4,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { Form } from 'react-bootstrap';
 import { AuthAPI } from "../../api/auth-api";
-import { HttpStatus } from "../../api/default";
+import { AUTH_DEBUG, BASE_URL, HttpStatus } from "../../api/default";
 
 // Style
 import './style.css'
-import { useAuthContext } from "../../contexts/AuthContext";
+import { HttpResponse } from "../CreateCourse/api";
 
 const PasswordRecoveryPage = () => {
     const navigate = useNavigate();
-
-    const { setToken } = useAuthContext();
-
-    const intialValues = { email: "", password: "" };
+    const intialValues = { email: ""};
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
     var errorsC = 0;
-
-    const saveTokenOnLocalStorage = (token) => {
-        //console.log("LoginPage::saveTokenOnLocalStorage(): ", token)
-        localStorage.setItem('token', token);
-    }
-
-    const saveUserDataOnLocalStorage = () => {
-        const jwt = localStorage.getItem('token')
-        AuthAPI.getUserInfo(jwt).then((response) => {
-            if (response.status == HttpStatus.OK) {
-                localStorage.setItem('userData', JSON.stringify(response.data));
-            }
-        });
-        //console.log(data)
-        //localStorage.setItem('userData', data);
-    }
-
 
 
     useEffect(() => {
@@ -49,26 +29,43 @@ const PasswordRecoveryPage = () => {
         setFormValues({ ...formValues, [name]: value });
     }
 
-    useEffect(() => {
-        if (Object.keys(formErrors).length !== 0 && isSubmit) { }
-    }, [formErrors, isSubmit])
+    const fetchRecovery = async () => {
+        const url = `${BASE_URL}/generate-password`
+        try {
+            const options = {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                },
+                body: JSON.stringify({ email: formValues.email})
+            }
+
+            const response = await fetch(url, options);
+            if (response.ok) {
+                const data = await response.json();
+                AUTH_DEBUG && console.log("AuthAPI::RecoverPassword(): ", data.token);
+                return new HttpResponse(HttpStatus.OK, data);
+            } else throw new Error("Error on RecoverPassword()");
+        } catch (error) {
+            console.warn(error)
+            return new HttpResponse(HttpStatus.ERROR, null);
+        }
+    }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmit(true);
         if (errorsC == 0) {
-            //console.log(formValues)
-            const responseLogin = await AuthAPI.login(formValues.email, formValues.password)
-            if (responseLogin.status == HttpStatus.OK) {
-                saveTokenOnLocalStorage(responseLogin.data.token)
-                const ok = await setToken(responseLogin.data.token);
-                if (ok) {
-                    saveUserDataOnLocalStorage()
-                    navigate("/")
-                }
+            //console.log("Requisição executada.")
+            const response = await fetchRecovery()
+            if (response.status == HttpStatus.OK) {
+               alert("Requisição para alteração de senha realizada!")
             } else {
-                alert("Falha ao executar login.")
+                alert("Falha em requisitar recuperação de senha.")
             }
         }
     }
@@ -76,18 +73,14 @@ const PasswordRecoveryPage = () => {
     const validate = (values) => {
         const errors = {};
         errorsC = 0;
+         const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
         if (!values.email) {
             errors.email = "Digite um e-mail.";
+        } else if (!regexemail.test(values.email)) {
+            errors.email = "Digite um email com formato válido!";
         }
 
-        if (!values.password) {
-            errors.password = "Digite uma senha";
-        } else if (values.password.length < 4) {
-            errors.password = "Senha inválida";
-        } else if (values.password.length > 16) {
-            errors.password = "Senha inválida";
-        }
         errorsC = Object.keys(errors).length;
         return errors;
     }
@@ -99,7 +92,7 @@ const PasswordRecoveryPage = () => {
                     <div className="col mb-5">
                         <div className="row">
                             <div className="col">
-                                <img style={{ width: "11em" }} onClick={() => { window.location.href = "/" }} src="https://i.ibb.co/r3QPmSt/logo.png" alt="logo" border="0" />
+                                <img style={{ width: "11em" }} onClick={() => {navigate('/')}} src="https://i.ibb.co/r3QPmSt/logo.png" alt="logo" border="0" />
                             </div>
                             <div className="col d-flex justify-content-end">
                                 <p className="mt-3">Já tem conta?&nbsp;<Link className="fw-bold link-termos" to="/login">ENTRE AGORA!</Link></p>
@@ -118,19 +111,16 @@ const PasswordRecoveryPage = () => {
                                 name="email"
                                 placeholder="Email"
                                 className="form-control"
-                                value={formValues.username}
+                                value={formValues.email}
                                 onChange={handleChange} />
                         </div>
                         <p className="mb-3 ps-1" style={{ color: "red" }}>{formErrors.email}</p>
-
                         <div className="row mt-3">
                             <div className="col text-start">
                                 <button className="btn btn-info"><FontAwesomeIcon icon={faCheck} className="me-2" />Enviar</button>
                             </div>
                         </div>
-
                     </Form>
-                    {/* / <button className="btn btn-info" onClick={userinfo}><FontAwesomeIcon icon={faCheck} className="me-2" />Testar</button> */}
                 </div>
             </div >
         </>

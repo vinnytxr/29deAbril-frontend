@@ -22,6 +22,7 @@ import { StudentLessonPage } from '../pages/StudentLessonPage';
 
 import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
+import ChangePasswordPage from '../pages/ChangePassword';
 
 const SidebarLayout = () => (
   <>
@@ -53,6 +54,7 @@ function DefaultRoutes() {
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterScreen />} />
           <Route path='/recuperar-senha' element={<PasswordRecoveryPage/>} />
+          <Route path='/alterar-senha' element={<ChangePasswordPage/>} />
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
             <Route path="/courses/:id" element={<CourseDetails />} />

@@ -9,7 +9,7 @@ import { Form, Row, Toast, ToastHeader, ToastBody } from "react-bootstrap";
 import { BASE_URL } from "../../api/default";
 
 export default function RegisterScreen() {
-    const intialValues = { name: "", email: "", password: "", cpf: "", about: "Conte algo sobre você!", photo: "null", role: [1], date: ""};
+    const intialValues = { name: "", email: "", password: "", cpf: "", about: "Conte algo sobre você!", role: [1], birth: ""};
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
@@ -43,7 +43,7 @@ export default function RegisterScreen() {
         if (Object.keys(formErrors).length === 0 && isSubmit) {
             //console.log(JSON.stringify(formValues))// CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
             
-                fetch(`${BASE_URL}/user/`, {
+                fetch(`http://25.4.94.234:8080/user/`, {
                     method: 'POST',
                     body: JSON.stringify(
                         formValues
@@ -98,7 +98,7 @@ export default function RegisterScreen() {
         if (Object.keys(formErrors).length === 0 && isSubmit) {
             console.log("submit: ", formValues);
             
-            fetch('https://portal-aulas-api.fly.dev/user/', {
+            fetch('http://25.4.94.234:8080/user/', {
                 method: 'POST',
                 body: JSON.stringify(
                     formValues
