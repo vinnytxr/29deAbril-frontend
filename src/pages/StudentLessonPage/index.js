@@ -11,7 +11,9 @@ import './styles.css'
 
 const DEFAULT_VIDEO_PLAYER_STATE = {
   playing: false,
-  started: false
+  started: false,
+  played: 0,
+  duration: 0
 }
 
 export const StudentLessonPage = () => {
@@ -19,6 +21,7 @@ export const StudentLessonPage = () => {
   const { id } = useParams();
   const [lesson, setLesson] = React.useState()
   const [videoPlayer, setVideoPlayer] = React.useState(DEFAULT_VIDEO_PLAYER_STATE)
+  const [videoDuration, setVideoDuration] = React.useState(null)
 
   const navigate = useNavigate();
 
@@ -27,7 +30,13 @@ export const StudentLessonPage = () => {
   }, [lesson])
 
   React.useEffect(() => {
+    console.log('videoPlayer: ', videoPlayer)
+    console.log('duration', videoDuration)
+  }, [videoPlayer, videoDuration]);
+
+  React.useEffect(() => {
     setVideoPlayer(DEFAULT_VIDEO_PLAYER_STATE)
+    setVideoDuration(null)
     const getLesson = async () => {
       const response = await LessonAPI.getLesson(id);
       setLesson(response.data);
@@ -36,8 +45,18 @@ export const StudentLessonPage = () => {
     if (id) getLesson();
   }, [id]);
 
+  React.useEffect(() => {
+    if(videoPlayer.played > 0.8){
+      window.alert("Parabéns, você concluiu a aula!")
+    }
+  }, [videoPlayer])
+
   const handleVideoOnPlay = () => setVideoPlayer({ ...videoPlayer, playing: true, started: true })
   // const handleVideoOnPause = () => setVideoPlayer({ ...videoPlayer, playing: false })
+
+  const handleOnProgress = ({ played }) => setVideoPlayer({...videoPlayer, played});
+  // const handleDuration = (duration) => setVideoDuration(duration);
+  // const handleOnProgress = (e) => console.log('progress: ', e);
 
   return lesson ? (
     <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
@@ -48,7 +67,7 @@ export const StudentLessonPage = () => {
         <Col xs={12}>
           {(lesson.banner || lesson.video) && <section style={{ position: 'relative' }}>
             {lesson.banner && (!videoPlayer.started || !lesson.video) && <img src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} />}
-            {lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} /* onPause={handleVideoOnPause} */ />}
+            {lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} onProgress={handleOnProgress} /* onPause={handleVideoOnPause} */ />}
             {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
           </section>}
         </Col>
