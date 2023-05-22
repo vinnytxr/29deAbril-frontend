@@ -26,6 +26,7 @@ function CourseDetails() {
 
   const { token, logged } = useAuthContext();
   const [data, setData] = useState({});
+  const [isFavorited, setFavorited] = useState(false)
   const [isFetched, setIsFetched] = useState(false);
 
   const navigate = useNavigate();
@@ -37,7 +38,12 @@ function CourseDetails() {
     if (id) {
       const dataFetch = async () => {
         try {
-          const response = await fetch(`${BASE_URL}/courses/courses/${id}`)
+          const response = await fetch(`${BASE_URL}/courses/courses/${id}`,  {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+                'jwt':token
+            }})
           if (response.status < 200 || response.status >= 300) throw new Error(`Curso não encontrado ${id}`)
           //console.log(response)
           const data = await response.json();
@@ -47,6 +53,7 @@ function CourseDetails() {
           }
           //console.log(data)
           setData({ ...data });
+          setFavorited(data.favorited)
           setIsFetched(true);
         } catch (err) {
           console.log("ERRO")
@@ -58,6 +65,18 @@ function CourseDetails() {
     }
 
   }, [id]);
+
+  useEffect(()=>{console.log(data)},[data])
+
+const manageBokomark = () => {
+  if(isFavorited){
+    deleteBookmark()
+    setFavorited(false)
+  }else{
+    saveBookmark()
+    setFavorited(true)
+  }
+}
 
   const saveBookmark = async () => {
     const url = `${BASE_URL}/courses/favorites/${data.id}`
@@ -75,8 +94,34 @@ function CourseDetails() {
       const response = await fetch(url, options);
       if (response.ok) {
         const data = await response.json();
+        alert("Curso adicionado as marcações.")
         //AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
         return new HttpResponse(HttpStatus.OK, data);
+      } else throw new Error("Error on ChangePassword()");
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, null);
+    }
+  }
+
+  const deleteBookmark = async () => {
+    const url = `${BASE_URL}/courses/favorites/${data.id}/remove`
+    try {
+      const options = {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'jwt': token
+        }
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        alert("Curso removido das marcações.")  
+        //AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
+        return new HttpResponse(HttpStatus.OK);
       } else throw new Error("Error on ChangePassword()");
     } catch (error) {
       console.warn(error)
@@ -94,7 +139,7 @@ function CourseDetails() {
                 <div className="row mt-4 mx-2 fw-bold">
 
                   <Card.Title>
-                   { logged && <Button onClick={() => saveBookmark()} variant="outline-light" className="mb-2">
+                   { logged && <Button onClick={() => manageBokomark()} variant="outline-light" className="mb-2">
                       <FontAwesomeIcon style={{ fontSize: '18px' }} icon={faBookmark} />
                     </Button> }
                     <p>{data.title}</p>
