@@ -31,6 +31,37 @@ const fetchChange = async (oldPassword, newPassword, jwt) => {
     }
 }
 
+const fetchRecovery = async (email) => {
+    const url = `${BASE_URL}/generate-password`
+    var errorMessage;
+    try {
+        const options = {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify({ email: email})
+        }
+
+        const response = await fetch(url, options);
+        if (response.ok) {
+            const data = await response.json();
+            AUTH_DEBUG && console.log("AuthAPI::RecoverPassword(): ", data.token);
+            return new HttpResponse(HttpStatus.OK, data);
+        } else{
+            errorMessage =  await response.json();
+            throw new Error("Error on RecoverPassword()");
+            return new HttpResponse(HttpStatus.ERROR, await response.json());
+        }
+    } catch (error) {
+        console.warn(error)
+        return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+}
+
 export const PasswordAPI = {
-   fetchChange
+   fetchChange,
+   fetchRecovery
 }

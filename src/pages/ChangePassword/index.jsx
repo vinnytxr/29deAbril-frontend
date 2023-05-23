@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLong, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { Form } from 'react-bootstrap';
 import { HttpStatus } from "../../api/default";
-import { toast } from 'react-toastify';
 import { PasswordAPI } from "../../api/password"
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Style
