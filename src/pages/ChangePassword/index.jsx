@@ -2,14 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faArrowLeftLong, faArrowRotateBack, faCheck } from '@fortawesome/free-solid-svg-icons'
-import { Form } from 'react-bootstrap';
+import { Button, Col, Form, Row} from 'react-bootstrap';
 import { AuthAPI } from "../../api/auth-api";
 import { AUTH_DEBUG, BASE_URL, HttpStatus } from "../../api/default";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Style
 import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
 import { HttpResponse } from "../CreateCourse/api";
+
+
+  
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();
@@ -19,6 +24,28 @@ const ChangePasswordPage = () => {
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
+    const [show, setShow] = useState(false);
+    const notifySuccess = (texto) => toast.success(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      const notifyError = (texto) => toast.error(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
     var errorsC = 0;
 
     useEffect(() => {
@@ -42,9 +69,9 @@ const ChangePasswordPage = () => {
             const response = await fetchChange()
            // console.log(response)
             if (response.status == HttpStatus.OK) {
-              alert("Senha alterada com sucesso!")
+                notifySuccess("Senha alterada com sucesso.");
             }else{
-                alert("Falha em alterar senha.")
+                notifyError("Falha em alterar senha.");
             }
 
         }

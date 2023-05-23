@@ -17,6 +17,8 @@ import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from "../../api/defaul
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Icons
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -26,8 +28,19 @@ function CourseDetails() {
 
   const { token, logged } = useAuthContext();
   const [data, setData] = useState({});
-  const [isFavorited, setFavorited] = useState(false)
+  const [isFavorited, setFavorited] = useState(false);
   const [isFetched, setIsFetched] = useState(false);
+  const notify = (texto) => toast.success(texto, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+
 
   const navigate = useNavigate();
   const { id } = useParams(); //Alterar o curso que deseja visualizar, quando for integrar vou deixar direto na função
@@ -38,12 +51,13 @@ function CourseDetails() {
     if (id) {
       const dataFetch = async () => {
         try {
-          const response = await fetch(`${BASE_URL}/courses/courses/${id}`,  {
+          const response = await fetch(`${BASE_URL}/courses/courses/${id}`, {
             method: 'GET',
             headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-                'jwt':token
-            }})
+              'Content-type': 'application/json; charset=UTF-8',
+              'jwt': token
+            }
+          })
           if (response.status < 200 || response.status >= 300) throw new Error(`Curso não encontrado ${id}`)
           //console.log(response)
           const data = await response.json();
@@ -60,23 +74,25 @@ function CourseDetails() {
           navigate("/404-not-found")
         }
       }
-     // console.log(data);
+      // console.log(data);
       dataFetch();
     }
 
   }, [id]);
 
-  useEffect(()=>{console.log(data)},[data])
+  useEffect(() => { console.log(data) }, [data])
 
-const manageBokomark = () => {
-  if(isFavorited){
-    deleteBookmark()
-    setFavorited(false)
-  }else{
-    saveBookmark()
-    setFavorited(true)
+  const manageBokomark = () => {
+    if (isFavorited) {
+      deleteBookmark()
+      setFavorited(false)
+      notify("Curso removido das suas marcações.");
+    } else {
+      notify("Curso adicionado as suas marcações.");
+      saveBookmark()
+      setFavorited(true)
+    }
   }
-}
 
   const saveBookmark = async () => {
     const url = `${BASE_URL}/courses/favorites/${data.id}`
@@ -94,7 +110,7 @@ const manageBokomark = () => {
       const response = await fetch(url, options);
       if (response.ok) {
         const data = await response.json();
-        alert("Curso adicionado as marcações.")
+        //alert("Curso adicionado as marcações.")
         //AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
         return new HttpResponse(HttpStatus.OK, data);
       } else throw new Error("Error on ChangePassword()");
@@ -119,7 +135,7 @@ const manageBokomark = () => {
 
       const response = await fetch(url, options);
       if (response.ok) {
-        alert("Curso removido das marcações.")  
+        //alert("Curso removido das marcações.")  
         //AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
         return new HttpResponse(HttpStatus.OK);
       } else throw new Error("Error on ChangePassword()");
@@ -139,9 +155,10 @@ const manageBokomark = () => {
                 <div className="row mt-4 mx-2 fw-bold">
 
                   <Card.Title>
-                   { logged && <Button onClick={() => manageBokomark()} variant="outline-light" className="mb-2">
+                    {logged && <Button onClick={() => manageBokomark()} variant="outline-light" className="mb-2">
                       <FontAwesomeIcon style={{ fontSize: '18px' }} icon={faBookmark} />
-                    </Button> }
+                    </Button>}
+
                     <p>{data.title}</p>
                   </Card.Title>
 
