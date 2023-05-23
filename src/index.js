@@ -6,10 +6,12 @@ import 'bootstrap/dist/js/bootstrap.bundle'
 
 // app
 import DefaultRoutes from "./routes"
+import { ToastContainer } from "react-toastify";
 
 const root = document.querySelector("#root")
 ReactDOM.createRoot(root).render(
     <React.StrictMode>
+        <ToastContainer/>
         <DefaultRoutes />
     </React.StrictMode>
 );
