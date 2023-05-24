@@ -106,6 +106,12 @@ body {
   color: #198754;
 }
 
+.container-course .edit-learning {
+  margin-left: 5px;
+  border: 2px solid #198754;
+  background-color: #198754;
+}
+
 .container-course .remove-learning {
   margin-left: 5px;
   width: calc(10% - 5px);

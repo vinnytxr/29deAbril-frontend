@@ -44,9 +44,10 @@ export const EditCourseScreen = () => {
 
     const [formValores, setFormValores] = useState(resetValores());
     const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL);
-    const [editable, setEditable] = useState(false);
+    const [editable, setEditable] = useState(true);
     const [learnings, setLearnings] = useState([]);
     const [lessons, setLessons] = useState([]);
+    const [learningValues, setLearningValues] = useState([]);
     const [learningInput, setLearningInput] = useState("");
     const [allowLearnings, setAllowLearnings] = useState(false);
 
@@ -104,7 +105,7 @@ export const EditCourseScreen = () => {
         post.append("professor", user.id);
 
 
-        CourseAPI.registerCourse(post).then(response => {
+        CourseAPI.updateCourse(id, post).then(response => {
             setEditable(false)
 
             setTimeout(() => {
@@ -115,6 +116,7 @@ export const EditCourseScreen = () => {
                     setEstado({})
                 }
             }, 1500)
+            refreshLearnings()
         })
     }
 
@@ -138,7 +140,6 @@ export const EditCourseScreen = () => {
                 setEstado({ ...estado, files: true })
             }}
             accept='.png,.jpeg,.jpg,.webp'
-            disabled={!editable}
         />
     );
 
@@ -153,6 +154,14 @@ export const EditCourseScreen = () => {
         const response = await CourseAPI.deleteLearning(id)
         if (response.status === HttpStatus.OK)
             refreshLearnings()
+    }
+
+    const upLearning = async (json, id) => { //terminei aqui verificar os campos
+        console.log(json)
+        setEditable(true)
+        if (!json.name || !json.name.length) return
+        const response = await CourseAPI.updateLearning(json, id)
+        if (response.status === HttpStatus.OK) refreshLearnings()
     }
 
     const refreshLearnings = async () => {
@@ -195,7 +204,6 @@ export const EditCourseScreen = () => {
                                                 value={formValores.title}
                                                 onChange={setTitle}
                                                 isValid={estado.title}
-                                                disabled={!editable}
                                                 isInvalid={estado.title !== undefined ? !estado.title : undefined}
                                                 onBlur={() => setEstado({ ...estado, title: formValores.title.trim().length >= 3 })}
                                             />
@@ -212,7 +220,6 @@ export const EditCourseScreen = () => {
                                                 value={formValores.description}
                                                 onChange={setDescription}
                                                 isValid={estado.description}
-                                                disabled={!editable}
                                                 isInvalid={estado.description !== undefined ? !estado.description : undefined}
                                                 onBlur={() => setEstado({ ...estado, description: formValores.description.trim().length >= 3 })}
                                             />
@@ -229,7 +236,6 @@ export const EditCourseScreen = () => {
                                                 value={formValores.content}
                                                 onChange={setContent}
                                                 isValid={estado.content}
-                                                disabled={!editable}
                                                 isInvalid={estado.content !== undefined ? !estado.content : undefined}
                                                 onBlur={() => setEstado({ ...estado, content: formValores.content.trim().length >= 3 })}
                                             />
@@ -259,17 +265,16 @@ export const EditCourseScreen = () => {
                                         <Button className="submit-form register-btn w-100"
                                             onClick={() => sendForm()}
                                             style={{ height: "60px" }}
-                                            disabled={!editable}
                                         >
-                                            {!editable && "Cadastrado" || "Cadastrar"}
+                                            Editar
                                         </Button>
                                     </Col>
                                     <Col lg={12} className="col-form-status pr0" style={{ display: postFormSuccess === PostFormStatus.NULL ? "none" : "block" }}>
                                         <Alert className="alert mt-3 form-status"
                                             variant={
                                                 postFormSuccess === PostFormStatus.ENVIADO ? 'success' : postFormSuccess === PostFormStatus.ENVIANDO ? 'primary' : 'danger'}>
-                                            {postFormSuccess === PostFormStatus.ENVIADO ? 'Curso cadastrado com sucesso !' :
-                                                postFormSuccess === PostFormStatus.ENVIANDO ? 'Enviando ...' : 'Houve um erro ao cadastrar curso, por favor, tente novamente mais tarde!'}
+                                            {postFormSuccess === PostFormStatus.ENVIADO ? 'Informações alteradas com sucesso !' :
+                                                postFormSuccess === PostFormStatus.ENVIANDO ? 'Enviando ...' : 'Houve um erro ao editar o curso, por favor, tente novamente mais tarde!'}
                                         </Alert>
                                     </Col>
                                 </Row>
@@ -291,12 +296,31 @@ export const EditCourseScreen = () => {
                                         <Col xs={12} className="mt-2" style={{ display: "flex", flexDirection: "row" }} key={learning.id}>
                                             <Form.Control
                                                 className="input-learning"
-                                                value={learning.name}
-                                                disabled={true}
+                                                value={learningValues[learning.id] || learning.name}
                                                 style={{ width: "90%" }}
+                                                disabled={editable}
+                                                onChange={(event) => {
+                                                    const updatedValues = [...learningValues];
+                                                    updatedValues[learning.id] = event.target.value;
+                                                    setLearningValues(updatedValues);
+                                                }}
                                             />
+                                            {editable ? (
+                                                <Button className="edit-learning"
+                                                    onClick={() => setEditable(false)}
+                                                >
+                                                    Editar
+                                                </Button>
+                                                ) : ( 
+                                                    <Button className="edit-learning"
+                                                        onClick={() => upLearning(learningValues[learning.id], learning.id)}
+                                                    >
+                                                        Salvar
+                                                    </Button>
+                                                )
+                                            }
                                             <Button className="remove-learning"
-                                                onClick={() => rmLearning(learning.id)}
+                                            onClick={() => rmLearning(learning.id)}
                                             >
                                                 -
                                             </Button>
@@ -365,12 +389,12 @@ const CourseNotFound = () => < h2 className="w-100 vh-100 d-flex flex-row justif
 
 const Lesson = ({ data }) => {
 
-    return <Link to={`/professor/lessons/edit/${data.id}`} style={{textDecoration: "none", color: "black"}}>
+    return <Link to={`/professor/lessons/edit/${data.id}`} style={{ textDecoration: "none", color: "black" }}>
         <Card style={{ width: '100%' }}>
             <Card.Img variant="left" src={data.banner} style={{ height: "30vh", objectFit: "fill" }} />
             <Card.Body>
-                <Card.Title style={{display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", lineHeight: "22px", height: "calc(3 * 22px)", fontSize: "18px", marginBottom: "1rem"}} >{data.title}</Card.Title>
-                <Card.Text style={{display: "-webkit-box", WebkitLineClamp: 10, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", lineHeight: "20px", height: "calc(10 * 20px)", fontSize: "16px"}}>{data.content}</Card.Text>
+                <Card.Title style={{ display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", lineHeight: "22px", height: "calc(3 * 22px)", fontSize: "18px", marginBottom: "1rem" }} >{data.title}</Card.Title>
+                <Card.Text style={{ display: "-webkit-box", WebkitLineClamp: 10, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", lineHeight: "20px", height: "calc(10 * 20px)", fontSize: "16px" }}>{data.content}</Card.Text>
                 {/* <Button variant="primary">Go somewhere</Button> */}
             </Card.Body>
         </Card>

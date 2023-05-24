@@ -37,6 +37,29 @@ const registerCourse = async (body) => {
   }
 }
 
+const updateCourse = async (courseId, body) => {
+  try {
+    const url = `${BASE_URL}/courses/courses/${courseId}`; // Inclua o identificador único do curso na URL
+    const options = {
+      method: 'PUT', // Utilize o método PUT para realizar o update
+      headers: {
+        Accept: 'application/json',
+      },
+      body: body,
+    };
+    const response = await fetch(url, options);
+    if (response.ok) {
+      const data = await response.json();
+      return new HttpResponse(HttpStatus.OK, data);
+    }
+    throw new Error("CourseAPI::updateCourse()");
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+};
+
+
 const registerLearning = async (body) => {
   try {
     const url = `${BASE_URL}/courses/learnings`
@@ -106,9 +129,35 @@ const deleteLearning = async (id) => {
   }
 }
 
+const updateLearning = async (body, id) => {
+  try {
+    const url = `${BASE_URL}/courses/learnings/${id}`
+    const options = {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+    const response = await fetch(url, options)
+    if (response.ok) {
+      const data = await response.json()
+      return new HttpResponse(HttpStatus.OK, data)
+    }
+    throw new Error("CourseAPI::updateLearning()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
+
 export const CourseAPI = {
   registerCourse,
   registerLearning,
   getCourse,
-  deleteLearning
+  deleteLearning,
+  updateCourse,
+  updateLearning
 }
