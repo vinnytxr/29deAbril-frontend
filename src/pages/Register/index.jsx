@@ -9,6 +9,8 @@ import {
 import './style.css'
 import { Form, Spinner } from 'react-bootstrap'
 import { BASE_URL } from '../../api/default'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function RegisterScreen() {
   const intialValues = {
@@ -24,9 +26,31 @@ export default function RegisterScreen() {
   const [formErrors, setFormErrors] = useState({})
   const [isSubmit, setIsSubmit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  
-
   const navigate = useNavigate()
+
+  const notifySuccess = (texto) =>
+    toast.success(texto, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    })
+
+  const notifyError = (texto) =>
+    toast.error(texto, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    })
 
   function formatCPF(cpf) {
     const formattedValue = cpf.replace(/\D/g, '')
@@ -34,7 +58,6 @@ export default function RegisterScreen() {
   }
 
   const handleChange = (e) => {
-    // console.log(e.target);
     const { name, value } = e.target
 
     if (name === 'cpf') {
@@ -51,7 +74,6 @@ export default function RegisterScreen() {
   }
 
   useEffect(() => {
-    //console.log(formValues);
     if (Object.keys(formErrors).length === 0 && isSubmit) {
       setIsLoading(true)
       const url = `${BASE_URL}/user/`
@@ -65,13 +87,11 @@ export default function RegisterScreen() {
       })
         .then((response) => {
           if (!response.ok) {
-            //console.log("OLHA O ERRO")
             setIsLoading(false)
-            alert('Falha ao se comunicar com o servidor.')
+            notifyError('Falha ao se comunicar com o servidor.')
           } else {
-            setIsLoading(false)
+            notifySuccess('Registrado com sucesso!')
             navigate('/login')
-            alert('Registrado com sucesso!')
           }
           return response.json()
         })
@@ -79,15 +99,16 @@ export default function RegisterScreen() {
   }, [isSubmit])
 
   useEffect(() => {
-    //console.log(formValues);
     if (isSubmit) setFormErrors(validate(formValues))
   }, [formValues])
+
+  useEffect(() => {console.log({isLoading})}, [isLoading])
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setFormErrors(validate(formValues))
-    setIsSubmit(true)
     setIsLoading(true)
+    setIsSubmit(true)
 
     if (Object.keys(formErrors).length === 0 && isSubmit) {
       const url = `${BASE_URL}/user/`
@@ -100,18 +121,18 @@ export default function RegisterScreen() {
       })
         .then((response) => {
           if (!response.ok) {
-            //console.log("OLHA O ERRO")
             setIsLoading(false)
-            alert('Falha ao se comunicar com o servidor.')
+            notifyError('Falha ao se comunicar com o servidor.')
+          } else {
+            notifySuccess('Registrado com sucesso!')
+            navigate('/login')
           }
-          setIsLoading(false)
           return response.json()
         })
     }
   }
 
   const validarCPF = (cpf) => {
-    console.log(cpf)
     // Elimina CPFs inválidos conhecidos
     if (
       cpf.length !== 11 ||
@@ -126,6 +147,7 @@ export default function RegisterScreen() {
       cpf === '88888888888' ||
       cpf === '99999999999'
     ) {
+      setIsLoading(false)
       return false
     }
 
@@ -137,6 +159,7 @@ export default function RegisterScreen() {
     let resto = 11 - (soma % 11)
     let digitoVerificador1 = resto === 10 || resto === 11 ? 0 : resto
     if (digitoVerificador1 !== parseInt(cpf.charAt(9))) {
+      setIsLoading(false)
       return false
     }
 
@@ -148,6 +171,7 @@ export default function RegisterScreen() {
     resto = 11 - (soma % 11)
     let digitoVerificador2 = resto === 10 || resto === 11 ? 0 : resto
     if (digitoVerificador2 !== parseInt(cpf.charAt(10))) {
+      setIsLoading(false)
       return false
     }
 
@@ -198,8 +222,8 @@ export default function RegisterScreen() {
     } else if (!validarCPF(formValues.cpf.replace(/\D/g, ''))) {
       errors.cpf = 'Número do cpf é inválido!'
     }
-    console.log('CPF:', validarCPF(formValues.cpf.replace(/\D/g, '')))
 
+    setIsLoading(false)
     return errors
   }
 
@@ -299,7 +323,7 @@ export default function RegisterScreen() {
 
             <div className="row mt-3">
               <div className="col text-start">
-                <button className="fbtn btn btn-success">
+              <button className="fbtn btn btn-success" disabled={isLoading}>
                 {isLoading ? (
                     <Spinner
                       className="me-2"
@@ -315,9 +339,6 @@ export default function RegisterScreen() {
                   CRIAR CONTA
                 </button>
               </div>
-              {/* <div className="col text-end">
-                                    <button className="btn btn-outline-info"><FontAwesomeIcon icon={faCheck} className="me-2" />Entrar</button>
-                                </div> */}
             </div>
           </Form>
         </div>
