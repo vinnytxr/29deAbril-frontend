@@ -17,3 +17,14 @@
     background-color: white;
     color: black;
 }
+
+.button-bookmark {
+    background-color: transparent;
+    border: none;
+}
+
+.button-bookmark:hover {
+    background-color: transparent;
+    border: none;
+    color: gold
+}
