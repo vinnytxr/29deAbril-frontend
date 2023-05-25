@@ -70,7 +70,6 @@ const ChangePasswordPage = () => {
             } else {
                 notifyError(response.data.error);
             }
-
         }
     }
 
