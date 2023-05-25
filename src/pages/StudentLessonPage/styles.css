@@ -11,3 +11,11 @@
   height: auto !important;
   aspect-ratio: 16/9 !important;
 }
+
+.span-aula-concluida {
+  background-color: #198754;
+  color: white;
+  font-weight: bold;
+  padding: 0 10px;
+  border-radius: 5px;
+}

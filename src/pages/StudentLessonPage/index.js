@@ -13,7 +13,8 @@ const DEFAULT_VIDEO_PLAYER_STATE = {
   playing: false,
   started: false,
   played: 0,
-  duration: 0
+  duration: 0,
+  completed: false
 }
 
 export const StudentLessonPage = () => {
@@ -46,28 +47,41 @@ export const StudentLessonPage = () => {
   }, [id]);
 
   React.useEffect(() => {
-    if(videoPlayer.played > 0.8){
+    if (videoPlayer.played > 0.8 && !videoPlayer.completed) {
       window.alert("Parabéns, você concluiu a aula!")
+      setVideoPlayer({ ...videoPlayer, completed: true })
     }
   }, [videoPlayer])
 
   const handleVideoOnPlay = () => setVideoPlayer({ ...videoPlayer, playing: true, started: true })
   // const handleVideoOnPause = () => setVideoPlayer({ ...videoPlayer, playing: false })
 
-  const handleOnProgress = ({ played }) => setVideoPlayer({...videoPlayer, played});
+  const handleOnProgress = ({ played }) => setVideoPlayer({ ...videoPlayer, played });
   // const handleDuration = (duration) => setVideoDuration(duration);
   // const handleOnProgress = (e) => console.log('progress: ', e);
 
   return lesson ? (
     <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
       <Row>
+        {
+          videoPlayer.completed &&
+          <Col xs={12} style={{ marginTop: '0.5rem' }}>
+            <span className='span-aula-concluida'>Aula concluída</span>
+          </Col>
+        }
         <Col xs={12}>
           <h1 style={{ fontWeight: 'bold' }}>{lesson.title}</h1>
         </Col>
         <Col xs={12}>
           {(lesson.banner || lesson.video) && <section style={{ position: 'relative' }}>
             {lesson.banner && (!videoPlayer.started || !lesson.video) && <img src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} />}
-            {lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} onProgress={handleOnProgress} /* onPause={handleVideoOnPause} */ />}
+            {lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} onProgress={handleOnProgress} /* onPause={handleVideoOnPause} */ config={{
+              file: {
+                attributes: {
+                  controlsList: 'nodownload'
+                }
+              }
+            }} />}
             {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
           </section>}
         </Col>
