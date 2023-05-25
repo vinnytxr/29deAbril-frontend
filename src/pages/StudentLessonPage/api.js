@@ -34,6 +34,28 @@ const getLesson = async (id) => {
     }
 }
 
+
+const completeLessonAsStudent = async (idStudent, idLesson) => {
+    try {
+        const url = `${BASE_URL}/lessons/lessons/complete-course/${idLesson}/${idStudent}`;
+        const options = {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+            },
+        }
+        const response = await fetch(url, options)
+        if (response.ok) {
+            const data = await response.json()
+            return new HttpResponse(HttpStatus.OK, data)
+        }
+        throw new Error("LessonAPI::completeLessonAsStudent()")
+    } catch (error) {
+        console.warn(error);
+        return new HttpResponse(HttpStatus.ERROR, null);
+    }
+}
+
 export const LessonAPI = {
     getLesson
 }
