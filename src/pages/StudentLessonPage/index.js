@@ -1,5 +1,5 @@
-import React from 'react';
-import { AuthContext } from '../../contexts/AuthContext';
+import React, { useEffect } from 'react';
+import { AuthContext, useAuthContext } from '../../contexts/AuthContext';
 import { Container, Row, Col } from 'react-bootstrap';
 import { LessonAPI } from './api';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -23,34 +23,49 @@ export const StudentLessonPage = () => {
   const [lesson, setLesson] = React.useState()
   const [videoPlayer, setVideoPlayer] = React.useState(DEFAULT_VIDEO_PLAYER_STATE)
   const [videoDuration, setVideoDuration] = React.useState(null)
+  const { user, refreshUserOnContext } = useAuthContext();
+
+  useEffect(() => console.log(lesson), [lesson])
 
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (window) window.scrollTo(0, 0);
-  }, [lesson])
+    if(lesson && lesson.users_who_completed && user)
+      if(lesson.users_who_completed.includes(user.id) && lesson.professor !== user.id)
+        setVideoPlayer({...videoPlayer, completed: true})
+  }, [lesson, user])
 
-  React.useEffect(() => {
-    console.log('videoPlayer: ', videoPlayer)
-    console.log('duration', videoDuration)
-  }, [videoPlayer, videoDuration]);
+  // React.useEffect(() => {
+  //   console.log('videoPlayer: ', videoPlayer)
+  //   console.log('duration', videoDuration)
+  // }, [videoPlayer, videoDuration]);
+
+  const refreshLesson = async () => {
+    const response = await LessonAPI.getLesson(id);
+    setLesson(response.data);
+  }
 
   React.useEffect(() => {
     setVideoPlayer(DEFAULT_VIDEO_PLAYER_STATE)
     setVideoDuration(null)
-    const getLesson = async () => {
-      const response = await LessonAPI.getLesson(id);
-      setLesson(response.data);
-    }
 
-    if (id) getLesson();
+    if (id) refreshLesson();
+    if (window) window.scrollTo(0, 0);
   }, [id]);
 
   React.useEffect(() => {
-    if (videoPlayer.played > 0.8 && !videoPlayer.completed) {
-      window.alert("Parabéns, você concluiu a aula!")
-      setVideoPlayer({ ...videoPlayer, completed: true })
+    const completeLesson = async () => {
+      if (videoPlayer.played > 0.8 && !videoPlayer.completed) {
+        window.alert("Parabéns, você concluiu a aula!")
+        setVideoPlayer({ ...videoPlayer, completed: true })
+
+        await LessonAPI.completeLessonAsStudent(user.id, lesson.id);
+        await refreshLesson()
+      }
     }
+
+    completeLesson()
+
   }, [videoPlayer])
 
   const handleVideoOnPlay = () => setVideoPlayer({ ...videoPlayer, playing: true, started: true })

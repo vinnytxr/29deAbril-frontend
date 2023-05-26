@@ -39,7 +39,7 @@ const completeLessonAsStudent = async (idStudent, idLesson) => {
     try {
         const url = `${BASE_URL}/lessons/lessons/complete-course/${idLesson}/${idStudent}`;
         const options = {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 Accept: 'application/json',
             },
@@ -57,5 +57,6 @@ const completeLessonAsStudent = async (idStudent, idLesson) => {
 }
 
 export const LessonAPI = {
-    getLesson
+    getLesson,
+    completeLessonAsStudent
 }
