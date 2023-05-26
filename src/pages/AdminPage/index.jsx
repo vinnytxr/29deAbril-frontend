@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 
 import './style.css'
 
-import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupItem } from 'react-bootstrap'
+import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupItem, Spinner } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faShare } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faCode, faShare } from '@fortawesome/free-solid-svg-icons'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 
 const AdministrationPage = () => {
@@ -16,6 +16,7 @@ const AdministrationPage = () => {
     const [codes, setCodes] = useState([]);
     const [enableBtn, setEnableBtn] = useState(true)
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         requestCodes()
@@ -130,10 +131,11 @@ const AdministrationPage = () => {
 
     const handleClick = async () => {
         setEnableBtn(false)
+        setIsLoading(true)
         const response = await createCode()
         setNewCode(response)
         requestCodes()
-        setTimeout(() => setEnableBtn(true), 1500)
+        setTimeout(() => {setEnableBtn(true);setIsLoading(false);}, 1500)
     }
 
     const createNewCode = () => {
@@ -185,7 +187,21 @@ const AdministrationPage = () => {
                                 <Row>
                                     <Col>
                                         <Form.Control readOnly type="text" placeholder='Clique no botão abaixo para gerar o código.' value={newCode} />
-                                        <Button disabled={!enableBtn} className='mt-2 btn-success' onClick={() => { createNewCode() }}>Gerar Código</Button>
+                                        <Button disabled={!enableBtn} className='mt-2 btn-success' onClick={() => { createNewCode() }}>
+                                            {isLoading ? (
+                                                <Spinner
+                                                className="me-2"
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                                />
+                                            ) : (
+                                                <FontAwesomeIcon icon={faCode} className="me-2" />
+                                            )}
+                                            Gerar Código
+                                        </Button>
                                     </Col>
                                 </Row>
                                 <div className='pt-4'></div>

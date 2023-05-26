@@ -146,7 +146,8 @@ function CourseDetails() {
                         className="button-bookmark"
                       >
                         <FontAwesomeIcon
-                          style={{ fontSize: '22px', color: isFavorited ? 'gold' : 'white', opacity: isFavorited ? 1 : 0.6}}
+                          color={isFavorited ? 'gold' : 'lightwhite'}
+                          opacity={isFavorited ? 1 : 0.7}
                           icon={faBookmark}
                         />
                       </Button>

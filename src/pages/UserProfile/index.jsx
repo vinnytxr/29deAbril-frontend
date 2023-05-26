@@ -206,9 +206,8 @@ const UserProfileScreen = () => {
               <Col>
                 <Navbar.Text>
                     <Dropdown>
-                      <DropdownToggle className='gear' style={{ color: '#3f3f3f', fontSize: '20', backgroundColor: 'white' }}>
+                      <DropdownToggle className='gear'>
                         <FontAwesomeIcon
-                          style={{ color: '#3f3f3f', fontSize: '20' }}
                           icon={faBars}
                         />
                       </DropdownToggle>
@@ -216,7 +215,6 @@ const UserProfileScreen = () => {
                         <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
                         <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
                       </DropdownMenu>
-
                     </Dropdown>
                 </Navbar.Text>
               </Col>

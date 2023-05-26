@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faArrowLeftLong, faArrowRotateBack, faCheck } from '@fortawesome/free-solid-svg-icons'
-import { Button, Col, Form, Row} from 'react-bootstrap';
-import { AuthAPI } from "../../api/auth-api";
+import { faArrowLeftLong, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { Form, Spinner } from 'react-bootstrap';
 import { AUTH_DEBUG, BASE_URL, HttpStatus } from "../../api/default";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Style
 import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
 import { HttpResponse } from "../CreateCourse/api";
-
-
   
 
 const ChangePasswordPage = () => {
@@ -24,7 +21,8 @@ const ChangePasswordPage = () => {
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
-    const [show, setShow] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
+
     const notifySuccess = (texto) => toast.success(texto, {
         position: "top-right",
         autoClose: 5000,
@@ -34,8 +32,9 @@ const ChangePasswordPage = () => {
         draggable: true,
         progress: undefined,
         theme: "light",
-      });
-      const notifyError = (texto) => toast.error(texto, {
+    });
+
+    const notifyError = (texto) => toast.error(texto, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -44,7 +43,7 @@ const ChangePasswordPage = () => {
         draggable: true,
         progress: undefined,
         theme: "light",
-      });
+    });
 
     var errorsC = 0;
 
@@ -58,23 +57,23 @@ const ChangePasswordPage = () => {
         setFormValues({ ...formValues, [name]: value });
     }
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmit(true);
-        if (errorsC == 0) {
-           // console.log("Requisição realizada.")
-            //console.log(formValues)
+        setIsLoading(true);
+
+        if (errorsC === 0) {
             const response = await fetchChange()
-           // console.log(response)
-            if (response.status == HttpStatus.OK) {
+            if (response.status === HttpStatus.OK) {
                 notifySuccess("Senha alterada com sucesso.");
+                setIsLoading(false)
             }else{
                 notifyError("Falha em alterar senha.");
+                setIsLoading(false)
             }
-
         }
+        setIsLoading(false)
     }
 
     const fetchChange = async () => {
@@ -121,7 +120,7 @@ const ChangePasswordPage = () => {
 
         if (!values.newPasswordConfirm) {
             errors.newPasswordConfirm = "Digite sua nova senha novamente!";
-        } else if (values.newPassword != values.newPasswordConfirm) {
+        } else if (values.newPassword !== values.newPasswordConfirm) {
             errors.newPasswordConfirm = "A senha digitada na confirmação deve ser idêntica a nova senha!";
         }
 
@@ -181,7 +180,21 @@ const ChangePasswordPage = () => {
                         <p className="mb-3 ps-1" style={{ color: "red" }}>{formErrors.newPasswordConfirm}</p>
                         <div className="row mt-3">
                             <div className="col text-start">
-                                <button className="btn btn-success"><FontAwesomeIcon icon={faCheck} className="me-2" />Confirmar alteração</button>
+                                <button className="btn btn-success" disabled={isLoading}>
+                                {isLoading ? (
+                                        <Spinner
+                                        className="me-2"
+                                        as="span"
+                                        animation="border"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                        />
+                                    ) : (
+                                        <FontAwesomeIcon icon={faCheck} className="me-2" />
+                                    )}
+                                    Confirmar alteração
+                                </button>
                             </div>
                         </div>
                     </Form>
