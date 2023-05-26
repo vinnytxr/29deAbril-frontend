@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faArrowLeftLong, faArrowRotateBack, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeftLong, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { Form } from 'react-bootstrap';
-import { AuthAPI } from "../../api/auth-api";
-import { AUTH_DEBUG, BASE_URL, HttpStatus } from "../../api/default";
+import { HttpStatus } from "../../api/default";
+import { PasswordAPI } from "../../api/password"
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Style
 import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
-import { HttpResponse } from "../CreateCourse/api";
+
+
+
+
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();
@@ -19,6 +24,28 @@ const ChangePasswordPage = () => {
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
+
+    const notifySuccess = (texto) => toast.success(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+    const notifyError = (texto) => toast.error(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+
     var errorsC = 0;
 
     useEffect(() => {
@@ -37,44 +64,15 @@ const ChangePasswordPage = () => {
         setFormErrors(validate(formValues));
         setIsSubmit(true);
         if (errorsC == 0) {
-           // console.log("Requisição realizada.")
-            //console.log(formValues)
-            const response = await fetchChange()
-           // console.log(response)
+            const response = await PasswordAPI.fetchChange(formValues.oldPassword, formValues.newPassword, token);
             if (response.status == HttpStatus.OK) {
-              alert("Senha alterada com sucesso!")
-            }else{
-                alert("Falha em alterar senha.")
+                notifySuccess("Senha alterada com sucesso.");
+            } else {
+                notifyError(response.data.error);
             }
-
         }
     }
 
-    const fetchChange = async () => {
-        const url = `${BASE_URL}/change-password`
-        try {
-            const options = {
-                method: 'PUT',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json', 
-                    'jwt': token
-                },
-                body: JSON.stringify({ old_password: formValues.oldPassword, new_password: formValues.newPassword })
-            }
-
-            const response = await fetch(url, options);
-            if (response.ok) {
-                const data = await response.json();
-                AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
-                return new HttpResponse(HttpStatus.OK, data);
-            } else throw new Error("Error on ChangePassword()");
-        } catch (error) {
-            console.warn(error)
-            return new HttpResponse(HttpStatus.ERROR, null);
-        }
-    }
 
     const validate = (values) => {
         const errors = {};
@@ -112,7 +110,7 @@ const ChangePasswordPage = () => {
                                 <img style={{ width: "11em" }} onClick={() => { navigate("/") }} src="https://i.ibb.co/r3QPmSt/logo.png" alt="logo" border="0" />
                             </div>
                             <div className="col d-flex justify-content-end">
-                                <p className="mt-3"><Link className="fw-bold link-limpo" style={{ color: "#1dbfb0" }} to="/perfil"><FontAwesomeIcon icon={faArrowLeftLong} className="me-1"/> Voltar!</Link></p>
+                                <p className="mt-3"><Link className="fw-bold link-limpo" style={{ color: "#1dbfb0" }} to="/perfil"><FontAwesomeIcon icon={faArrowLeftLong} className="me-1" /> Voltar!</Link></p>
                             </div>
                         </div>
                     </div>
