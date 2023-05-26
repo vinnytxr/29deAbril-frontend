@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router";
-import { Container, Col, Row, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Col, Row, Form, Button, Alert, Modal } from 'react-bootstrap';
 import { HttpStatus, LessonAPI } from "./api";
 import { cut } from "../../tools/string";
 import noImage from './no-image.png'
@@ -19,6 +19,7 @@ const PostFormStatus = {
 
 const isString = value => typeof value === 'string' || value instanceof String;
 const imageBeUpdated = value => !(isString(value) && value.slice(0, 5).includes('http'))
+const videoBeUpdated = value => !(isString(value) && value.slice(0, 5).includes('http'))
 
 export const EditLessonScreen = () => {
     const [lessonExists, setLessonExists] = useState(undefined);
@@ -87,14 +88,16 @@ export const EditLessonScreen = () => {
 
         var post = new FormData();
 
+        console.log('ToSend: ', formValores)
+
         post.append("title", formValores.title);
         post.append("content", formValores.content);
 
-        if (formValores.useBannerFromVideo)
+        if (!formValores.useBannerFromVideo && formValores.files.lenght && imageBeUpdated(formValores.files[0]))
             post.append("banner", formValores.files[0]);
 
-        // if (formValores.videos.length)
-        //     post.append("video", formValores.videos[0]);
+        if (formValores.videos.length && videoBeUpdated(formValores.videos[0]))
+            post.append("video", formValores.videos[0]);
 
         console.log(formValores)
 
@@ -103,13 +106,6 @@ export const EditLessonScreen = () => {
             setTimeout(() => {
                 setPostFormStatus(response.status === HttpStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
                 if (response.status === HttpStatus.OK && !!response.data) {
-                    const lesson = response.data
-                    setFormValores({
-                        title: lesson.title,
-                        content: lesson.content,
-                        files: [lesson.banner],
-                        videos: [lesson.video]
-                    })
                     setTimeout(() => setPostFormStatus(PostFormStatus.NULL)
                         , 2000)
                     setEstado({})
@@ -180,6 +176,11 @@ export const EditLessonScreen = () => {
             navigate(`/professor/courses/edit/${formValores.course}`)()
     }
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     return (
         <section className="box-course pb-1 pt-1">
             <Container fluid className="container-new-lesson container-lesson mb-5">
@@ -195,12 +196,38 @@ export const EditLessonScreen = () => {
                                     </Button>
                                 </Col>
                                 <Col xs={2}>
-                                    <Button className="submit-form mt-3 remove-bnt w-100"
-                                        onClick={() => rmlesson(id)}
-                                        style={{ height: "40px", width: "40px" }}
-                                    >
+                                    <Button className="submit-form mt-3 remove-bnt w-100" onClick={handleShow}>
                                         Excluir aula
                                     </Button>
+
+                                    <Modal
+                                        show={show}
+                                        onHide={handleClose}
+                                        backdrop="static"
+                                        keyboard={false}
+                                    >
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>Confirmar exclusão de aula?</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            <Row >
+                                                <Col xs={6}>
+                                                    <Button onClick={handleClose} className="mt-3 cancel-modal-btn w-100">
+                                                        Cancelar
+                                                    </Button>
+                                                </Col>
+
+                                                <Col xs={6}>
+                                                    <Button 
+                                                        className="mt-3 remove-modal-btn w-100"
+                                                        onClick={() => rmlesson(id)}
+                                                    >
+                                                        Excluir
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        </Modal.Body>
+                                    </Modal>
                                 </Col>
                             </Row>
                         </Col>

@@ -164,3 +164,27 @@ body {
     height: 30vh;
   }
 }
+
+.modal .cancel-modal-btn  {
+  width: calc(10% - 5px);
+  border: 2px solid #dc3545;
+  background-color: #dc3545;
+}
+
+.modal .cancel-modal-btn:active {
+  background-color: white;
+  color: #dc3545;
+  border: 2px solid white;
+}
+
+.modal .remove-modal-btn  {
+  width: calc(10% - 5px);
+  border: 2px solid #198754;
+  background-color: #198754;
+}
+
+.modal .remove-modal-btn:active {
+  background-color: white;
+  color: #198754;
+  border: 2px solid white;
+}

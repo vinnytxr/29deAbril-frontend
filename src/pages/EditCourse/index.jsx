@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { Container, Col, Row, Form, Button, Alert, Card } from 'react-bootstrap';
+import { Container, Col, Row, Form, Button, Alert, Card, Modal } from 'react-bootstrap';
 import { HttpStatus, CourseAPI } from "./api";
 import noImage from './no-image.png'
 import './style.css'
@@ -199,6 +199,11 @@ export const EditCourseScreen = () => {
         } else setCourseExists(false)
     }
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     return (courseExists === false) ? <CourseNotFound /> : courseExists && !!user ? (
         <section className="box-course pb-1 pt-1">
             <Container fluid className="container-new-course container-course mb-5">
@@ -214,12 +219,38 @@ export const EditCourseScreen = () => {
                                     </Button>
                                 </Col>
                                 <Col xs={2}>
-                                    <Button className="submit-form mb-2 cancel-btn w-100"
-                                        onClick={() => rmcourse(id)}
-                                        style={{ height: "40px", width: "40px" }}
-                                    >
-                                        Excluir curso
+                                <Button className="submit-form mt-3 remove-learning w-100" onClick={handleShow}>
+                                        Excluir aula
                                     </Button>
+
+                                    <Modal
+                                        show={show}
+                                        onHide={handleClose}
+                                        backdrop="static"
+                                        keyboard={false}
+                                    >
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>Confirmar exclusão do curso?</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            <Row >
+                                                <Col xs={6}>
+                                                    <Button onClick={handleClose} className="mt-3 cancel-modal-btn w-100">
+                                                        Cancelar
+                                                    </Button>
+                                                </Col>
+
+                                                <Col xs={6}>
+                                                    <Button 
+                                                        className="mt-3 remove-modal-btn w-100"
+                                                        onClick={() => rmcourse(id)}
+                                                    >
+                                                        Excluir
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        </Modal.Body>
+                                    </Modal>
                                 </Col>
                             </Row>
                         </Col>
