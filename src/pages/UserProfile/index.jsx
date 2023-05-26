@@ -1,76 +1,70 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Navbar, Row, Card, Button, Modal, Form, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap'
+import { Col, Container, Navbar, Row, Card, Button, Modal, Form, Dropdown } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faGear, faHamburger, faLinesLeaning, faPen } from '@fortawesome/free-solid-svg-icons'
-import { AuthAPI } from "../../api/auth-api";
-import { HttpStatus, HttpResponse, BASE_URL } from "../../api/default";
-import { Navigate, useNavigate } from 'react-router-dom'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { HttpStatus } from "../../api/default";
+import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { Roles } from '../../api/default'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { AUTH_DEBUG } from '../../api/default';
-
+import { ProfileAPI } from '../../api/profile';
 import './style.css'
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu'
 import DropdownToggle from 'react-bootstrap/esm/DropdownToggle'
+import { toast } from 'react-toastify'
 
 const UserProfileScreen = () => {
   const navigate = useNavigate()
-
   const [selectedFileTmp, setSelectedFile] = useState(null);
   const [editando, setEditando] = useState(false)
   const [aboutText, setAboutText] = useState();
   const [newName, setNewName] = useState();
   const [formErrors, setFormErrors] = useState({});
-
   const { logged, user, token, setToken, refreshUserOnContext } = useAuthContext();
-
   const [authorizationCode, setAuthorizationCode] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showModalNotification, setShowModalNotification] = useState(false);
-
   const [imagesToUpdate, setImagesToUpdate] = useState()
+  const notifyError = (texto) => toast.error(texto, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+  const notifySuccess = (texto) => toast.success(texto, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+
 
   useEffect(() => {
-    if (imagesToUpdate && imagesToUpdate.length)
-      updateUserPicture(imagesToUpdate[0]);
+    const fetchFunction = async () => {
+      if (imagesToUpdate && imagesToUpdate.length) {
+        const response = await ProfileAPI.updateUserPicture(imagesToUpdate[0], user.id);
+        if (response.status != HttpStatus.OK) {
+          notifyError("Falha na alteração da foto de perfil.")
+        } else {
+          refreshUserOnContext()
+        }
+      }
+    }
+    fetchFunction()
   }, [imagesToUpdate])
 
-  const updateUserPicture = async (userImageToUpdate) => {
-    var body = new FormData();
-    body.append("photo", userImageToUpdate);
-
-    const url = `${BASE_URL}/user/${user.id}/`
-    try {
-      const options = {
-        method: 'PATCH',
-        headers: {
-          Accept: 'application/json'
-        },
-        body: body
-      }
-      const response = await fetch(url, options);
-      if (response.ok) {
-        const data = await response.json();
-        refreshUserOnContext()
-        return new HttpResponse(HttpStatus.OK, data);
-      } else {
-        throw new Error("Error on sendPhoto()");
-      }
-    } catch (error) {
-      console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null);
-    }
-  }
 
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = () => setShowModal(true);
-  const handleCloseModalNotification = () => {
-    setShowModalNotification(false);
-    handleShowModal();
-  }
-  const handleShowModalNotification = () => setShowModalNotification(true);
 
   const date = (dateString) => {
     const dateObj = new Date(dateString);
@@ -84,14 +78,15 @@ const UserProfileScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await AuthAPI.putInvite(user.id, authorizationCode, token)
-    if (response.status === HttpStatus.OK) {
-      setToken(token)
-      handleCloseModal()
-    } else {
+    const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
+
+    if (response.status != HttpStatus.OK) {
       setAuthorizationCode('')
+      notifyError("Falha ao alterar permissões.")
+    } else {
+      setToken(token)
+      notifySuccess("Permissões atualizadas com sucesso. Agora você é um professor :)");
       handleCloseModal()
-      handleShowModalNotification()
     }
   }
 
@@ -105,45 +100,18 @@ const UserProfileScreen = () => {
     setEditando(true)
   }
 
-  const fetchEdit = async () => {
-    const url = `${BASE_URL}/user/${user.id}/`
-    try {
-      const options = {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
-        },
-        body: JSON.stringify({ about: aboutText, name: newName })
-      }
-
-      const response = await fetch(url, options);
-      if (response.ok) {
-        const data = await response.json();
-        AUTH_DEBUG && console.log("AuthAPI::edit(): ", data.token);
-        return new HttpResponse(HttpStatus.OK, data);
-      } else throw new Error("Error on edit()");
-    } catch (error) {
-      console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null);
-    }
-  }
-
   const salvarAlteracoes = async () => {
-
-
     if (Object.keys(validateEditing()).length == 0 && editando) {
       setEditando(false)
       if (user.name != newName || aboutText != user.about) {
         //console.log("Válidado, enviar para o banco.")
-        const response = await fetchEdit()
-        //console.log(response)
-        if (response.status == HttpStatus.OK) {
-          //console.log("RECARREGAR")
-          navigate(0)
+        const response = await ProfileAPI.fetchEdit(newName, aboutText, user.id)
+        if (response.status != HttpStatus.OK) {
+          notifyError("Falha na edição de perfil.");
+        } else {
+          notifySuccess("Perfil alterado com sucesso.");
+          refreshUserOnContext();
         }
-
       }
     }
   }
@@ -156,7 +124,6 @@ const UserProfileScreen = () => {
   const validateEditing = () => {
 
     const errors = {};
-
     if (newName.length < 3) {
       errors.newName = "Digite um nome válido!";
     } else if (newName.length > 50) {
@@ -205,19 +172,19 @@ const UserProfileScreen = () => {
             <Row className='align-items-center'>
               <Col>
                 <Navbar.Text>
-                    <Dropdown>
-                      <DropdownToggle className='gear' style={{ color: '#3f3f3f', fontSize: '20', backgroundColor: 'white' }}>
-                        <FontAwesomeIcon
-                          style={{ color: '#3f3f3f', fontSize: '20' }}
-                          icon={faBars}
-                        />
-                      </DropdownToggle>
-                      <DropdownMenu>
-                        <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
-                        <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
-                      </DropdownMenu>
+                  <Dropdown>
+                    <DropdownToggle className='gear' style={{ color: '#3f3f3f', fontSize: '20', backgroundColor: 'white' }}>
+                      <FontAwesomeIcon
+                        style={{ color: '#3f3f3f', fontSize: '20' }}
+                        icon={faBars}
+                      />
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
+                      <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
+                    </DropdownMenu>
 
-                    </Dropdown>
+                  </Dropdown>
                 </Navbar.Text>
               </Col>
               <Col>
@@ -293,7 +260,7 @@ const UserProfileScreen = () => {
                     )}
 
 
-                   
+
                   </Col>
                 </Col>
               </Row>
@@ -327,19 +294,7 @@ const UserProfileScreen = () => {
                 </Form>
               </Modal.Body>
             </Modal>
-            <Modal
-              size="lg"
-              className="modal-invite"
-              show={showModalNotification}
-              onHide={handleCloseModalNotification}
-            >
-              <Modal.Header closeButton style={{ border: 'none' }} />
-              <Modal.Body>
-                <h5>Convite inválido, tente novamente ou contate o administrador !</h5>
-              </Modal.Body>
-            </Modal>
           </Col>
-
           <Col>
             <Row>
               <Col className='d-flex justify-content-between pe-0 ps-0'>
