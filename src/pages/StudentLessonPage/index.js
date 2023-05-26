@@ -1,5 +1,4 @@
 import React from 'react';
-import { AuthContext } from '../../contexts/AuthContext';
 import { Container, Row, Col } from 'react-bootstrap';
 import { LessonAPI } from './api';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -47,7 +46,7 @@ export const StudentLessonPage = () => {
         </Col>
         <Col xs={12}>
           {(lesson.banner || lesson.video) && <section style={{ position: 'relative' }}>
-            {lesson.banner && (!videoPlayer.started || !lesson.video) && <img src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} />}
+            {lesson.banner && (!videoPlayer.started || !lesson.video) && <img alt='' src={lesson.banner} style={{ width: '100%', aspectRatio: '16/9', margin: '1rem 0', cursor: 'pointer' }} />}
             {lesson.video && videoPlayer.started && <ReactPlayer url={lesson.video} controls={videoPlayer.playing} className='react-player' playing={videoPlayer.playing} onPlay={handleVideoOnPlay} /* onPause={handleVideoOnPause} */ />}
             {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
           </section>}
@@ -73,7 +72,7 @@ const LinkLesson = ({ title, link, image, inverse }) => {
   return (
     <Link to={link} style={{ width: '37%' }}>
       <article style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
-        <img src={image} style={{ width: '100%', filter: 'brightness(35%)', aspectRatio: '16/8' }} />
+        <img alt='' src={image} style={{ width: '100%', filter: 'brightness(35%)', aspectRatio: '16/8' }} />
 
         <div style={{ position: 'absolute', color: 'white', left: 0, top: 0, fontWeight: 'bold', textAlign: 'center', maxWidth: '100%', maxHeight: '100%', overflow: 'hidden', padding: '5px' }}>
           {!inverse && <span>Próxima aula</span>}

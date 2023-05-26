@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card'
 import './course_details.css'
-
-// Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css'
-
-// Components
 import CardDetails from '../../components/CardDetails/card_details'
 import CheckDetails from '../../components/CheckDetails/check_details'
 import CheckCourseInformation from '../../components/CheckCourseInformation/check_course_information'
@@ -24,7 +20,6 @@ function CourseDetails() {
   const { token, logged } = useAuthContext()
   const [data, setData] = useState({})
   const [isFavorited, setFavorited] = useState(false)
-  const [isFetched, setIsFetched] = useState(false)
 
   const notify = (texto) =>
     toast.success(texto, {
@@ -62,7 +57,6 @@ function CourseDetails() {
           }
           setData({ ...data })
           setFavorited(data.favorited)
-          setIsFetched(true)
         } catch (err) {
           navigate('/404-not-found')
         }

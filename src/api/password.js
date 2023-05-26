@@ -23,7 +23,6 @@ const fetchChange = async (oldPassword, newPassword, jwt) => {
         } else{ 
             errorMessage =  await response.json();
             throw new Error("Error on ChangePassword()");
-            return new HttpResponse(HttpStatus.ERROR, await response.json());
         }
     } catch (error) {
         console.warn(error)
@@ -53,7 +52,6 @@ const fetchRecovery = async (email) => {
         } else{
             errorMessage =  await response.json();
             throw new Error("Error on RecoverPassword()");
-            return new HttpResponse(HttpStatus.ERROR, await response.json());
         }
     } catch (error) {
         console.warn(error)

@@ -21,7 +21,6 @@ function CardDetails({ image, course }) {
     setIsLoading(false)
   }
 
-  const [dados, setDados] = useState('')
   const [buttonDisabled, setButtonDisabled] = useState(false)
   const [cardText, setcardText] = useState('')
   const [cardText2, setcardText2] = useState('')

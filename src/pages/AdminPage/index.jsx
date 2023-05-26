@@ -6,7 +6,7 @@ import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupIt
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCode, faEnvelope, faIdCard, faMailBulk, faMailForward, faMailReply, faPalette, faShare } from '@fortawesome/free-solid-svg-icons'
+import { faCode, faEnvelope, faShare } from '@fortawesome/free-solid-svg-icons'
 import { HttpStatus } from '../../api/default'
 import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
