@@ -39,9 +39,9 @@ const registerCourse = async (body) => {
 
 const updateCourse = async (courseId, body) => {
   try {
-    const url = `${BASE_URL}/courses/courses/${courseId}`; // Inclua o identificador único do curso na URL
+    const url = `${BASE_URL}/courses/courses/${courseId}`;
     const options = {
-      method: 'PUT', // Utilize o método PUT para realizar o update
+      method: 'PATCH',
       headers: {
         Accept: 'application/json',
       },
@@ -58,7 +58,6 @@ const updateCourse = async (courseId, body) => {
     return new HttpResponse(HttpStatus.ERROR, null);
   }
 };
-
 
 const registerLearning = async (body) => {
   try {
@@ -110,6 +109,25 @@ const getCourse = async (id) => {
   }
 }
 
+const deleteCourse = async (id) => {
+  try {
+    const url = `${BASE_URL}/courses/courses/${id}`
+    const options = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+      },
+    }
+    const response = await fetch(url, options)
+    if (response.ok)
+      return new HttpResponse(HttpStatus.OK, null)
+    throw new Error("CourseAPI::deleteCourse()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
 const deleteLearning = async (id) => {
   try {
     const url = `${BASE_URL}/courses/learnings/${id}`
@@ -129,23 +147,23 @@ const deleteLearning = async (id) => {
   }
 }
 
-const updateLearning = async (body, id) => {
+const updateLearning = async (body, learningId) => {
   try {
-    const url = `${BASE_URL}/courses/learnings/${id}`
+    const url = `${BASE_URL}/courses/learnings/${learningId}`;
     const options = {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
+        'Content-Type': 'application/json',
         Accept: 'application/json',
-        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(body)
-    }
-    const response = await fetch(url, options)
+      body: JSON.stringify(body),
+    };
+    const response = await fetch(url, options);
     if (response.ok) {
-      const data = await response.json()
-      return new HttpResponse(HttpStatus.OK, data)
+      const data = await response.json();
+      return new HttpResponse(HttpStatus.OK, data);
     }
-    throw new Error("CourseAPI::updateLearning()")
+    throw new Error("CourseAPI::updateLearning()");
   } catch (error) {
     console.warn(error);
     return new HttpResponse(HttpStatus.ERROR, null);
@@ -157,6 +175,7 @@ export const CourseAPI = {
   registerCourse,
   registerLearning,
   getCourse,
+  deleteCourse,
   deleteLearning,
   updateCourse,
   updateLearning

@@ -9,17 +9,26 @@ import { HttpStatus } from "../../api/default";
 // Style
 import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
     const navigate = useNavigate();
-
     const { setToken } = useAuthContext();
-
     const intialValues = { email: "", password: "" };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
     var errorsC = 0;
+    const notifyError = (texto) => toast.error(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
 
     const saveTokenOnLocalStorage = (token) => {
         //console.log("LoginPage::saveTokenOnLocalStorage(): ", token)
@@ -64,11 +73,12 @@ const LoginPage = () => {
                 saveTokenOnLocalStorage(responseLogin.data.token)
                 const ok = await setToken(responseLogin.data.token);
                 if (ok) {
-                    saveUserDataOnLocalStorage()
-                    navigate("/")
+                    saveUserDataOnLocalStorage();
+                    toast.dismiss();
+                    navigate("/");
                 }
             }else{
-                alert("Falha ao executar login.")
+                notifyError("Falha ao executar login.")
             }
         }
     }
@@ -78,15 +88,15 @@ const LoginPage = () => {
         errorsC = 0;
 
         if (!values.email) {
-            errors.email = "Digite um e-mail.";
+            errors.email = "Digite um e-mail!";
         }
 
         if (!values.password) {
-            errors.password = "Digite uma senha";
+            errors.password = "Digite uma senha!";
         } else if (values.password.length < 4) {
-            errors.password = "Senha inválida";
+            errors.password = "A senha precisa ter mais do que 3 caracteres!";
         } else if (values.password.length > 16) {
-            errors.password = "Senha inválida";
+            errors.password = "A senha pode ter no máximo 16 caracteres!";
         }
         errorsC = Object.keys(errors).length;
         return errors;

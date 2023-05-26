@@ -19,6 +19,10 @@ const PostFormStatus = {
     NULL: 'NULL'
 }
 
+const isString = value => typeof value === 'string' || value instanceof String;
+const imageBeUpdated = value => !(isString(value) && value.slice(0, 5).includes('http'))
+
+
 export const EditCourseScreen = () => {
     const [courseExists, setCourseExists] = useState(undefined)
 
@@ -44,7 +48,8 @@ export const EditCourseScreen = () => {
 
     const [formValores, setFormValores] = useState(resetValores());
     const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL);
-    const [editable, setEditable] = useState(true);
+    const [editable, setEditable] = useState(false);
+    const [editableLearning, seteditableLearning] = useState(true);
     const [learnings, setLearnings] = useState([]);
     const [lessons, setLessons] = useState([]);
     const [learningValues, setLearningValues] = useState([]);
@@ -67,6 +72,7 @@ export const EditCourseScreen = () => {
 
     useEffect(() => { if (id) refreshLearnings() }, [id]);
 
+    useEffect(() => console.log(formValores), [formValores])
     const setDescription = (e) => {
         setEstado({ ...estado, description: undefined })
         setFormValores({ ...formValores, description: e?.target?.value })
@@ -100,10 +106,9 @@ export const EditCourseScreen = () => {
 
         post.append("title", formValores.title);
         post.append("description", formValores.description);
-        post.append("banner", formValores.files[0]);
         post.append("content", formValores.content);
         post.append("professor", user.id);
-
+        post.append("banner", formValores.files[0]);
 
         CourseAPI.updateCourse(id, post).then(response => {
             setEditable(false)
@@ -111,6 +116,13 @@ export const EditCourseScreen = () => {
             setTimeout(() => {
                 setPostFormStatus(response.status === HttpStatus.OK ? PostFormStatus.ENVIADO : PostFormStatus.ERRO)
                 if (response.status === HttpStatus.OK && !!response.data) {
+                    const course = response.data
+                    setFormValores({
+                        title: course.title,
+                        description: course.description,
+                        content: course.content,
+                        files: [course.banner]
+                    })
                     setAllowLearnings(true)
                     setTimeout(() => setPostFormStatus(PostFormStatus.NULL), 5000)
                     setEstado({})
@@ -131,6 +143,7 @@ export const EditCourseScreen = () => {
     const InvisibleInputFile = () => (
         <input id='input-files-ftc'
             type="file"
+            disabled={!editable}
             style={{ display: 'none' }}
             onChange={(e) => {
                 setFormValores({
@@ -142,6 +155,12 @@ export const EditCourseScreen = () => {
             accept='.png,.jpeg,.jpg,.webp'
         />
     );
+
+    const rmcourse = async (id) => {
+        const response = await CourseAPI.deleteCourse(id)
+        if (response.status === HttpStatus.OK)
+            navigate(`/professor/courses`)()
+    }
 
     const addLearning = async (json) => {
         console.log(json)
@@ -156,11 +175,10 @@ export const EditCourseScreen = () => {
             refreshLearnings()
     }
 
-    const upLearning = async (json, id) => { //terminei aqui verificar os campos
-        console.log(json)
-        setEditable(true)
-        if (!json.name || !json.name.length) return
-        const response = await CourseAPI.updateLearning(json, id)
+    const upLearning = async (value, id) => { //terminei aqui verificar os campos
+        seteditableLearning(true)
+        if (!value.name || !value.name.length) return
+        const response = await CourseAPI.updateLearning(value, id)
         if (response.status === HttpStatus.OK) refreshLearnings()
     }
 
@@ -186,8 +204,31 @@ export const EditCourseScreen = () => {
             <Container fluid className="container-new-course container-course mb-5">
                 <Form>
                     <Row>
+                        <Col lg={12} className="mt-4">
+                            <Row>
+                                <Col xs={10}>
+                                    <Button className="submit-add-lesson"
+                                        onClick={() => navigate(`/professor/courses`)}
+                                    >
+                                        Voltar
+                                    </Button>
+                                </Col>
+                                <Col xs={2}>
+                                    <Button className="submit-form mb-2 cancel-btn w-100"
+                                        onClick={() => rmcourse(id)}
+                                        style={{ height: "40px", width: "40px" }}
+                                    >
+                                        Excluir curso
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Col>
                         <Col lg={12} className="mt-2">
-                            <h2>Editar curso</h2>
+                            <Row>
+                                <Col xs={10}>
+                                    <h2>Editar curso</h2>
+                                </Col>
+                            </Row>
                         </Col>
                         <Col xs={12} lg={7}>
                             <Container fluid>
@@ -202,6 +243,7 @@ export const EditCourseScreen = () => {
                                                 type="text"
                                                 placeholder=""
                                                 value={formValores.title}
+                                                disabled={!editable}
                                                 onChange={setTitle}
                                                 isValid={estado.title}
                                                 isInvalid={estado.title !== undefined ? !estado.title : undefined}
@@ -218,6 +260,7 @@ export const EditCourseScreen = () => {
                                                 required
                                                 as="textarea"
                                                 value={formValores.description}
+                                                disabled={!editable}
                                                 onChange={setDescription}
                                                 isValid={estado.description}
                                                 isInvalid={estado.description !== undefined ? !estado.description : undefined}
@@ -234,6 +277,7 @@ export const EditCourseScreen = () => {
                                                 required
                                                 as="textarea"
                                                 value={formValores.content}
+                                                disabled={!editable}
                                                 onChange={setContent}
                                                 isValid={estado.content}
                                                 isInvalid={estado.content !== undefined ? !estado.content : undefined}
@@ -253,7 +297,7 @@ export const EditCourseScreen = () => {
                                         <label htmlFor="input-files-ftc" style={{ width: "100%" }}>
                                             <img
                                                 className={`image-for-input-file ${estado.files === false ? "error" : ""}`}
-                                                src={formValores.files.length ? formValores.files[0] : noImage}
+                                                src={!!formValores.files.length && !imageBeUpdated(formValores.files[0]) ? formValores.files[0] : formValores.files.length ? URL.createObjectURL(formValores.files[0]) : noImage}
                                                 style={{ width: "100%", objectFit: "contain", objectPosition: "center", cursor: "pointer", backgroundColor: "white" }}
                                             />
                                         </label>
@@ -262,12 +306,29 @@ export const EditCourseScreen = () => {
                                 </Row>
                                 <Row>
                                     <Col lg={12} className="mt-3 pr0" style={{ display: postFormSuccess !== PostFormStatus.NULL ? "none" : "block", paddingBottom: "5px" }}>
-                                        <Button className="submit-form register-btn w-100"
-                                            onClick={() => sendForm()}
-                                            style={{ height: "60px" }}
-                                        >
-                                            Editar
-                                        </Button>
+                                        {editable &&
+                                            <Button className="submit-form mb-2 cancel-btn w-100"
+                                                onClick={() => setEditable(false)}
+                                                style={{ height: "60px" }}
+                                            >
+                                                Cancelar
+                                            </Button>
+                                        }
+                                        {!editable ? (
+                                            <Button className="submit-form register-btn w-100"
+                                                onClick={() => setEditable(true)}
+                                                style={{ height: "60px" }}
+                                            >
+                                                Editar
+                                            </Button>
+                                        ) : (
+                                            <Button className="submit-form register-btn w-100"
+                                                onClick={() => sendForm()}
+                                                style={{ height: "60px" }}
+                                            >
+                                                Salvar
+                                            </Button>
+                                        )}
                                     </Col>
                                     <Col lg={12} className="col-form-status pr0" style={{ display: postFormSuccess === PostFormStatus.NULL ? "none" : "block" }}>
                                         <Alert className="alert mt-3 form-status"
@@ -286,7 +347,7 @@ export const EditCourseScreen = () => {
             {allowLearnings &&
                 <Container fluid className="container-learnings-metadados container-course">
                     <Row>
-                        <Col xs={12} lg={6}>
+                        <Col xs={12} lg={7}>
                             <Container fluid className="pl0 pr0">
                                 <Col xs={12}>
                                     <h2>Aprendizados</h2>
@@ -298,32 +359,38 @@ export const EditCourseScreen = () => {
                                                 className="input-learning"
                                                 value={learningValues[learning.id] || learning.name}
                                                 style={{ width: "90%" }}
-                                                disabled={editable}
+                                                disabled={editableLearning}
                                                 onChange={(event) => {
                                                     const updatedValues = [...learningValues];
                                                     updatedValues[learning.id] = event.target.value;
                                                     setLearningValues(updatedValues);
                                                 }}
                                             />
-                                            {editable ? (
+                                            {editableLearning ? (
                                                 <Button className="edit-learning"
-                                                    onClick={() => setEditable(false)}
+                                                    onClick={() => seteditableLearning(false)}
                                                 >
                                                     Editar
                                                 </Button>
-                                                ) : ( 
-                                                    <Button className="edit-learning"
-                                                        onClick={() => upLearning(learningValues[learning.id], learning.id)}
-                                                    >
-                                                        Salvar
-                                                    </Button>
-                                                )
+                                            ) : (
+                                                <Button className="edit-learning"
+                                                    onClick={() => upLearning({ name: learningValues[learning.id] }, learning.id)}
+                                                >
+                                                    Salvar
+                                                </Button>
+                                            )
                                             }
-                                            <Button className="remove-learning"
-                                            onClick={() => rmLearning(learning.id)}
+                                            {editableLearning && <Button className="remove-learning"
+                                                onClick={() => rmLearning(learning.id)}
                                             >
                                                 -
-                                            </Button>
+                                            </Button>}
+                                            {!editableLearning && <Button className="cancel-learning"
+                                                onClick={() => seteditableLearning(true)}
+                                            >
+                                                Cancelar
+                                            </Button>}
+
                                         </Col>
                                     ))}
                                     <Col xs={12}>
