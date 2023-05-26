@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 
 import './style.css'
 
-import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupItem } from 'react-bootstrap'
+import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupItem, Spinner } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShare } from '@fortawesome/free-solid-svg-icons'
-import { AdminAPI } from '../../api/admin'
+import { faCode, faEnvelope, faShare } from '@fortawesome/free-solid-svg-icons'
 import { HttpStatus } from '../../api/default'
+import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,6 +20,8 @@ const AdministrationPage = () => {
     const [codes, setCodes] = useState([]);
     const [enableBtn, setEnableBtn] = useState(true)
     const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingEmail, setIsLoadingEmail] = useState(false)
 
     const notifySuccess = () => toast.success("E-mail enviado com sucesso.", {
         position: "top-right",
@@ -50,13 +52,13 @@ const AdministrationPage = () => {
 
     const validate = () => {
         const errors = {};
-        const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        const regexemail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-        if (newCode == "") {
+        if (newCode === "") {
             errors.codigo = "Selecione um código para ser enviado."
         }
 
-        if (email == "") {
+        if (email === "") {
             errors.email = "Digite um email!";
         } else if (!regexemail.test(email)) {
             errors.email = "Digite um email com formato válido!";
@@ -66,41 +68,48 @@ const AdministrationPage = () => {
     }
 
     const sendToEmail = async () => {
-        if (validate() == 0) {
+        setIsLoadingEmail(true)
+        if (validate() === 0) {
             const response = await AdminAPI.sendCode(email, newCode, token);
-            if (response.status != HttpStatus.OK) {
+            if (response.status !== HttpStatus.OK) {
+                setIsLoadingEmail(false)
                 notifyError("Falha ao enviar código por e-mail.");
             } else {
+                setIsLoadingEmail(false)
                 notifySuccess()
             }
         }
+        setIsLoadingEmail(false)
     }
 
     
     const selectCode = (code) => {
-        // console.log("Código selecionado:", code)
         setNewCode(code)
     }
 
     const requestCodes = async () => {
         const listCodes = await AdminAPI.fetchCodes(token);
-        //console.log(listCodes)
-        if (listCodes.status != HttpStatus.OK) {
+
+        if (listCodes.status !== HttpStatus.OK) {
             notifyError("Falha ao requisitar lista de códigos.");
         }
         setCodes(listCodes.data);
     }
 
     const handleClick = async () => {
-        setEnableBtn(false);
+        setEnableBtn(false)
+        setIsLoading(true)
+        
         const response = await AdminAPI.createCode(token);
-        if (response.status != HttpStatus.OK) {
+
+        if (response.status !== HttpStatus.OK) {
             notifyError("Falha ao requisitar novo código.");
         }
-        setNewCode(response.data.code);
 
+        setNewCode(response.data.code);
+        
         requestCodes();
-        setTimeout(() => setEnableBtn(true), 1500);
+        setTimeout(() => {setEnableBtn(true);setIsLoading(false);}, 1500)
     }
 
     const createNewCode = () => {
@@ -151,7 +160,21 @@ const AdministrationPage = () => {
                                 <Row>
                                     <Col>
                                         <Form.Control readOnly type="text" placeholder='Clique no botão abaixo para gerar o código.' value={newCode} />
-                                        <Button disabled={!enableBtn} className='mt-2 btn-success' onClick={() => { createNewCode() }}>Gerar Código</Button>
+                                        <Button disabled={!enableBtn} className='mt-2 btn-success' onClick={() => { createNewCode() }}>
+                                            {isLoading ? (
+                                                <Spinner
+                                                className="me-2"
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                                />
+                                            ) : (
+                                                <FontAwesomeIcon icon={faCode} className="me-2" />
+                                            )}
+                                            Gerar Código
+                                        </Button>
                                     </Col>
                                 </Row>
                                 <div className='pt-4'></div>
@@ -165,7 +188,20 @@ const AdministrationPage = () => {
                                             className="form-control"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)} />
-                                        <Button className='mt-2 mb-1 btn-success' onClick={() => { sendToEmail() }}>Enviar</Button>
+                                        <Button className='mt-2 mb-1 btn-success' onClick={() => { sendToEmail() }}>
+                                            {isLoadingEmail ? (
+                                                <Spinner
+                                                    className="me-2"
+                                                    as="span"
+                                                    animation="border"
+                                                    size="sm"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                />
+                                                ) : (<FontAwesomeIcon icon={faEnvelope} className="me-2" />)
+                                            }
+                                            Enviar
+                                        </Button>
                                         <p className="ps-2 mb-0" style={{ color: "red" }}>{errors.email}</p>
                                         <p className="ps-2  mb-0" style={{ color: "red" }}>{errors.codigo}</p>
                                     </Col>

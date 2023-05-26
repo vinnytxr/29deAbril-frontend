@@ -2,13 +2,7 @@ import React, { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle'
 import Avatar from 'react-avatar'
-
-import './style.css'
-
-// componentes
 import CardCourses from '../../components/CardCourses'
-
-//Bootstrap
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Form from 'react-bootstrap/Form'
@@ -16,15 +10,13 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Navbar from 'react-bootstrap/Navbar'
-import { ListGroup } from 'react-bootstrap'
-
-//Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { AuthAPI } from '../../api/auth-api'
-import { HttpResponse, HttpStatus } from '../../api/default'
+import { HttpStatus } from '../../api/default'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { Link } from 'react-router-dom'
+import './style.css'
 
 function Home() {
     const [data, setData] = useState({})
@@ -34,15 +26,11 @@ function Home() {
 
     const getCourses = async (e) => {
         const responseCourses = await AuthAPI.getCoursesData()
-        if (responseCourses.status == HttpStatus.OK) {
+        if (responseCourses.status === HttpStatus.OK) {
             setData(responseCourses.data)
             setIsFetched(true)
         }
     }
-
-    useEffect(() => {
-        console.log('data home: ', data, logged, user)
-    }, [data, logged, user])
 
     useEffect(() => {
         getCourses()

@@ -1,11 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
-
-import { Col, Container, Navbar, Row, Pagination } from 'react-bootstrap'
+import { Col, Container, Row, Pagination } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
-import { useAuthContext } from '../../contexts/AuthContext';
 import CardCourses from '../../components/CardCourses'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'

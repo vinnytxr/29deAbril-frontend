@@ -1,6 +1,3 @@
-
-
-import { useContext } from "react";
 import { useAuthContext } from "./AuthContext";
 
 const hasRoles = (context, roles) => {

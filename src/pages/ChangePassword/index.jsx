@@ -2,19 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLong, faCheck } from '@fortawesome/free-solid-svg-icons'
-import { Form } from 'react-bootstrap';
+import { Form, Spinner } from 'react-bootstrap';
 import { HttpStatus } from "../../api/default";
 import { PasswordAPI } from "../../api/password"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-// Style
-import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
-
-
-
-
+import './style.css'
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();
@@ -24,6 +18,7 @@ const ChangePasswordPage = () => {
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const notifySuccess = (texto) => toast.success(texto, {
         position: "top-right",
@@ -35,6 +30,7 @@ const ChangePasswordPage = () => {
         progress: undefined,
         theme: "light",
     });
+
     const notifyError = (texto) => toast.error(texto, {
         position: "top-right",
         autoClose: 5000,
@@ -58,19 +54,24 @@ const ChangePasswordPage = () => {
         setFormValues({ ...formValues, [name]: value });
     }
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmit(true);
-        if (errorsC == 0) {
+        setIsLoading(true);
+
+        if (errorsC === 0) {
             const response = await PasswordAPI.fetchChange(formValues.oldPassword, formValues.newPassword, token);
-            if (response.status == HttpStatus.OK) {
+            if (response.status === HttpStatus.OK) {
                 notifySuccess("Senha alterada com sucesso.");
+                setIsLoading(false)
             } else {
                 notifyError(response.data.error);
+                setIsLoading(false)
             }
         }
+        
+        setIsLoading(false)
     }
 
 
@@ -92,7 +93,7 @@ const ChangePasswordPage = () => {
 
         if (!values.newPasswordConfirm) {
             errors.newPasswordConfirm = "Digite sua nova senha novamente!";
-        } else if (values.newPassword != values.newPasswordConfirm) {
+        } else if (values.newPassword !== values.newPasswordConfirm) {
             errors.newPasswordConfirm = "A senha digitada na confirmação deve ser idêntica a nova senha!";
         }
 
@@ -152,7 +153,21 @@ const ChangePasswordPage = () => {
                         <p className="mb-3 ps-1" style={{ color: "red" }}>{formErrors.newPasswordConfirm}</p>
                         <div className="row mt-3">
                             <div className="col text-start">
-                                <button className="btn btn-success"><FontAwesomeIcon icon={faCheck} className="me-2" />Confirmar alteração</button>
+                                <button className="btn btn-success" disabled={isLoading}>
+                                {isLoading ? (
+                                        <Spinner
+                                        className="me-2"
+                                        as="span"
+                                        animation="border"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                        />
+                                    ) : (
+                                        <FontAwesomeIcon icon={faCheck} className="me-2" />
+                                    )}
+                                    Confirmar alteração
+                                </button>
                             </div>
                         </div>
                     </Form>

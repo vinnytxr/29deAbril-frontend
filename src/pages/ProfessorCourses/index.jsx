@@ -1,6 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
-
 import { Col, Container, Navbar, Row, Pagination } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { AuthAPI } from '../../api/auth-api'
@@ -10,10 +8,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import "./index.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
-
-const NotFound = () => (
-    <h1>Nenhum curso cadastrado por este professor !</h1>
-)
 
 const ProfessorCoursesPage = () => {
     const [userData, setUserData] = useState({ name: "" });
