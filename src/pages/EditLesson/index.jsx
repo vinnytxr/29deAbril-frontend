@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import { Container, Col, Row, Form, Button, Alert, Modal } from 'react-bootstrap';
 import { HttpStatus, LessonAPI } from "./api";
 import { cut } from "../../tools/string";
+import { useAuthContext } from "../../contexts/AuthContext";
 import noImage from './no-image.png'
 import './style.css'
 
@@ -36,6 +37,8 @@ export const EditLessonScreen = () => {
     };
 
     const { id } = useParams();
+
+    const { user } = useAuthContext();
 
     const [estado, setEstado] = useState({
         title: undefined,
@@ -181,7 +184,7 @@ export const EditLessonScreen = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    return (
+    return (lessonExists === false) ? <LessonNotFound /> : lessonExists && !!user ? (
         <section className="box-course pb-1 pt-1">
             <Container fluid className="container-new-lesson container-lesson mb-5">
                 <Form>
@@ -349,8 +352,8 @@ export const EditLessonScreen = () => {
                                         <Alert className="alert mt-3 form-status"
                                             variant={
                                                 postFormSuccess === PostFormStatus.ENVIADO ? 'success' : postFormSuccess === PostFormStatus.ENVIANDO ? 'primary' : 'danger'}>
-                                            {postFormSuccess === PostFormStatus.ENVIADO ? 'Aula cadastrada com sucesso !' :
-                                                postFormSuccess === PostFormStatus.ENVIANDO ? 'Enviando ...' : 'Houve um erro ao cadastrar aula, por favor, tente novamente mais tarde!'}
+                                            {postFormSuccess === PostFormStatus.ENVIADO ? 'Alteração da aula realizada com sucesso !' :
+                                                postFormSuccess === PostFormStatus.ENVIANDO ? 'Enviando ...' : 'Houve um erro ao editar aula, por favor, tente novamente mais tarde!'}
                                         </Alert>
                                     </Col>
                                 </Row>
@@ -360,7 +363,9 @@ export const EditLessonScreen = () => {
                 </Form>
             </Container>
         </section >
-    );
+    ) : <></>;
 }
 
 export default EditLessonScreen
+
+const LessonNotFound = () => < h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Ops! Você está perdido?<br />Esta aula não existe</h2>;
