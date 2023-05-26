@@ -3,8 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { Form } from 'react-bootstrap';
-import { AuthAPI } from "../../api/auth-api";
+import { PasswordAPI } from "../../api/password";
 import { AUTH_DEBUG, BASE_URL, HttpStatus } from "../../api/default";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Style
 import './style.css'
@@ -18,6 +20,27 @@ const PasswordRecoveryPage = () => {
     const [isSubmit, setIsSubmit] = useState(false)
     var errorsC = 0;
 
+    const notifySuccess = (texto) => toast.success(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+    const notifyError = (texto) => toast.error(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+
 
     useEffect(() => {
         if (isSubmit)
@@ -29,7 +52,8 @@ const PasswordRecoveryPage = () => {
         setFormValues({ ...formValues, [name]: value });
     }
 
-    const fetchRecovery = async () => {
+
+    const fetchRecoveryT = async () => {
         const url = `${BASE_URL}/generate-password`
         try {
             const options = {
@@ -61,11 +85,11 @@ const PasswordRecoveryPage = () => {
         setIsSubmit(true);
         if (errorsC == 0) {
             //console.log("Requisição executada.")
-            const response = await fetchRecovery()
+            const response = await PasswordAPI.fetchRecovery(formValues.email)
             if (response.status == HttpStatus.OK) {
-               alert("Requisição para alteração de senha realizada!")
+                notifySuccess("Requisição para alteração de senha realizada!")
             } else {
-                alert("Falha em requisitar recuperação de senha.")
+                notifyError(`Falha em requisitar recuperação de senha.\n ${response.data.message}`)
             }
         }
     }
