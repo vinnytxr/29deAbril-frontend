@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faCheck,
-} from '@fortawesome/free-solid-svg-icons'
 
 import './style.css'
-import { Form, Spinner } from 'react-bootstrap'
-import { BASE_URL } from '../../api/default'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { Form, Spinner } from "react-bootstrap";
+import { HttpStatus } from "../../api/default";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { AuthAPI } from "../../api/auth-api";
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+
 
 export default function RegisterScreen() {
   const intialValues = {
@@ -58,79 +58,63 @@ export default function RegisterScreen() {
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
-    if (name === 'cpf') {
-      // Remove tudo que não é número
-      if (value.length > 14) {
-        return
-      }
-      const formattedValue = value.replace(/\D/g, '')
+    if (name === "cpf") {
+        if (value.length > 14) {
+            return;
+        }
+        const formattedValue = value.replace(/\D/g, '');
 
-      setFormValues({ ...formValues, [name]: formattedValue })
+        setFormValues({ ...formValues, [name]: formattedValue });
     } else {
-      setFormValues({ ...formValues, [name]: value })
+        setFormValues({ ...formValues, [name]: value });
     }
   }
 
   useEffect(() => {
+    const fetchFunction = async () => {
+    setIsLoading(true)
     if (Object.keys(formErrors).length === 0 && isSubmit) {
-      setIsLoading(true)
-      const url = `${BASE_URL}/user/`
-      //console.log(JSON.stringify(formValues))// CAHAMAR A FUNÇÃO DE CADASTRO AQUI ======================================================================================
-      fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(formValues),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
+        const response = await AuthAPI.fetchRegister(formValues);
+        if (response.status === HttpStatus.OK) {
+            notifySuccess("Registrado com sucesso!");
             setIsLoading(false)
-            notifyError('Falha ao se comunicar com o servidor.')
-          } else {
-            notifySuccess('Registrado com sucesso!')
             navigate('/login')
-          }
-          return response.json()
-        })
+        } else {
+          setIsLoading(false)
+          notifyError(response.data.email[0]);
+        }
     }
-  }, [isSubmit])
+  }
+  fetchFunction();
+  }, [isSubmit]);
 
   useEffect(() => {
     if (isSubmit) setFormErrors(validate(formValues))
   }, [formValues])
 
-  useEffect(() => {console.log({isLoading})}, [isLoading])
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setFormErrors(validate(formValues))
-    setIsLoading(true)
-    setIsSubmit(true)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormErrors(validate(formValues));
+    setIsSubmit(true);
+    setIsLoading(true);
 
     if (Object.keys(formErrors).length === 0 && isSubmit) {
-      const url = `${BASE_URL}/user/`
-      fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(formValues),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
+        const response = await AuthAPI.fetchRegister(formValues);
+        if (response.status === HttpStatus.OK) {
+            notifySuccess("Registrado com sucesso!");
             setIsLoading(false)
-            notifyError('Falha ao se comunicar com o servidor.')
-          } else {
-            notifySuccess('Registrado com sucesso!')
             navigate('/login')
-          }
-          return response.json()
-        })
-    }
+        } else {
+            setIsLoading(false)
+            notifyError(response.data.email[0]);
+        }
+
+      }
   }
+
+
 
   const validarCPF = (cpf) => {
     // Elimina CPFs inválidos conhecidos
@@ -179,53 +163,53 @@ export default function RegisterScreen() {
     return true
   }
 
+
   const validate = (values) => {
-    console.log('Validade date:', values.birth)
-    const errors = {}
-    const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
-    const regexcpf = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/
+        //console.log("Validade date:", values.birth)
+        const errors = {};
+        const regexemail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        const regexcpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 
-    if (!values.name) {
-      errors.name = 'Digite um nome!'
+        if (!values.name) {
+            errors.name = "Digite um nome!";
+        }
+
+        if (!values.email && isSubmit) {
+            errors.email = "Digita um email!";
+        } else if (!regexemail.test(values.email)) {
+            errors.email = "Digite um email com formato válido!";
+        }
+
+        if (!values.password) {
+            errors.password = "Digite uma senha!";
+        } else if (values.password.length < 4) {
+            errors.password = "Senha precisa ter mais de 4 caracteres!";
+        } else if (values.password.length > 16) {
+            errors.password = "Senha não pode ter mais que 16 caracteres!";
+        }
+
+        if (!values.birth) {
+            errors.birth = "Selecione uma data!";
+        } else {
+            let date1 = new Date(values.birth)
+            const yearsAgo = new Date();
+            yearsAgo.setFullYear(yearsAgo.getFullYear() - 13);
+            if (date1 > yearsAgo) {
+                errors.birth = "O usuário precisa ter mais de 13 anos para realizar o cadastro."
+            }
+        }
+
+        if (!values.cpf) {
+            errors.cpf = "Digite um cpf!";
+        } else if (!regexcpf.test(formatCPF(values.cpf))) {
+            errors.cpf = "Digite um cpf com formato válido!";
+        } else if (!validarCPF(formValues.cpf.replace(/\D/g, ''))) {
+            errors.cpf = "Número do cpf é inválido!";
+        }
+
+        setIsLoading(false)
+        return errors;
     }
-
-    if (!values.email && isSubmit) {
-      errors.email = 'Digita um email!'
-    } else if (!regexemail.test(values.email)) {
-      errors.email = 'Digite um email com formato válido!'
-    }
-
-    if (!values.password) {
-      errors.password = 'Digite uma senha!'
-    } else if (values.password.length < 4) {
-      errors.password = 'Senha precisa ter mais de 4 caracteres!'
-    } else if (values.password.length > 16) {
-      errors.password = 'Senha não pode ter mais que 16 caracteres!'
-    }
-
-    if (!values.birth) {
-      errors.birth = 'Selecione uma data!'
-    } else {
-      let date1 = new Date(values.birth)
-      const yearsAgo = new Date()
-      yearsAgo.setFullYear(yearsAgo.getFullYear() - 13)
-      if (date1 > yearsAgo) {
-        errors.birth =
-          'O usuário precisa ter mais de 13 anos para realizar o cadastro.'
-      }
-    }
-
-    if (!values.cpf) {
-      errors.cpf = 'Digite um cpf!'
-    } else if (!regexcpf.test(formatCPF(values.cpf))) {
-      errors.cpf = 'Digite um cpf com formato válido!'
-    } else if (!validarCPF(formValues.cpf.replace(/\D/g, ''))) {
-      errors.cpf = 'Número do cpf é inválido!'
-    }
-
-    setIsLoading(false)
-    return errors
-  }
 
   return (
     <>

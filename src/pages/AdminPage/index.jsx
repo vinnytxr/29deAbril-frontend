@@ -6,8 +6,12 @@ import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupIt
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck, faCode, faShare } from '@fortawesome/free-solid-svg-icons'
-import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
+import { faCode, faShare } from '@fortawesome/free-solid-svg-icons'
+import { HttpStatus } from '../../api/default'
+import { AdminAPI } from '../../api/admin'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const AdministrationPage = () => {
     const { user, token } = useAuthContext();
@@ -18,64 +22,42 @@ const AdministrationPage = () => {
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false)
 
+    const notifySuccess = () => toast.success("E-mail enviado com sucesso.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+
+    const notifyError = (texto) => toast.error(texto, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
+
     useEffect(() => {
         requestCodes()
     }, []);
 
-    const fetchCodes = async () => {
-        const response = await fetch(`${BASE_URL}/invitation/`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'jwt': token,
-                Accept: 'application/json'
-            },
-        })
-
-        if (response.ok) {
-            const data = await response.json()
-            return data
-        } else {
-            return []
-        }
-    }
-
-    const createCode = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append("jwt", token);
-        myHeaders.append("Content-Type", "application/json");
-
-        var raw = JSON.stringify({
-            "code": "",
-            "professor": null
-        });
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow'
-        };
-
-        const response = await fetch(`${BASE_URL}/invitation/`, requestOptions)
-        if (response.ok) {
-            const data = await response.json()
-            return data.code
-        } else {
-            return ""
-        }
-
-    }
 
     const validate = () => {
         const errors = {};
-        const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        const regexemail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-        if (newCode == "") {
+        if (newCode === "") {
             errors.codigo = "Selecione um código para ser enviado."
         }
 
-        if (email == "") {
+        if (email === "") {
             errors.email = "Digite um email!";
         } else if (!regexemail.test(email)) {
             errors.email = "Digite um email com formato válido!";
@@ -84,63 +66,49 @@ const AdministrationPage = () => {
         return Object.keys(errors).length
     }
 
-    const sendCode = async () => {
-        if (validate() == 0) {
-            console.log("Válido")
-            const url = `${BASE_URL}/user/send-email/`
-            try {
-                const options = {
-                    method: 'PATCH',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json'
-                    },
-                    body: JSON.stringify({ email: email, code: newCode })
-                }
-
-                const response = await fetch(url, options);
-                if (response.ok) {
-                    const data = await response.json();
-                    AUTH_DEBUG && console.log("AuthAPI::send code(): ", data.token);
-                    alert("E-mail enviado com sucesso!")
-                    return new HttpResponse(HttpStatus.OK, data);
-                } else {
-                    alert("Falha ao enviar e-mail!")
-                    throw new Error("Error on send code()");
-                }
-            } catch (error) {
-                console.warn(error)
-                return new HttpResponse(HttpStatus.ERROR, null);
+    const sendToEmail = async () => {
+        if (validate() === 0) {
+            const response = await AdminAPI.sendCode(email, newCode, token);
+            if (response.status !== HttpStatus.OK) {
+                notifyError("Falha ao enviar código por e-mail.");
+            } else {
+                notifySuccess()
             }
         }
-        console.log(errors)
-        console.log(email)
     }
 
+    
     const selectCode = (code) => {
-        console.log("Código selecionado:", code)
         setNewCode(code)
     }
 
     const requestCodes = async () => {
-        const response = await fetchCodes()
-        setCodes(response)
+        const listCodes = await AdminAPI.fetchCodes(token);
 
+        if (listCodes.status !== HttpStatus.OK) {
+            notifyError("Falha ao requisitar lista de códigos.");
+        }
+        setCodes(listCodes.data);
     }
 
     const handleClick = async () => {
         setEnableBtn(false)
         setIsLoading(true)
-        const response = await createCode()
-        setNewCode(response)
-        requestCodes()
+        
+        const response = await AdminAPI.createCode(token);
+
+        if (response.status !== HttpStatus.OK) {
+            notifyError("Falha ao requisitar novo código.");
+        }
+
+        setNewCode(response.data.code);
+        
+        requestCodes();
         setTimeout(() => {setEnableBtn(true);setIsLoading(false);}, 1500)
     }
 
     const createNewCode = () => {
-        handleClick()
-
+        handleClick();
     }
 
 
@@ -215,7 +183,7 @@ const AdministrationPage = () => {
                                             className="form-control"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)} />
-                                        <Button className='mt-2 mb-1 btn-success' onClick={() => { sendCode() }}>Enviar</Button>
+                                        <Button className='mt-2 mb-1 btn-success' onClick={() => { sendToEmail() }}>Enviar</Button>
                                         <p className="ps-2 mb-0" style={{ color: "red" }}>{errors.email}</p>
                                         <p className="ps-2  mb-0" style={{ color: "red" }}>{errors.codigo}</p>
                                     </Col>
@@ -245,7 +213,7 @@ const AdministrationPage = () => {
                                                     <span className='box'>
                                                         <span className={`flag ${code.professor !== null ? "flag-used" : "flag-not-used"}`}>{code.professor !== null ? "utilizado" : "livre"}</span>
                                                     </span>
-                                                    {code.professor === null &&<span onClick={() => selectCode(code.code)} className='share'>Selecionar <FontAwesomeIcon
+                                                    {code.professor === null && <span style={{ cursor: "pointer" }} onClick={() => selectCode(code.code)} className='share'>Selecionar <FontAwesomeIcon
                                                         style={{ color: 'white', fontSize: '16' }}
                                                         icon={faShare}
                                                     /></span>}

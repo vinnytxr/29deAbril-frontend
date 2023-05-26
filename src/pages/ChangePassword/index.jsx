@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLong, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { Form, Spinner } from 'react-bootstrap';
-import { AUTH_DEBUG, BASE_URL, HttpStatus } from "../../api/default";
+import { HttpStatus } from "../../api/default";
+import { PasswordAPI } from "../../api/password"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -11,7 +12,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
 import { HttpResponse } from "../CreateCourse/api";
-  
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();
@@ -64,43 +64,19 @@ const ChangePasswordPage = () => {
         setIsLoading(true);
 
         if (errorsC === 0) {
-            const response = await fetchChange()
+            const response = await PasswordAPI.fetchChange(formValues.oldPassword, formValues.newPassword, token);
             if (response.status === HttpStatus.OK) {
                 notifySuccess("Senha alterada com sucesso.");
                 setIsLoading(false)
-            }else{
-                notifyError("Falha em alterar senha.");
+            } else {
+                notifyError(response.data.error);
                 setIsLoading(false)
             }
         }
+        
         setIsLoading(false)
     }
 
-    const fetchChange = async () => {
-        const url = `${BASE_URL}/change-password`
-        try {
-            const options = {
-                method: 'PUT',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json', 
-                    'jwt': token
-                },
-                body: JSON.stringify({ old_password: formValues.oldPassword, new_password: formValues.newPassword })
-            }
-
-            const response = await fetch(url, options);
-            if (response.ok) {
-                const data = await response.json();
-                AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
-                return new HttpResponse(HttpStatus.OK, data);
-            } else throw new Error("Error on ChangePassword()");
-        } catch (error) {
-            console.warn(error)
-            return new HttpResponse(HttpStatus.ERROR, null);
-        }
-    }
 
     const validate = (values) => {
         const errors = {};
@@ -138,7 +114,7 @@ const ChangePasswordPage = () => {
                                 <img style={{ width: "11em" }} onClick={() => { navigate("/") }} src="https://i.ibb.co/r3QPmSt/logo.png" alt="logo" border="0" />
                             </div>
                             <div className="col d-flex justify-content-end">
-                                <p className="mt-3"><Link className="fw-bold link-limpo" style={{ color: "#1dbfb0" }} to="/perfil"><FontAwesomeIcon icon={faArrowLeftLong} className="me-1"/> Voltar!</Link></p>
+                                <p className="mt-3"><Link className="fw-bold link-limpo" style={{ color: "#1dbfb0" }} to="/perfil"><FontAwesomeIcon icon={faArrowLeftLong} className="me-1" /> Voltar!</Link></p>
                             </div>
                         </div>
                     </div>
