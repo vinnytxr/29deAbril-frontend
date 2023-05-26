@@ -1,53 +1,42 @@
-import React, { useState, useEffect } from "react";
-import Card from 'react-bootstrap/Card';
-import "./course_details.css"
-
-// Bootstrap
-import "bootstrap/dist/css/bootstrap.min.css"
-
-// Components
-import CardDetails from "../../components/CardDetails/card_details"
-import CheckDetails from "../../components/CheckDetails/check_details"
-import CheckCourseInformation from "../../components/CheckCourseInformation/check_course_information"
-import StarRating from "../../components/StarRating/star_rating";
-import AccordionListCourse from "../../components/AccordionList/accordion_list";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button, Container } from "react-bootstrap";
-import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from "../../api/default";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookmark } from "@fortawesome/free-solid-svg-icons";
-import { useAuthContext } from "../../contexts/AuthContext";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-// Icons
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-//import { faHeart, faShareNodes} from '@fortawesome/free-solid-svg-icons'
+import React, { useState, useEffect } from 'react'
+import Card from 'react-bootstrap/Card'
+import './course_details.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import CardDetails from '../../components/CardDetails/card_details'
+import CheckDetails from '../../components/CheckDetails/check_details'
+import CheckCourseInformation from '../../components/CheckCourseInformation/check_course_information'
+import StarRating from '../../components/StarRating/star_rating'
+import AccordionListCourse from '../../components/AccordionList/accordion_list'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Button, Container } from 'react-bootstrap'
+import { BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBookmark } from '@fortawesome/free-solid-svg-icons'
+import { useAuthContext } from '../../contexts/AuthContext'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function CourseDetails() {
+  const { token, logged } = useAuthContext()
+  const [data, setData] = useState({})
+  const [isFavorited, setFavorited] = useState(false)
 
-  const { token, logged } = useAuthContext();
-  const [data, setData] = useState({});
-  const [isFavorited, setFavorited] = useState(false);
-  const [isFetched, setIsFetched] = useState(false);
-  const notify = (texto) => toast.success(texto, {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-  });
+  const notify = (texto) =>
+    toast.success(texto, {
+      position: 'top-right',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    })
 
-
-  const navigate = useNavigate();
-  const { id } = useParams(); //Alterar o curso que deseja visualizar, quando for integrar vou deixar direto na função
+  const navigate = useNavigate()
+  const { id } = useParams()
 
   useEffect(() => {
-    // fetch data
-
     if (id) {
       const dataFetch = async () => {
         try {
@@ -55,44 +44,40 @@ function CourseDetails() {
             method: 'GET',
             headers: {
               'Content-type': 'application/json; charset=UTF-8',
-              'jwt': token
-            }
+              jwt: token,
+            },
           })
-          if (response.status < 200 || response.status >= 300) throw new Error(`Curso não encontrado ${id}`)
-          //console.log(response)
-          const data = await response.json();
-          // set state when the data received
+          if (response.status < 200 || response.status >= 300)
+            throw new Error(`Curso não encontrado ${id}`)
+          const data = await response.json()
           if (data.lessons && data.lessons.length) {
-            data.lessons = data.lessons.sort((lessonA, lessonB) => lessonA.id < lessonB.id ? -1 : 1);
+            data.lessons = data.lessons.sort((lessonA, lessonB) =>
+              lessonA.id < lessonB.id ? -1 : 1
+            )
           }
-          //console.log(data)
-          setData({ ...data });
+          setData({ ...data })
           setFavorited(data.favorited)
-          setIsFetched(true);
         } catch (err) {
-          console.log("ERRO")
-          navigate("/404-not-found")
+          navigate('/404-not-found')
         }
       }
-      // console.log(data);
-      dataFetch();
+      dataFetch()
     }
+  }, [id])
 
-  }, [id]);
-
-  useEffect(() => { console.log(data) }, [data])
-
-  const manageBokomark = () => {
+  const manageBookmark = () => {
     if (isFavorited) {
-      deleteBookmark()
       setFavorited(false)
-      notify("Curso removido das suas marcações.");
+      deleteBookmark()
+      notify('Curso removido das suas marcações.')
     } else {
-      notify("Curso adicionado as suas marcações.");
-      saveBookmark()
+      notify('Curso adicionado as suas marcações.')
       setFavorited(true)
+      saveBookmark()
     }
   }
+
+  useEffect(() => {console.log({isFavorited})}, [isFavorited])
 
   const saveBookmark = async () => {
     const url = `${BASE_URL}/courses/favorites/${data.id}`
@@ -103,20 +88,18 @@ function CourseDetails() {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          'jwt': token
-        }
+          jwt: token,
+        },
       }
 
-      const response = await fetch(url, options);
+      const response = await fetch(url, options)
       if (response.ok) {
-        const data = await response.json();
-        //alert("Curso adicionado as marcações.")
-        //AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
-        return new HttpResponse(HttpStatus.OK, data);
-      } else throw new Error("Error on ChangePassword()");
+        const data = await response.json()
+        return new HttpResponse(HttpStatus.OK, data)
+      } else throw new Error('Error on SaveBookmark')
     } catch (error) {
       console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null);
+      return new HttpResponse(HttpStatus.ERROR, null)
     }
   }
 
@@ -129,19 +112,16 @@ function CourseDetails() {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          'jwt': token
-        }
+          jwt: token,
+        },
       }
-
-      const response = await fetch(url, options);
+      const response = await fetch(url, options)
       if (response.ok) {
-        //alert("Curso removido das marcações.")  
-        //AUTH_DEBUG && console.log("AuthAPI::ChangePassword(): ", data.token);
-        return new HttpResponse(HttpStatus.OK);
-      } else throw new Error("Error on ChangePassword()");
+        return new HttpResponse(HttpStatus.OK)
+      } else throw new Error('Error on ChangePassword()')
     } catch (error) {
       console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null);
+      return new HttpResponse(HttpStatus.ERROR, null)
     }
   }
 
@@ -151,46 +131,45 @@ function CourseDetails() {
         <div className="col mt-5">
           <Card className="custom-bg">
             <div className="row">
-              <div className="col-8">
-                <div className="row mt-4 mx-2 fw-bold">
-
+              <div className="col-8 mt-2 mx-1">
                   <Card.Title>
-                    {logged && <Button onClick={() => manageBokomark()} variant="outline-light" className="mb-2">
-                      <FontAwesomeIcon style={{ fontSize: '18px' }} icon={faBookmark} />
-                    </Button>}
-
-                    <p>{data.title}</p>
+                    {logged && (
+                      <Button
+                        onClick={() => manageBookmark()}
+                        variant="outline-light"
+                        className="button-bookmark"
+                      >
+                        <FontAwesomeIcon
+                          color={isFavorited ? 'gold' : 'lightwhite'}
+                          opacity={isFavorited ? 1 : 0.7}
+                          icon={faBookmark}
+                        />
+                      </Button>
+                    )}
                   </Card.Title>
-
+                <div className="row mt-4 mx-2 fw-bold fs-4">
+                    <p>{data.title}</p>
                 </div>
                 <div className="row mt-5 mx-2">
-                  <Card.Text>
-                    {data.description}
-                  </Card.Text>
+                  <Card.Text>{data.description}</Card.Text>
                 </div>
                 <div className="row mt-5 mx-2">
                   <StarRating value={4.6} />
                 </div>
                 <div className="row">
                   <div className="col">
-                    <Card.Text className="mt-5 ms-3">
-                      Professor: {data?.professor?.name}
+                    <Card.Text className="mt-5 ms-3 mb-2">
+                      Professor: <strong className='mx-2'>{data?.professor?.name}</strong>
                     </Card.Text>
                   </div>
-                  {/* <div className="col mt-5 mx-5">
-                      <FontAwesomeIcon style={{ color: "#ffffff", fontSize: "20" }} icon={faHeart} className="mx-5" />
-                    </div>
-                    <div className="col mt-5">
-                      <FontAwesomeIcon style={{ color: "#ffffff", fontSize: "20" }} icon={faShareNodes}/> 
-                    </div> */}
                 </div>
               </div>
 
-              {data && data?.students &&
+              {data && data?.students && (
                 <div className="col d-flex justify-content-center align-items-center my-2">
                   <CardDetails image={data.banner} course={data} />
                 </div>
-              }
+              )}
             </div>
           </Card>
 
@@ -203,16 +182,13 @@ function CourseDetails() {
                   </Card.Text>
                 </div>
                 <div className="row mx-1">
-                  <Card.Text className="my-2">
-                    {data.content}
-                  </Card.Text>
+                  <Card.Text className="my-2">{data.content}</Card.Text>
                 </div>
               </Card>
             </div>
           </div>
 
-
-          {data?.learnings?.length ?
+          {data?.learnings?.length ? (
             <div className="row">
               <div className="col mt-3">
                 <Card className="body-card">
@@ -224,9 +200,10 @@ function CourseDetails() {
                   <CheckDetails cdetails={data} />
                 </Card>
               </div>
-            </div> : <></>
-          }
-
+            </div>
+          ) : (
+            <></>
+          )}
 
           <div className="row">
             <div className="col mt-3">
@@ -245,7 +222,7 @@ function CourseDetails() {
 
           <div className="row">
             <div className="col mt-3">
-              {data?.lessons?.length ?
+              {data?.lessons?.length ? (
                 <Card className="body-card ">
                   <div className="row">
                     <Card.Text className="my-2 ms-3 fw-bold">
@@ -255,14 +232,16 @@ function CourseDetails() {
                       <AccordionListCourse sessions={data} />
                     </div>
                   </div>
-                </Card> : <></>
-              }
+                </Card>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>
       </div>
     </Container>
-  );
-};
+  )
+}
 
 export default CourseDetails

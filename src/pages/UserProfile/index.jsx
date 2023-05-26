@@ -16,7 +16,6 @@ import { toast } from 'react-toastify'
 
 const UserProfileScreen = () => {
   const navigate = useNavigate()
-  const [selectedFileTmp, setSelectedFile] = useState(null);
   const [editando, setEditando] = useState(false)
   const [aboutText, setAboutText] = useState();
   const [newName, setNewName] = useState();
@@ -24,8 +23,8 @@ const UserProfileScreen = () => {
   const { logged, user, token, setToken, refreshUserOnContext } = useAuthContext();
   const [authorizationCode, setAuthorizationCode] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [showModalNotification, setShowModalNotification] = useState(false);
   const [imagesToUpdate, setImagesToUpdate] = useState()
+
   const notifyError = (texto) => toast.error(texto, {
     position: "top-right",
     autoClose: 5000,
@@ -52,7 +51,7 @@ const UserProfileScreen = () => {
     const fetchFunction = async () => {
       if (imagesToUpdate && imagesToUpdate.length) {
         const response = await ProfileAPI.updateUserPicture(imagesToUpdate[0], user.id);
-        if (response.status != HttpStatus.OK) {
+        if (response.status !== HttpStatus.OK) {
           notifyError("Falha na alteração da foto de perfil.")
         } else {
           refreshUserOnContext()
@@ -80,7 +79,7 @@ const UserProfileScreen = () => {
     e.preventDefault();
     const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
 
-    if (response.status != HttpStatus.OK) {
+    if (response.status !== HttpStatus.OK) {
       setAuthorizationCode('')
       notifyError("Falha ao alterar permissões.")
     } else {
@@ -101,12 +100,11 @@ const UserProfileScreen = () => {
   }
 
   const salvarAlteracoes = async () => {
-    if (Object.keys(validateEditing()).length == 0 && editando) {
+    if (Object.keys(validateEditing()).length === 0 && editando) {
       setEditando(false)
-      if (user.name != newName || aboutText != user.about) {
-        //console.log("Válidado, enviar para o banco.")
+      if (user.name !== newName || aboutText !== user.about) {
         const response = await ProfileAPI.fetchEdit(newName, aboutText, user.id)
-        if (response.status != HttpStatus.OK) {
+        if (response.status !== HttpStatus.OK) {
           notifyError("Falha na edição de perfil.");
         } else {
           notifySuccess("Perfil alterado com sucesso.");
@@ -130,7 +128,7 @@ const UserProfileScreen = () => {
       errors.newName = "O nome não deve ter mais do que 50 caracteres!";
     }
 
-    if (aboutText.length == 0) {
+    if (aboutText.length === 0) {
       errors.about = "Digite algo sobre você!";
     } else if (aboutText.length > 150) {
       errors.about = "Texto 'sobre' é muito longo!";
@@ -172,19 +170,17 @@ const UserProfileScreen = () => {
             <Row className='align-items-center'>
               <Col>
                 <Navbar.Text>
-                  <Dropdown>
-                    <DropdownToggle className='gear' style={{ color: '#3f3f3f', fontSize: '20', backgroundColor: 'white' }}>
-                      <FontAwesomeIcon
-                        style={{ color: '#3f3f3f', fontSize: '20' }}
-                        icon={faBars}
-                      />
-                    </DropdownToggle>
-                    <DropdownMenu>
-                      <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
-                      <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
-                    </DropdownMenu>
-
-                  </Dropdown>
+                    <Dropdown>
+                      <DropdownToggle className='gear'>
+                        <FontAwesomeIcon
+                          icon={faBars}
+                        />
+                      </DropdownToggle>
+                      <DropdownMenu>
+                        <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
+                        <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
+                      </DropdownMenu>
+                    </Dropdown>
                 </Navbar.Text>
               </Col>
               <Col>
@@ -220,7 +216,7 @@ const UserProfileScreen = () => {
                       overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
                     >
                       <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
-                        {user.photo ? <img src={user.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} />
+                        {user.photo ? <img src={user.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
                           : <Avatar
                             name={user.name && user.name.split(' ')[0]}
                             color="#0f5b7a"
@@ -231,11 +227,6 @@ const UserProfileScreen = () => {
                           />}
                       </label>
                     </OverlayTrigger>
-                    {selectedFileTmp && (
-                      <div>
-                        <p>Selected file: {selectedFileTmp.name}</p>
-                      </div>
-                    )}
                   </div>
                   <Col className="d-flex align-items-center gap-1">
 
@@ -307,7 +298,7 @@ const UserProfileScreen = () => {
               </Col>
             </Row>
             <Row className="mb-4">
-              {Object.keys(formErrors).length != 0 && editando && <> <p className="ps-2 mb-1" style={{ color: "red" }}>{formErrors.newName}</p><p className="ps-2 mb-1" style={{ color: "red" }}>{formErrors.about}</p></>}
+              {Object.keys(formErrors).length !== 0 && editando && <> <p className="ps-2 mb-1" style={{ color: "red" }}>{formErrors.newName}</p><p className="ps-2 mb-1" style={{ color: "red" }}>{formErrors.about}</p></>}
               <Card
                 style={{
                   padding: '16px',

@@ -1,18 +1,14 @@
 import React from 'react';
-import { Component } from 'react';
-
 import './style.css'
-
 import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
-
 import { SiBookstack } from 'react-icons/si'
 import { FaBookmark, FaUser } from 'react-icons/fa'
 import { ImBooks } from 'react-icons/im'
-import { GiArchiveRegister, GiBookmark } from 'react-icons/gi'
+import { GiArchiveRegister } from 'react-icons/gi'
 import { TbLogin } from 'react-icons/tb'
 import { AiFillHome } from 'react-icons/ai'
-import { BsBookmark, BsKeyFill } from 'react-icons/bs'
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { BsKeyFill } from 'react-icons/bs'
+import { Link, useNavigate } from 'react-router-dom';
 import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
 import { Roles } from '../../api/default';
 
@@ -72,17 +68,7 @@ const FAIcon = ({ Icon }) => (
 )
 
 const SideNav = () => {
-
   const navigate = useNavigate();
-
-  const onSelect = (e) => {
-    console.log('onSelect');
-  }
-
-  const toggleNav = () => {
-    console.log('toggle..');
-  }
-
   return (
       <Navbar className='home'>
         <Card className='cardSide'>

@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { Form } from 'react-bootstrap';
+import { Form, Spinner } from 'react-bootstrap';
 import { PasswordAPI } from "../../api/password";
-import { AUTH_DEBUG, BASE_URL, HttpStatus } from "../../api/default";
+import { HttpStatus } from "../../api/default";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Style
 import './style.css'
-import { HttpResponse } from "../CreateCourse/api";
 
 const PasswordRecoveryPage = () => {
     const navigate = useNavigate();
@@ -18,6 +17,7 @@ const PasswordRecoveryPage = () => {
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmit, setIsSubmit] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     var errorsC = 0;
 
     const notifySuccess = (texto) => toast.success(texto, {
@@ -52,52 +52,29 @@ const PasswordRecoveryPage = () => {
         setFormValues({ ...formValues, [name]: value });
     }
 
-
-    const fetchRecoveryT = async () => {
-        const url = `${BASE_URL}/generate-password`
-        try {
-            const options = {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json'
-                },
-                body: JSON.stringify({ email: formValues.email})
-            }
-
-            const response = await fetch(url, options);
-            if (response.ok) {
-                const data = await response.json();
-                AUTH_DEBUG && console.log("AuthAPI::RecoverPassword(): ", data.token);
-                return new HttpResponse(HttpStatus.OK, data);
-            } else throw new Error("Error on RecoverPassword()");
-        } catch (error) {
-            console.warn(error)
-            return new HttpResponse(HttpStatus.ERROR, null);
-        }
-    }
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmit(true);
-        if (errorsC == 0) {
-            //console.log("Requisição executada.")
+        setIsLoading(true)
+
+        if (errorsC === 0) {
             const response = await PasswordAPI.fetchRecovery(formValues.email)
-            if (response.status == HttpStatus.OK) {
+            if (response.status === HttpStatus.OK) {
+                setIsLoading(false)
                 notifySuccess("Requisição para alteração de senha realizada!")
             } else {
+                setIsLoading(false)
                 notifyError(`Falha em requisitar recuperação de senha.\n ${response.data.message}`)
             }
         }
+        setIsLoading(false)
     }
 
     const validate = (values) => {
         const errors = {};
         errorsC = 0;
-         const regexemail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+         const regexemail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
         if (!values.email) {
             errors.email = "Digite um e-mail.";
@@ -141,7 +118,21 @@ const PasswordRecoveryPage = () => {
                         <p className="mb-3 ps-1" style={{ color: "red" }}>{formErrors.email}</p>
                         <div className="row mt-3">
                             <div className="col text-start">
-                                <button className="btn btn-info"><FontAwesomeIcon icon={faCheck} className="me-2" />Enviar</button>
+                                <button className="btn btn-info">
+                                {isLoading ? (
+                                        <Spinner
+                                        className="me-2"
+                                        as="span"
+                                        animation="border"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                        />
+                                    ) : (
+                                        <FontAwesomeIcon icon={faCheck} className="me-2" />
+                                    )}
+                                    Enviar
+                                    </button>
                             </div>
                         </div>
                     </Form>

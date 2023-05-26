@@ -161,7 +161,7 @@ const LinkLesson = ({ title, link, image, inverse }) => {
   return (
     <Link to={link} style={{ width: '37%' }}>
       <article style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
-        <img src={image} style={{ width: '100%', filter: 'brightness(35%)', aspectRatio: '16/8' }} />
+        <img alt='' src={image} style={{ width: '100%', filter: 'brightness(35%)', aspectRatio: '16/8' }} />
 
         <div style={{ position: 'absolute', color: 'white', left: 0, top: 0, fontWeight: 'bold', textAlign: 'center', maxWidth: '100%', maxHeight: '100%', overflow: 'hidden', padding: '5px' }}>
           {!inverse && <span>Próxima aula</span>}
