@@ -6,6 +6,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { Button } from 'react-bootstrap';
 import ReactPlayer from 'react-player'
+import { toast } from 'react-toastify';
 
 import './styles.css'
 
@@ -21,24 +22,57 @@ export const StudentLessonPage = () => {
 
   const { id } = useParams();
   const [lesson, setLesson] = React.useState()
+  const [controle, setControle] = React.useState({ enrolled: undefined })
   const [videoPlayer, setVideoPlayer] = React.useState(DEFAULT_VIDEO_PLAYER_STATE)
   const [videoDuration, setVideoDuration] = React.useState(null)
   const { user, refreshUserOnContext } = useAuthContext();
+
+  const notifySuccess = (texto) => toast.success(texto, {
+    position: "top-right",
+    autoClose: 3500,
+    hideProgressBar: false,
+    closeOnClick: false,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+
+  const notifyError = (texto) => toast.error(texto, {
+    position: "top-right",
+    autoClose: 3500,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+});
 
   useEffect(() => console.log(lesson), [lesson])
 
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if(lesson && lesson.users_who_completed && user)
-      if(lesson.users_who_completed.includes(user.id) && lesson.professor !== user.id)
-        setVideoPlayer({...videoPlayer, completed: true})
+    if (lesson && lesson.users_who_completed && user)
+      if (lesson.users_who_completed.includes(user.id) && lesson.professor !== user.id)
+        setVideoPlayer({ ...videoPlayer, completed: true })
   }, [lesson, user])
 
-  // React.useEffect(() => {
-  //   console.log('videoPlayer: ', videoPlayer)
-  //   console.log('duration', videoDuration)
-  // }, [videoPlayer, videoDuration]);
+  React.useEffect(() => {
+
+    const verifyPermissions = async (courseId) => {
+      const response = await LessonAPI.getCourse(lesson.course);
+      const course = response.data;
+      console.log('course', course, user.id)
+      const isEnrolled = course.students.map(c => c.id).includes(user.id)
+      setControle({ enrolled: isEnrolled })
+    }
+
+    if (lesson && lesson.id) {
+      verifyPermissions(lesson.course)
+    }
+  }, [lesson])
 
   const refreshLesson = async () => {
     const response = await LessonAPI.getLesson(id);
@@ -55,8 +89,8 @@ export const StudentLessonPage = () => {
 
   React.useEffect(() => {
     const completeLesson = async () => {
-      if (videoPlayer.played > 0.8 && !videoPlayer.completed) {
-        window.alert("Parabéns, você concluiu a aula!")
+      if (videoPlayer.played > 0.95 && !videoPlayer.completed) {
+        notifySuccess("Parabéns, você concluiu a aula!")
         setVideoPlayer({ ...videoPlayer, completed: true })
 
         await LessonAPI.completeLessonAsStudent(user.id, lesson.id);
@@ -68,12 +102,18 @@ export const StudentLessonPage = () => {
 
   }, [videoPlayer])
 
-  const handleVideoOnPlay = () => setVideoPlayer({ ...videoPlayer, playing: true, started: true })
-  // const handleVideoOnPause = () => setVideoPlayer({ ...videoPlayer, playing: false })
+  const handleVideoOnPlay = () => {
+    if (!controle.enrolled) {
+      notifyError("Você precisa matricular-se no curso para assistir as aula!")
+      setVideoPlayer({ ...videoPlayer, playing: false, started: false, played: false })
+    } else {
+      setVideoPlayer({ ...videoPlayer, playing: true, started: true, played: false })
+    }
+  }
 
-  const handleOnProgress = ({ played }) => setVideoPlayer({ ...videoPlayer, played });
-  // const handleDuration = (duration) => setVideoDuration(duration);
-  // const handleOnProgress = (e) => console.log('progress: ', e);
+  const handleOnProgress = ({ played }) => {
+    if(controle.enrolled) setVideoPlayer({ ...videoPlayer, played });
+  }
 
   return lesson ? (
     <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
@@ -129,8 +169,6 @@ const LinkLesson = ({ title, link, image, inverse }) => {
           <br /><br />
           <span>{title}</span>
         </div>
-        {/* {!inverse && <BsFillPlayFill style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
-                {inverse && <BsFillPlayFill style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(180deg)', cursor: 'pointer' }} />} */}
       </article>
     </Link>
   );
