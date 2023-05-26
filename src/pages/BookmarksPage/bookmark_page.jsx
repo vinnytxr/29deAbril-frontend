@@ -1,10 +1,7 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
-
-import { Col, Container, Navbar, Row, Pagination } from 'react-bootstrap'
+import { Col, Container, Row, Pagination } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
-import { AuthAPI } from '../../api/auth-api'
-import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
+import { BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 import { useAuthContext } from '../../contexts/AuthContext';
 import CardCourses from '../../components/CardCourses'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -17,7 +14,7 @@ const BookmarksPage = () => {
     const [activePage, setActivePage] = useState(1);
     const [amountPages, setAmountPages] = useState(6);
     const navigate = useNavigate();
-    const { token, logged } = useAuthContext();
+    const { token } = useAuthContext();
 
     const pageSize = 6;
 
@@ -91,7 +88,6 @@ const BookmarksPage = () => {
         const getStudentCourses = async () => {
             setIsFetched(false)
             try {
-                const { id } = userData;
                 const responseCourses = await getBookmarks()
                 if (responseCourses.status === HttpStatus.OK) {
                     //console.log(responseCourses)

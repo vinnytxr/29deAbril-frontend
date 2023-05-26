@@ -51,8 +51,7 @@ const fetchRegister = async (formValues) => {
             return new HttpResponse(HttpStatus.OK, data);
         } else {
             errorMessage = await response.json();
-            throw new Error("Error on Register()");
-            return new HttpResponse(HttpStatus.ERROR, await response.json());
+            throw new Error("Error on Register()")
         }
     } catch (error) {
         console.warn(error)

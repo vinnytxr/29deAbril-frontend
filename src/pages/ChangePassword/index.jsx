@@ -7,11 +7,8 @@ import { HttpStatus } from "../../api/default";
 import { PasswordAPI } from "../../api/password"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-// Style
-import './style.css'
 import { useAuthContext } from "../../contexts/AuthContext";
-import { HttpResponse } from "../CreateCourse/api";
+import './style.css'
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();

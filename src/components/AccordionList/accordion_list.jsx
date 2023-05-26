@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { Accordion, ListGroupItem } from "react-bootstrap";
@@ -10,10 +10,6 @@ import { useNavigate } from 'react-router-dom';
 function AccordionListCourse({ sessions }) {
   const { lessons } = sessions;
   const navigate = useNavigate();
-
-  const alertClicked = () => {
-    alert('Você clicou em uma aula');
-  };
 
   return (
     <Accordion alwaysOpen className="lesson-accordion">

@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AuthAPI } from '../api/auth-api';
 import { HttpStatus } from '../api/default';
 import { AUTH_DEBUG } from '../api/default';
