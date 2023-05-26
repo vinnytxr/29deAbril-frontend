@@ -38,7 +38,7 @@ export const EditLessonScreen = () => {
 
     const { id } = useParams();
 
-    const { user } = useAuthContext();
+     const { user } = useAuthContext();
 
     const [estado, setEstado] = useState({
         title: undefined,
