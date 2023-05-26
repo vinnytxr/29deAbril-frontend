@@ -74,8 +74,8 @@ export default function RegisterScreen() {
 
   useEffect(() => {
     const fetchFunction = async () => {
-    setIsLoading(true)
-    if (Object.keys(formErrors).length === 0 && isSubmit) {
+      if (Object.keys(formErrors).length === 0 && isSubmit) {
+        setIsLoading(true)
         const response = await AuthAPI.fetchRegister(formValues);
         if (response.status === HttpStatus.OK) {
             notifySuccess("Registrado com sucesso!");

@@ -6,7 +6,7 @@ import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupIt
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCode, faShare } from '@fortawesome/free-solid-svg-icons'
+import { faCode, faEnvelope, faIdCard, faMailBulk, faMailForward, faMailReply, faPalette, faShare } from '@fortawesome/free-solid-svg-icons'
 import { HttpStatus } from '../../api/default'
 import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
@@ -21,6 +21,7 @@ const AdministrationPage = () => {
     const [enableBtn, setEnableBtn] = useState(true)
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingEmail, setIsLoadingEmail] = useState(false)
 
     const notifySuccess = () => toast.success("E-mail enviado com sucesso.", {
         position: "top-right",
@@ -67,14 +68,18 @@ const AdministrationPage = () => {
     }
 
     const sendToEmail = async () => {
+        setIsLoadingEmail(true)
         if (validate() === 0) {
             const response = await AdminAPI.sendCode(email, newCode, token);
             if (response.status !== HttpStatus.OK) {
+                setIsLoadingEmail(false)
                 notifyError("Falha ao enviar código por e-mail.");
             } else {
+                setIsLoadingEmail(false)
                 notifySuccess()
             }
         }
+        setIsLoadingEmail(false)
     }
 
     
@@ -183,7 +188,20 @@ const AdministrationPage = () => {
                                             className="form-control"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)} />
-                                        <Button className='mt-2 mb-1 btn-success' onClick={() => { sendToEmail() }}>Enviar</Button>
+                                        <Button className='mt-2 mb-1 btn-success' onClick={() => { sendToEmail() }}>
+                                            {isLoadingEmail ? (
+                                                <Spinner
+                                                    className="me-2"
+                                                    as="span"
+                                                    animation="border"
+                                                    size="sm"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                />
+                                                ) : (<FontAwesomeIcon icon={faEnvelope} className="me-2" />)
+                                            }
+                                            Enviar
+                                        </Button>
                                         <p className="ps-2 mb-0" style={{ color: "red" }}>{errors.email}</p>
                                         <p className="ps-2  mb-0" style={{ color: "red" }}>{errors.codigo}</p>
                                     </Col>
