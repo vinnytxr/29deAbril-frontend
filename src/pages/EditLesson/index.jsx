@@ -100,6 +100,9 @@ export const EditLessonScreen = () => {
         if (formValores.videos.length && videoBeUpdated(formValores.videos[0]))
             post.append("video", formValores.videos[0]);
 
+        if (formValores.useBannerFromVideo)
+            post.append("useframe", 1)
+
         LessonAPI.updateLesson(post, id).then(response => {
             setEditable(false)
             setTimeout(() => {

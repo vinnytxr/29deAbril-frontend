@@ -78,12 +78,13 @@ const UserProfileScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
+    console.log("response: ", response)
 
     if (response.status !== HttpStatus.OK) {
       setAuthorizationCode('')
       notifyError("Falha ao alterar permissões.")
     } else {
-      setToken(token)
+      refreshUserOnContext()
       notifySuccess("Permissões atualizadas com sucesso. Agora você é um professor :)");
       handleCloseModal()
     }
