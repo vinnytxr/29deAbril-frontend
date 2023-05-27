@@ -142,7 +142,7 @@ export const StudentLessonPage = () => {
                 }
               }
             }} />}
-            {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#198754', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
+            {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#0E6216', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
           </section>}
         </Col>
         <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
@@ -151,7 +151,7 @@ export const StudentLessonPage = () => {
         <Col xs={12}>
           <section style={{ display: 'flex', justifyContent: 'space-between' }}>
             {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
-            <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#198754', borderColor: '#198754', borderRadius: '10px' }} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
+            <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
               Ver todas as aulas
             </Button>
             {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}
