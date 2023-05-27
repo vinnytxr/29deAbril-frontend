@@ -49,8 +49,6 @@ export const StudentLessonPage = () => {
     theme: "light",
 });
 
-  useEffect(() => console.log(lesson), [lesson])
-
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -64,7 +62,6 @@ export const StudentLessonPage = () => {
     const verifyPermissions = async (courseId) => {
       const response = await LessonAPI.getCourse(lesson.course);
       const course = response.data;
-      console.log('course', course, user.id)
       const isEnrolled = course.students.map(c => c.id).includes(user.id)
       setControle({ enrolled: isEnrolled })
     }
@@ -73,6 +70,8 @@ export const StudentLessonPage = () => {
       verifyPermissions(lesson.course)
     }
   }, [lesson])
+
+  const isProfessorOfLessonCourse = () => user && lesson && lesson.professor && (lesson.professor === user.id);
 
   const refreshLesson = async () => {
     const response = await LessonAPI.getLesson(id);
@@ -89,7 +88,7 @@ export const StudentLessonPage = () => {
 
   React.useEffect(() => {
     const completeLesson = async () => {
-      if (videoPlayer.played > 0.95 && !videoPlayer.completed) {
+      if (videoPlayer.played > 0.95 && !videoPlayer.completed && !isProfessorOfLessonCourse()) {
         notifySuccess("Parabéns, você concluiu a aula!")
         setVideoPlayer({ ...videoPlayer, completed: true })
 
@@ -103,7 +102,7 @@ export const StudentLessonPage = () => {
   }, [videoPlayer])
 
   const handleVideoOnPlay = () => {
-    if (!controle.enrolled) {
+    if (!controle.enrolled && !isProfessorOfLessonCourse()) {
       notifyError("Você precisa matricular-se no curso para assistir as aula!")
       setVideoPlayer({ ...videoPlayer, playing: false, started: false, played: false })
     } else {
@@ -121,7 +120,13 @@ export const StudentLessonPage = () => {
         {
           videoPlayer.completed &&
           <Col xs={12} style={{ marginTop: '0.5rem' }}>
-            <span className='span-aula-concluida'>Aula concluída</span>
+            <span className='flag-completed-lesson'>Aula concluída</span>
+          </Col>
+        }
+        {
+          isProfessorOfLessonCourse() &&
+          <Col xs={12} style={{ marginTop: '0.5rem' }}>
+            <span className='flag-is-professor'>Você é o professor desta aula</span>
           </Col>
         }
         <Col xs={12}>

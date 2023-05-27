@@ -22,7 +22,6 @@ const getLesson = async (id) => {
             if(data.video){
                 let pathVideo = data.video.split('/')
                 data.video = BASE_URL + '/lessons/lessons/stream-video/' + pathVideo[pathVideo.length - 1]
-                console.log('X', pathVideo, data.video)
             }
 
             return new HttpResponse(HttpStatus.OK, data)

@@ -12,7 +12,7 @@
   aspect-ratio: 16/9 !important;
 }
 
-.span-aula-concluida {
+.container-student-lesson-page .flag-completed-lesson, .container-student-lesson-page .flag-is-professor {
   background-color: #198754;
   color: white;
   font-weight: bold;
