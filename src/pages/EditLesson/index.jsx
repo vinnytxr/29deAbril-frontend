@@ -38,7 +38,7 @@ export const EditLessonScreen = () => {
 
     const { id } = useParams();
 
-     const { user } = useAuthContext();
+    const { user } = useAuthContext();
 
     const [estado, setEstado] = useState({
         title: undefined,
@@ -91,18 +91,14 @@ export const EditLessonScreen = () => {
 
         var post = new FormData();
 
-        console.log('ToSend: ', formValores)
-
         post.append("title", formValores.title);
         post.append("content", formValores.content);
 
-        if (!formValores.useBannerFromVideo && formValores.files.lenght && imageBeUpdated(formValores.files[0]))
+        if (!formValores.useBannerFromVideo && formValores.files.length && imageBeUpdated(formValores.files[0]))
             post.append("banner", formValores.files[0]);
 
         if (formValores.videos.length && videoBeUpdated(formValores.videos[0]))
             post.append("video", formValores.videos[0]);
-
-        console.log(formValores)
 
         LessonAPI.updateLesson(post, id).then(response => {
             setEditable(false)
@@ -221,7 +217,7 @@ export const EditLessonScreen = () => {
                                                 </Col>
 
                                                 <Col xs={6}>
-                                                    <Button 
+                                                    <Button
                                                         className="mt-3 remove-modal-btn w-100"
                                                         onClick={() => rmlesson(id)}
                                                     >
@@ -288,7 +284,7 @@ export const EditLessonScreen = () => {
                                             <img
                                                 className={`image-for-input-file ${estado.files === false ? "error" : ""}`}
                                                 src={!!formValores.files.length && !imageBeUpdated(formValores.files[0]) ? formValores.files[0] : formValores.files.length ? URL.createObjectURL(formValores.files[0]) : noImage}
-                                                style={{ width: "100%", objectFit: "contain", objectPosition: "center", cursor: "pointer", backgroundColor: "white" }}
+                                                style={{ width: "100%", objectFit: "contain", objectPosition: "center", cursor: editable ? "pointer" : "auto", backgroundColor: "white" }}
                                             />
                                         </label>
                                     </Col>
@@ -307,10 +303,11 @@ export const EditLessonScreen = () => {
                                                 setFormValores({ ...formValores, useBannerFromVideo: e.target.checked })
                                             }}
                                             checked={formValores.useBannerFromVideo}
+                                            disabled={!editable}
                                         />
                                     </Col>
                                     <Col xs={12} className='mt-3 pr0'>
-                                        <label htmlFor="input-files-video-ftc" className='label-to-use-frame-as-banner-input'>
+                                        <label htmlFor="input-files-video-ftc" className='label-to-use-frame-as-banner-input' style={{ cursor: editable ? 'pointer' : 'auto' }}>
                                             <span>Selecionar video</span>
                                         </label>
                                     </Col>

@@ -198,8 +198,8 @@ body {
   align-items: center;
   background-color: #198754;
   border-radius: 5px;
-  cursor: pointer;
   color: white;
+  cursor: pointer;
 }
 
 @media (max-width: 991.98px) {

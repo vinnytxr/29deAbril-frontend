@@ -626,7 +626,7 @@ const Lesson = ({ data }) => {
       <Card style={{ width: '100%' }}>
         <Card.Img
           variant="left"
-          src={data.banner}
+          src={data?.banner ?? noImage}
           style={{ height: '30vh', objectFit: 'fill' }}
         />
         <Card.Body>
