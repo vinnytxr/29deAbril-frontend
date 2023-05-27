@@ -27,7 +27,7 @@ const updateUserPicture = async (userImageToUpdate, id) => {
     }
 }
 
-const fetchEdit = async (newName, aboutText, id) => {
+const fetchEdit = async (newName, aboutText, newLink, id) => {
     const url = `${BASE_URL}/user/${id}/`
     var errorMessage;
     try {
@@ -38,7 +38,7 @@ const fetchEdit = async (newName, aboutText, id) => {
                 'Content-Type': 'application/json',
                 Accept: 'application/json'
             },
-            body: JSON.stringify({ about: aboutText, name: newName })
+            body: JSON.stringify({ about: aboutText, name: newName, contactLink: newLink })
         }
 
         const response = await fetch(url, options);
