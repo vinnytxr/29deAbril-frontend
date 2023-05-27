@@ -107,7 +107,11 @@ export const EditCourseScreen = () => {
     post.append("description", formValores.description);
     post.append("content", formValores.content);
     post.append("professor", user.id);
-    post.append("banner", formValores.files[0]);
+
+    if(formValores.files.length && imageBeUpdated(formValores.files[0])){
+      console.log('banner be updated')
+      post.append("banner", formValores.files[0]);
+    }
 
     CourseAPI.updateCourse(id, post).then(response => {
         setEditable(false)
@@ -236,7 +240,7 @@ export const EditCourseScreen = () => {
                     </Col>
                     <Col xs={2}>
                     <Button className="submit-form mt-3 remove-learning w-100" onClick={handleShow}>
-                            Excluir aula
+                            Excluir curso
                         </Button>
 
                         <Modal
@@ -377,7 +381,7 @@ export const EditCourseScreen = () => {
                           width: '100%',
                           objectFit: 'contain',
                           objectPosition: 'center',
-                          cursor: 'pointer',
+                          cursor: editable ? 'pointer' : 'auto',
                           backgroundColor: 'white',
                         }}
                       />
