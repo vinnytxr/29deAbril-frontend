@@ -37,6 +37,28 @@ const registerCourse = async (body) => {
   }
 }
 
+const updateCourse = async (courseId, body) => {
+  try {
+    const url = `${BASE_URL}/courses/courses/${courseId}`;
+    const options = {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json',
+      },
+      body: body,
+    };
+    const response = await fetch(url, options);
+    if (response.ok) {
+      const data = await response.json();
+      return new HttpResponse(HttpStatus.OK, data);
+    }
+    throw new Error("CourseAPI::updateCourse()");
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+};
+
 const registerLearning = async (body) => {
   try {
     const url = `${BASE_URL}/courses/learnings`
@@ -87,6 +109,25 @@ const getCourse = async (id) => {
   }
 }
 
+const deleteCourse = async (id) => {
+  try {
+    const url = `${BASE_URL}/courses/courses/${id}`
+    const options = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+      },
+    }
+    const response = await fetch(url, options)
+    if (response.ok)
+      return new HttpResponse(HttpStatus.OK, null)
+    throw new Error("CourseAPI::deleteCourse()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
 const deleteLearning = async (id) => {
   try {
     const url = `${BASE_URL}/courses/learnings/${id}`
@@ -106,9 +147,36 @@ const deleteLearning = async (id) => {
   }
 }
 
+const updateLearning = async (body, learningId) => {
+  try {
+    const url = `${BASE_URL}/courses/learnings/${learningId}`;
+    const options = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(body),
+    };
+    const response = await fetch(url, options);
+    if (response.ok) {
+      const data = await response.json();
+      return new HttpResponse(HttpStatus.OK, data);
+    }
+    throw new Error("CourseAPI::updateLearning()");
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
+
 export const CourseAPI = {
   registerCourse,
   registerLearning,
   getCourse,
-  deleteLearning
+  deleteCourse,
+  deleteLearning,
+  updateCourse,
+  updateLearning
 }
