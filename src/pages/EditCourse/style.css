@@ -20,8 +20,8 @@ body {
 }
 
 .container-new-course .register-btn {
-  background-color: #198754;
-  border-color: #198754;
+  background-color: #0E6216;
+  border-color: #0E6216;
 }
 
 .container-new-course .cancel-btn {
@@ -31,13 +31,13 @@ body {
 
 .container-new-course .submit-form:active {
   background-color: white;
-  color: #198754;
+  color: #0E6216;
   border-color: white;
 }
 
 .container-course h2 {
   font-weight: bold;
-  color: #198754;
+  color: #0E6216;
 }
 
 .container-course input,
@@ -58,8 +58,8 @@ body {
 }
 
 .container-new-course .ok {
-  border-color: #198754 !important;
-  color: #198754 !important;
+  border-color: #0E6216 !important;
+  color: #0E6216 !important;
 }
 
 .container-new-course .file-input-span .ok,
@@ -104,20 +104,20 @@ body {
 .container-course .submit-add-lesson {
   margin-left: 5px;
   width: calc(20% - 5px);
-  border: 2px solid #198754;
-  background-color: #198754;
+  border: 2px solid #0E6216;
+  background-color: #0E6216;
 }
 
 .container-course .submit-form-learning:active {
   border: 2px solid white;
   background-color: white;
-  color: #198754;
+  color: #0E6216;
 }
 
 .container-course .edit-learning {
   margin-left: 5px;
-  border: 2px solid #198754;
-  background-color: #198754;
+  border: 2px solid #0E6216;
+  background-color: #0E6216;
 }
 
 .container-course .remove-learning {
@@ -140,7 +140,7 @@ body {
 }
 
 .container-course .label-submit-learning span {
-  color: #198754;
+  color: #0E6216;
   font-weight: bold;
 }
 
@@ -179,12 +179,12 @@ body {
 
 .modal .remove-modal-btn  {
   width: calc(10% - 5px);
-  border: 2px solid #198754;
-  background-color: #198754;
+  border: 2px solid #0E6216;
+  background-color: #0E6216;
 }
 
 .modal .remove-modal-btn:active {
   background-color: white;
-  color: #198754;
+  color: #0E6216;
   border: 2px solid white;
 }

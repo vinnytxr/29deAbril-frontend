@@ -20,6 +20,7 @@ function CourseDetails() {
   const { token, logged } = useAuthContext()
   const [data, setData] = useState({})
   const [isFavorited, setFavorited] = useState(false)
+  const { user } = useAuthContext();
 
   const notify = (texto) =>
     toast.success(texto, {
@@ -77,7 +78,7 @@ function CourseDetails() {
     }
   }
 
-  useEffect(() => {console.log({isFavorited})}, [isFavorited])
+  useEffect(() => { console.log({ isFavorited }) }, [isFavorited])
 
   const saveBookmark = async () => {
     const url = `${BASE_URL}/courses/favorites/${data.id}`
@@ -126,29 +127,35 @@ function CourseDetails() {
   }
 
   return (
-    <Container flex className="mb-4">
+    <Container flex className="course-details mb-4">
       <div className="row">
-        <div className="col mt-5">
+        {
+          user && data && user.id === data?.professor?.id &&
+          <div className="col-md-12 mt-1">
+            <span className='flag-is-professor'>Você é o professor deste curso</span>
+          </div>
+        }
+        <div className="col mt-1">
           <Card className="custom-bg">
             <div className="row">
               <div className="col-8 mt-2 mx-1">
-                  <Card.Title>
-                    {logged && (
-                      <Button
-                        onClick={() => manageBookmark()}
-                        variant="outline-light"
-                        className="button-bookmark"
-                      >
-                        <FontAwesomeIcon
-                          color={isFavorited ? 'gold' : 'lightwhite'}
-                          opacity={isFavorited ? 1 : 0.7}
-                          icon={faBookmark}
-                        />
-                      </Button>
-                    )}
-                  </Card.Title>
+                <Card.Title>
+                  {logged && (
+                    <Button
+                      onClick={() => manageBookmark()}
+                      variant="outline-light"
+                      className="button-bookmark"
+                    >
+                      <FontAwesomeIcon
+                        color={isFavorited ? 'gold' : 'lightwhite'}
+                        opacity={isFavorited ? 1 : 0.7}
+                        icon={faBookmark}
+                      />
+                    </Button>
+                  )}
+                </Card.Title>
                 <div className="row mt-4 mx-2 fw-bold fs-4">
-                    <p>{data.title}</p>
+                  <p>{data.title}</p>
                 </div>
                 <div className="row mt-5 mx-2">
                   <Card.Text>{data.description}</Card.Text>

@@ -78,12 +78,13 @@ const UserProfileScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
+    console.log("response: ", response)
 
     if (response.status !== HttpStatus.OK) {
       setAuthorizationCode('')
       notifyError("Falha ao alterar permissões.")
     } else {
-      setToken(token)
+      refreshUserOnContext()
       notifySuccess("Permissões atualizadas com sucesso. Agora você é um professor :)");
       handleCloseModal()
     }
@@ -266,7 +267,7 @@ const UserProfileScreen = () => {
               && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
               && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
               <Card style={{ cursor: 'pointer', width: '90%' }} className='mt-1' onClick={handleShowModal}>
-                <Col style={{ backgroundColor: "#198754", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
+                <Col style={{ backgroundColor: "#0E6216", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
                   <p className="m-1">Tornar-me professor!</p>
                 </Col>
               </Card>
