@@ -1,36 +1,45 @@
-.custom-bg {
+.pageDetails .custom-bg {
     background-color: #0E6216;
     color: #ffffff;
 }
 
-.body {
+.pageDetails .body {
     background-color: #DBDBDB;
     /* Cor de fundo desejada */
 }
 
-.body-card {
+.pageDetails .body-card {
     background-color: #FFFFFF;
     /* Cor de fundo desejada */
 }
 
-.lesson-accordion .accordion-header button {
+.pageDetails .lesson-accordion .accordion-header button {
     background-color: white;
     color: black;
 }
 
-.button-bookmark {
+.pageDetails .button-bookmark {
     background-color: transparent;
     border: none;
     font-size: 24px;
 }
 
-.button-bookmark:hover {
+.pageDetails .button-bookmark:hover {
     background-color: transparent;
     border: none;
     color: gold;
     opacity: 1;
 }
 
+.pageDetails .link {
+    text-decoration: none;
+    color: gold;
+}
+
+.pageDetails a {
+    text-decoration: none;
+    color: gold;
+}
 .course-details .flag-is-professor {
     background-color: #0E6216;
     color: white;

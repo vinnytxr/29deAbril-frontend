@@ -7,7 +7,7 @@ import CheckDetails from '../../components/CheckDetails/check_details'
 import CheckCourseInformation from '../../components/CheckCourseInformation/check_course_information'
 import StarRating from '../../components/StarRating/star_rating'
 import AccordionListCourse from '../../components/AccordionList/accordion_list'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Button, Container } from 'react-bootstrap'
 import { BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -127,7 +127,7 @@ function CourseDetails() {
   }
 
   return (
-    <Container flex className="course-details mb-4">
+    <Container flex className="pageDetails course-details mb-4">
       <div className="row">
         {
           user && data && user.id === data?.professor?.id &&
@@ -166,7 +166,16 @@ function CourseDetails() {
                 <div className="row">
                   <div className="col">
                     <Card.Text className="mt-5 ms-3 mb-2">
-                      Professor: <strong className='mx-2'>{data?.professor?.name}</strong>
+                      Professor: 
+                      {!logged ? (
+                        <span>
+                          <strong className='mx-2'>{data?.professor?.name}</strong>
+                        </span>
+                      ) : (
+                        <Link to={`/student/courses/professor/${data?.professor?.id}`}>
+                          <strong className='mx-2 link'>{data?.professor?.name}</strong>
+                        </Link>
+                      )}
                     </Card.Text>
                   </div>
                 </div>

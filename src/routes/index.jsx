@@ -21,6 +21,7 @@ import StudentCoursesPage from '../pages/StudentCourses/student_courses';
 import { StudentLessonPage } from '../pages/StudentLessonPage';
 import EditLessonScreen from '../pages/EditLesson';
 import CourseRating from '../pages/CourseRating/course_rating';
+import TeacherProfile from '../pages/ProfessorProfile/professor_profile';
 
 import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
@@ -63,6 +64,7 @@ function DefaultRoutes() {
             <Route path="/courses/:id" element={<CourseDetails />} />
             <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><StudentLessonPage /></StrictRoute>} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseDetails /></StrictRoute>} />
+            <Route path="/student/courses/professor/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><TeacherProfile /></StrictRoute>} />
             <Route path="/student/courses/rating/" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseRating /></StrictRoute>} />
             <Route path="/professor/courses" element={<StrictRoute roles={[Roles.PROFESSOR]}><ProfessorCoursesPage /></StrictRoute>} />
             <Route path="/student/marked-courses" element={<StrictRoute roles={[Roles.STUDENT]}><BookmarksPage /></StrictRoute>} />

@@ -161,6 +161,31 @@ const getStudentCourses = async(studentId, page = 1, size = 10) => {
      }
 }
 
+const getProfessorPerfil = async (id, jwt) => {
+    const url = `${BASE_URL}/perfil/${id}/`
+    try {
+        const options = {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                jwt: jwt,
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            }
+        }
+
+        const response = await fetch(url, options);
+
+        if (response.ok) {
+            const data = await response.json();
+            AUTH_DEBUG && console.log("AuthAPI::getProfessorPerfil(): ", data);
+            return new HttpResponse(HttpStatus.OK, data);
+        } else throw new Error("Error on getProfessorPerfil()");
+    } catch (error) {
+        console.warn(error)
+        return new HttpResponse(HttpStatus.ERROR, null);
+    }
+}
 
 export const AuthAPI = {
     getUserInfo,
@@ -168,5 +193,6 @@ export const AuthAPI = {
     login,
     getCoursesData,
     getProfessorCourses,
-    getStudentCourses
+    getStudentCourses,
+    getProfessorPerfil
 }
