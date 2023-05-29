@@ -173,6 +173,7 @@ function CourseDetails() {
       const response = await fetch(url, options)
       if (response.ok) {
         const data = await response.json()
+        notify('Sucesso, agradecemos a sua avaliação!')
         return new HttpResponse(HttpStatus.OK, data)
       } else throw new Error('Error on updateRating()')
     } catch (error) {
@@ -197,6 +198,7 @@ function CourseDetails() {
       const response = await fetch(url, options)
       if (response.ok) {
         const data = await response.json()
+        notify('Sucesso, agradecemos a sua avaliação!')
         return new HttpResponse(HttpStatus.OK, data)
       } else throw new Error('Error on createRating()')
     } catch (error) {
