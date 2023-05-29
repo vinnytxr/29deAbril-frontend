@@ -1,5 +1,6 @@
 import React from "react";
 import Card from 'react-bootstrap/Card';
+import noImage from '../../assets/no-image.png'
 
 import './style.css'
 
@@ -14,7 +15,7 @@ function CardCourses({ teste }) {
 
   return (
     <Card className="cardAula" style={{ width: '15rem' }}>
-      <Card.Img className="cardAula-img-top" variant="top" src={teste.banner} />
+      <Card.Img className="cardAula-img-top" variant="top" src={teste?.banner ?? noImage} />
       <Card.Body>
         <Card.Title className="cardAula-title">{teste.title}</Card.Title>
         <Card.Text className="cardAula-description">

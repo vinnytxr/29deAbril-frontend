@@ -19,6 +19,9 @@ import CourseDetails from '../pages/CourseDetails/course_details';
 import AdministrationPage from '../pages/AdminPage';
 import StudentCoursesPage from '../pages/StudentCourses/student_courses';
 import { StudentLessonPage } from '../pages/StudentLessonPage';
+import EditLessonScreen from '../pages/EditLesson';
+import CourseRating from '../pages/CourseRating/course_rating';
+import TeacherProfile from '../pages/ProfessorProfile/professor_profile';
 
 import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
@@ -54,20 +57,22 @@ function DefaultRoutes() {
         <Routes>
           <Route path='/login' element={<LoginPage />} />
           <Route path='/register' element={<RegisterScreen />} />
-          <Route path='/recuperar-senha' element={<PasswordRecoveryPage/>} />
-          <Route path='/alterar-senha' element={<ChangePasswordPage/>} />
+          <Route path='/recuperar-senha' element={<PasswordRecoveryPage />} />
+          <Route path='/alterar-senha' element={<ChangePasswordPage />} />
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
             <Route path="/courses/:id" element={<CourseDetails />} />
             <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><StudentLessonPage /></StrictRoute>} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseDetails /></StrictRoute>} />
+            <Route path="/student/courses/professor/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><TeacherProfile /></StrictRoute>} />
+            <Route path="/student/courses/rating/" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseRating /></StrictRoute>} />
             <Route path="/professor/courses" element={<StrictRoute roles={[Roles.PROFESSOR]}><ProfessorCoursesPage /></StrictRoute>} />
             <Route path="/student/marked-courses" element={<StrictRoute roles={[Roles.STUDENT]}><BookmarksPage /></StrictRoute>} />
             <Route path="/student/enrolled-courses" element={<StrictRoute roles={[Roles.STUDENT]}><StudentCoursesPage /></StrictRoute>} />
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewLessonScreen /></StrictRoute>} />
-            <Route path="/professor/lessons/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><LessonEditScreen /></StrictRoute>} />
+            <Route path="/professor/lessons/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditLessonScreen /></StrictRoute>} />
             <Route path="/perfil" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><UserProfileScreen /></StrictRoute>} />
             <Route path="/admin/generate-invite" element={<StrictRoute roles={[Roles.ADMIN]}><AdministrationPage /></StrictRoute>} />
             <Route path='/logout' element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]} children={<Logout />} />} />
@@ -80,8 +85,6 @@ function DefaultRoutes() {
 }
 
 export default DefaultRoutes
-
-const LessonEditScreen = () => < h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Ops! Pagina de edição de aula!<br />Recurso em implementação</h2>;
 
 const Logout = () => {
   const { setToken } = useAuthContext();

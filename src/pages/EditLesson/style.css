@@ -102,6 +102,31 @@ body {
   color: #0E6216;
 }
 
+.container-new-lesson .cancel-btn  {
+  width: calc(10% - 5px);
+  border: 2px solid #dc3545;
+  background-color: #dc3545;
+}
+
+.container-new-lesson .cancel-btn :active {
+  background-color: white;
+  color: #dc3545;
+  border: 2px solid white;
+}
+
+.container-lesson .remove-bnt {
+  margin-left: 5px;
+  width: calc(10% - 5px);
+  border: 2px solid #dc3545;
+  background-color: #dc3545;
+}
+
+.container-lesson .remove-bnt:active {
+  background-color: white;
+  color: #dc3545;
+  border: 2px solid white;
+}
+
 .container-lesson .remove-learning {
   margin-left: 5px;
   width: calc(10% - 5px);
@@ -112,6 +137,30 @@ body {
 .container-lesson .remove-learning:active {
   background-color: white;
   color: #dc3545;
+  border: 2px solid white;
+}
+
+.modal .cancel-modal-btn  {
+  width: calc(10% - 5px);
+  border: 2px solid #dc3545;
+  background-color: #dc3545;
+}
+
+.modal .cancel-modal-btn:active {
+  background-color: white;
+  color: #dc3545;
+  border: 2px solid white;
+}
+
+.modal .remove-modal-btn  {
+  width: calc(10% - 5px);
+  border: 2px solid #0E6216;
+  background-color: #0E6216;
+}
+
+.modal .remove-modal-btn:active {
+  background-color: white;
+  color: #0E6216;
   border: 2px solid white;
 }
 
@@ -149,8 +198,8 @@ body {
   align-items: center;
   background-color: #0E6216;
   border-radius: 5px;
-  cursor: pointer;
   color: white;
+  cursor: pointer;
 }
 
 @media (max-width: 991.98px) {

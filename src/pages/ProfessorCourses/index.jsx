@@ -65,7 +65,6 @@ const ProfessorCoursesPage = () => {
                 const responseCourses = await AuthAPI.getProfessorCourses(id, activePage, pageSize)
                 if (responseCourses.status === HttpStatus.OK) {
                     setData(responseCourses.data)
-                    console.log(responseCourses.data)
                     const pages = Math.ceil(responseCourses.data.count / pageSize)
                     setAmountPages(pages)
                     setIsFetched(true)

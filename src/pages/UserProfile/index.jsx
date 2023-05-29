@@ -19,6 +19,7 @@ const UserProfileScreen = () => {
   const [editando, setEditando] = useState(false)
   const [aboutText, setAboutText] = useState();
   const [newName, setNewName] = useState();
+  const [newLink, setNewLink] = useState();
   const [formErrors, setFormErrors] = useState({});
   const { logged, user, token, setToken, refreshUserOnContext } = useAuthContext();
   const [authorizationCode, setAuthorizationCode] = useState('');
@@ -78,12 +79,13 @@ const UserProfileScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
+    console.log("response: ", response)
 
     if (response.status !== HttpStatus.OK) {
       setAuthorizationCode('')
       notifyError("Falha ao alterar permissões.")
     } else {
-      setToken(token)
+      refreshUserOnContext()
       notifySuccess("Permissões atualizadas com sucesso. Agora você é um professor :)");
       handleCloseModal()
     }
@@ -96,14 +98,15 @@ const UserProfileScreen = () => {
   const editar = () => {
     setNewName(user.name)
     setAboutText(user.about)
+    setNewLink(user.contactLink)
     setEditando(true)
   }
 
   const salvarAlteracoes = async () => {
     if (Object.keys(validateEditing()).length === 0 && editando) {
       setEditando(false)
-      if (user.name !== newName || aboutText !== user.about) {
-        const response = await ProfileAPI.fetchEdit(newName, aboutText, user.id)
+      if (user.name !== newName || aboutText !== user.about  || newLink !== user.contactLink) {
+        const response = await ProfileAPI.fetchEdit(newName, aboutText, newLink, user.id)
         if (response.status !== HttpStatus.OK) {
           notifyError("Falha na edição de perfil.");
         } else {
@@ -132,6 +135,12 @@ const UserProfileScreen = () => {
       errors.about = "Digite algo sobre você!";
     } else if (aboutText.length > 150) {
       errors.about = "Texto 'sobre' é muito longo!";
+    }
+
+    if (newLink.length === 0) {
+      errors.about = "Digite o link do seu perfil!";
+    } else if (aboutText.length > 150) {
+      errors.about = "O link é muito longo!";
     }
 
     setFormErrors(errors)
@@ -266,7 +275,7 @@ const UserProfileScreen = () => {
               && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
               && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
               <Card style={{ cursor: 'pointer', width: '90%' }} className='mt-1' onClick={handleShowModal}>
-                <Col style={{ backgroundColor: "#198754", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
+                <Col style={{ backgroundColor: "#0E6216", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
                   <p className="m-1">Tornar-me professor!</p>
                 </Col>
               </Card>
@@ -304,7 +313,7 @@ const UserProfileScreen = () => {
                   padding: '16px',
                 }}
               >
-                <Row className="mb-4">
+                <Row className="mb-3">
                   <Col className="d-flex justify-content-between align-items-center">
                     <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
                       Sobre mim
@@ -331,10 +340,35 @@ const UserProfileScreen = () => {
                     )}
                   </Col>
                 </Row>
+                <Row className="mb-3">
+                  <Col className="d-flex justify-content-between align-items-center">
+                    <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                      Rede Social
+                    </h1>
+                  </Col>
+                </Row>
+                <Row>
+                <Col>
+                    {editando ? (
+                      <div className="mb-3">
+                        <textarea
+                          rows={4}
+                          className="form-control"
+                          value={newLink}
+                          onChange={(e) => setNewLink(e.target.value)}
+                        />
+                      </div>
+                    ) : (
+                      <div className="mb-3 d-flex justify-content-between align-items-center">
+                        <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
+                          {user.contactLink}
+                        </p>
+                      </div>
+                    )}
+                  </Col>
+                </Row>
               </Card>
             </Row>
-
-
           </Col>
         </Row>
       </Container>

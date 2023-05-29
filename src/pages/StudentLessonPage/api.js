@@ -22,7 +22,6 @@ const getLesson = async (id) => {
             if(data.video){
                 let pathVideo = data.video.split('/')
                 data.video = BASE_URL + '/lessons/lessons/stream-video/' + pathVideo[pathVideo.length - 1]
-                console.log('X', pathVideo, data.video)
             }
 
             return new HttpResponse(HttpStatus.OK, data)
@@ -34,6 +33,57 @@ const getLesson = async (id) => {
     }
 }
 
+
+const completeLessonAsStudent = async (idStudent, idLesson) => {
+    try {
+        const url = `${BASE_URL}/lessons/lessons/complete-course/${idLesson}/${idStudent}`;
+        const options = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+            },
+        }
+        const response = await fetch(url, options)
+        if (response.ok) {
+            const data = await response.json()
+            return new HttpResponse(HttpStatus.OK, data)
+        }
+        throw new Error("LessonAPI::completeLessonAsStudent()")
+    } catch (error) {
+        console.warn(error);
+        return new HttpResponse(HttpStatus.ERROR, null);
+    }
+}
+
+const getCourse = async (id) => {
+    try {
+      const url = `${BASE_URL}/courses/courses/${id}`
+      const options = {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      }
+      const response = await fetch(url, options)
+      if (response.ok) {
+        const data = await response.json()
+  
+        if (data.lessons && data.lessons.length) {
+          data.lessons = data.lessons.sort((lessonA, lessonB) => lessonA.id < lessonB.id ? -1 : 1);
+        }
+  
+        return new HttpResponse(HttpStatus.OK, data)
+      }
+  
+      throw new Error("CourseAPI::getCourse()")
+    } catch (error) {
+      console.warn(error);
+      return new HttpResponse(HttpStatus.ERROR, null);
+    }
+  }
+
 export const LessonAPI = {
-    getLesson
+    getLesson,
+    completeLessonAsStudent,
+    getCourse
 }
