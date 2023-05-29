@@ -18,6 +18,7 @@ import { useAuthContext } from '../../contexts/AuthContext'
 import { Link } from 'react-router-dom'
 import './style.css'
 
+
 function Home() {
     const [data, setData] = useState({})
     const [isFetched, setIsFetched] = useState(false)
@@ -38,6 +39,7 @@ function Home() {
 
     return (
         <>
+         
             <Col>
                 <Navbar>
                     <Container fluid>
@@ -72,9 +74,9 @@ function Home() {
                         <h1 className="mt-3 mb-3 fs-5 fw-bold">Todos os cursos</h1>
 
                         <InputGroup className="mb-3">
-                            <Form.Control placeholder="Buscar cursos" disabled={true}/>
+                            <Form.Control placeholder="Buscar cursos" disabled={true} />
                             <Button variant="outline-secondary" id="button-addon2" disabled={true}>
-                                <FontAwesomeIcon icon={faMagnifyingGlass}  className="me-2" />
+                                <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" />
                             </Button>
                         </InputGroup>
                         {isFetched ? (

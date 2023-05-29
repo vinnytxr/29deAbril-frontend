@@ -57,6 +57,7 @@ const fetchEdit = async (newName, aboutText, newLink, id) => {
 
 const putInvite = async (userId, invite, jwt) => {
     const url = `${BASE_URL}/invitation/`;
+    var errorMessage;
     try {
         const options = {
             method: 'PUT',
@@ -74,10 +75,13 @@ const putInvite = async (userId, invite, jwt) => {
             const data = await response.json();
             AUTH_DEBUG && console.log("AuthAPI::getUserInfo(): ", data);
             return new HttpResponse(HttpStatus.OK, data);
-        } else throw new Error("Error on getUserInfo()");
+        } else {
+            errorMessage = await response.json();
+            throw new Error("Error on putInvite()");
+        }
     } catch (error) {
         console.warn(error)
-        return new HttpResponse(HttpStatus.ERROR, null);
+        return new HttpResponse(HttpStatus.ERROR, errorMessage);
     }
 }
 

@@ -61,6 +61,7 @@ const fetchRegister = async (formValues) => {
 
 const login = async (email, password) => {
     const url = `${BASE_URL}/login/`
+    var errorMessage;
     try {
         const options = {
             method: 'POST',
@@ -77,10 +78,13 @@ const login = async (email, password) => {
             const data = await response.json();
             AUTH_DEBUG && console.log("AuthAPI::login(): ", data.token);
             return new HttpResponse(HttpStatus.OK, data);
-        } else throw new Error("Error on login()");
+        } else {
+            errorMessage = await response.json();
+            throw new Error("Error on Register()")
+        }
     } catch (error) {
         console.warn(error)
-        return new HttpResponse(HttpStatus.ERROR, null);
+        return new HttpResponse(HttpStatus.ERROR, errorMessage);
     }
 }
 

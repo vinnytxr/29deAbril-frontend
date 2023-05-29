@@ -17,20 +17,33 @@ import { faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { BookmarkAPI } from '../../api/bookmark'
 
 function CourseDetails() {
-  const { token, logged } = useAuthContext()
+  const { token, logged, user, refreshUserOnContext } = useAuthContext()
   const [data, setData] = useState({})
-  const [isFavorited, setFavorited] = useState(false)
-  const { user } = useAuthContext();
+  const [isFavorited, setFavorited] = useState(false);
   const [rating, setRating] = useState(0);
   const [userRating, setUserRating] = useState(false);
+  const [allowFavorite, setAllowFavorite] = useState(true)
 
   const handleRatingChange = (newValue) => {
     setRating(newValue);
   };
 
-  const notify = (texto) =>
+  const notifyError = (texto) =>
+    toast.error(texto, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    })
+
+  const notifySuccess = (texto) =>
     toast.success(texto, {
       position: 'top-right',
       autoClose: 3000,
@@ -64,8 +77,9 @@ function CourseDetails() {
               lessonA.id < lessonB.id ? -1 : 1
             )
           }
+          //console.log("Favorite ", user.favorite_courses.includes(data.id))
+          setFavorited(user.favorite_courses.includes(data.id))
           setData({ ...data })
-          setFavorited(data.favorited)
         } catch (err) {
           navigate('/404-not-found')
         }
@@ -74,81 +88,45 @@ function CourseDetails() {
     }
   }, [id])
 
-  const manageBookmark = () => {
+  const manageBookmark = async () => {
+    setAllowFavorite(false);
     if (isFavorited) {
-      setFavorited(false)
-      deleteBookmark()
-      notify('Curso removido das suas marcações.')
+      const response = await BookmarkAPI.deleteBookmark(data.id, token);
+      if (response.status === HttpStatus.OK) {
+        setFavorited(false);
+        notifySuccess('Curso removido das suas marcações.');
+      } else {
+        notifyError("Falha ao remover curso das marcações.");
+      }
     } else {
-      notify('Curso adicionado as suas marcações.')
-      setFavorited(true)
-      saveBookmark()
-    }
-  }
-
-  useEffect(() => { console.log({ isFavorited }) }, [isFavorited])
-
-  const saveBookmark = async () => {
-    const url = `${BASE_URL}/courses/favorites/${data.id}`
-    try {
-      const options = {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          jwt: token,
-        },
+      const response = await BookmarkAPI.saveBookmark(data.id, token);
+      if (response.status === HttpStatus.OK) {
+        setFavorited(true);
+        notifySuccess('Curso adicionado as suas marcações.');
+      } else {
+        notifyError("Falha ao adicionar curso das marcações.");
       }
-
-      const response = await fetch(url, options)
-      if (response.ok) {
-        const data = await response.json()
-        return new HttpResponse(HttpStatus.OK, data)
-      } else throw new Error('Error on SaveBookmark')
-    } catch (error) {
-      console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
     }
+    refreshUserOnContext();
+    setAllowFavorite(true);
   }
 
-  const deleteBookmark = async () => {
-    const url = `${BASE_URL}/courses/favorites/${data.id}/remove`
-    try {
-      const options = {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          jwt: token,
-        },
-      }
-      const response = await fetch(url, options)
-      if (response.ok) {
-        return new HttpResponse(HttpStatus.OK)
-      } else throw new Error('Error on ChangePassword()')
-    } catch (error) {
-      console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
-    }
-  }
 
   const isUserRating = async () => {
     const url = `${BASE_URL}/courses/ratings/check-rating/${data.id}/${user.id}`
     try {
-        const options = {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json'
-            }
+      const options = {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
         }
-        const response = await fetch(url, options)
+      }
+      const response = await fetch(url, options)
       if (response.ok) {
         const data = await response.json()
-          if(data.result === 1) {return setUserRating(true)}
+        if (data.result === 1) { return setUserRating(true) }
         return new HttpResponse(HttpStatus.OK, data)
       } else throw new Error('Error on isUserRating()')
     } catch (error) {
@@ -156,7 +134,7 @@ function CourseDetails() {
       return new HttpResponse(HttpStatus.ERROR, null)
     }
   }
-  
+
   const updateRating = async () => {
     const url = `${BASE_URL}/courses/ratings/update-rating/${data.id}/${user.id}`
     try {
@@ -173,7 +151,7 @@ function CourseDetails() {
       const response = await fetch(url, options)
       if (response.ok) {
         const data = await response.json()
-        notify('Sucesso, agradecemos a sua avaliação!')
+        notifySuccess('Sucesso, agradecemos a sua avaliação!')
         return new HttpResponse(HttpStatus.OK, data)
       } else throw new Error('Error on updateRating()')
     } catch (error) {
@@ -198,7 +176,7 @@ function CourseDetails() {
       const response = await fetch(url, options)
       if (response.ok) {
         const data = await response.json()
-        notify('Sucesso, agradecemos a sua avaliação!')
+        notifySuccess('Sucesso, agradecemos a sua avaliação!')
         return new HttpResponse(HttpStatus.OK, data)
       } else throw new Error('Error on createRating()')
     } catch (error) {
@@ -206,7 +184,7 @@ function CourseDetails() {
       return new HttpResponse(HttpStatus.ERROR, null)
     }
   }
-  
+
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -218,15 +196,15 @@ function CourseDetails() {
         <div className="row mt-2">
           <div className="col">
             {
-            user && data && user.id === data?.professor?.id &&
-            <div className="col-md-12 mt-3">
-              <span className='flag-is-professor'>Você é o professor deste curso</span>
-            </div>
+              user && data && user.id === data?.professor?.id &&
+              <div className="col-md-12 mt-3">
+                <span className='flag-is-professor'>Você é o professor deste curso</span>
+              </div>
             }
           </div>
           {user && data && user.id !== data?.professor?.id &&
             <div className="col text-end">
-              <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating();}}>
+              <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating(); }}>
                 Avaliar curso
               </Button>
 
@@ -236,10 +214,10 @@ function CourseDetails() {
                 </Modal.Header>
                 <Modal.Body className="d-flex justify-content-center align-items-center">
                   Ficamos felizes pela conclusão de seu aprendizado!<br>
-                  </br> Avalie o curso e nos ajude com seu feedback! 
+                  </br> Avalie o curso e nos ajude com seu feedback!
                 </Modal.Body>
                 <Modal.Body className="d-flex justify-content-center align-items-center">
-                  <StarCourseRating value={data.rating} onChange={handleRatingChange}/>
+                  <StarCourseRating value={data.rating} onChange={handleRatingChange} />
                 </Modal.Body >
                 <Modal.Footer>
                   <Button className="pageDetails mt-3 cancel-rating" onClick={handleClose}>
@@ -247,22 +225,22 @@ function CourseDetails() {
                   </Button>
                   {!userRating ? (
                     <>
-                      <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); createRating();}}>
+                      <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); createRating(); }}>
                         Salvar
                       </Button>
                     </>
-                  ): (<>
-                    <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); updateRating();}}>
+                  ) : (<>
+                    <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); updateRating(); }}>
                       Salvar
                     </Button>
                   </>)
-                  }          
+                  }
                 </Modal.Footer>
               </Modal>
             </div>
           }
         </div>
-        
+
         <div className="col mt-1">
           <Card className="custom-bg">
             <div className="row">
@@ -272,6 +250,7 @@ function CourseDetails() {
                     <Button
                       onClick={() => manageBookmark()}
                       variant="outline-light"
+                      disabled={!allowFavorite}
                       className="button-bookmark"
                     >
                       <FontAwesomeIcon
@@ -294,7 +273,7 @@ function CourseDetails() {
                 <div className="row">
                   <div className="col">
                     <Card.Text className="mt-5 ms-3 mb-2">
-                      Professor: 
+                      Professor:
                       {!logged ? (
                         <span>
                           <strong className='mx-2'>{data?.professor?.name}</strong>
