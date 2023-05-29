@@ -17,6 +17,7 @@ import { faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { BookmarkAPI } from '../../api/bookmark'
 
 function CourseDetails() {
   const { token, logged, user, refreshUserOnContext } = useAuthContext()
@@ -63,7 +64,7 @@ function CourseDetails() {
               lessonA.id < lessonB.id ? -1 : 1
             )
           }
-          console.log("Favorite ", user.favorite_courses.includes(data.id))
+          //console.log("Favorite ", user.favorite_courses.includes(data.id))
           setFavorited(user.favorite_courses.includes(data.id))
           setData({ ...data })
         } catch (err) {
@@ -76,62 +77,17 @@ function CourseDetails() {
 
   const manageBookmark = () => {
     if (isFavorited) {
+      BookmarkAPI.deleteBookmark(data.id, token);
       setFavorited(false)
-      deleteBookmark()
       notify('Curso removido das suas marcações.')
     } else {
+      BookmarkAPI.saveBookmark(data.id, token);
       notify('Curso adicionado as suas marcações.')
       setFavorited(true)
-      saveBookmark()
     }
     refreshUserOnContext()
   }
 
-  const saveBookmark = async () => {
-    const url = `${BASE_URL}/courses/favorites/${data.id}`
-    try {
-      const options = {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          jwt: token,
-        },
-      }
-
-      const response = await fetch(url, options)
-      if (response.ok) {
-        const data = await response.json()
-        return new HttpResponse(HttpStatus.OK, data)
-      } else throw new Error('Error on SaveBookmark')
-    } catch (error) {
-      console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
-    }
-  }
-
-  const deleteBookmark = async () => {
-    const url = `${BASE_URL}/courses/favorites/${data.id}/remove`
-    try {
-      const options = {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          jwt: token,
-        },
-      }
-      const response = await fetch(url, options)
-      if (response.ok) {
-        return new HttpResponse(HttpStatus.OK)
-      } else throw new Error('Error on ChangePassword()')
-    } catch (error) {
-      console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
-    }
-  }
 
   const isUserRating = async () => {
     const url = `${BASE_URL}/courses/ratings/check-rating/${data.id}/${user.id}`

@@ -109,7 +109,7 @@ export const EditCourseScreen = () => {
     post.append("professor", user.id);
 
     if(formValores.files.length && imageBeUpdated(formValores.files[0])){
-      console.log('banner be updated')
+      //console.log('banner be updated')
       post.append("banner", formValores.files[0]);
     }
 

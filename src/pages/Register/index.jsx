@@ -83,7 +83,7 @@ export default function RegisterScreen() {
             navigate('/login')
         } else {
           setIsLoading(false)
-          notifyError(response.data.email[0]);
+          notifyError("Falha ao cadastrar novo usuário. " + response.data.error + ".");
         }
     }
   }
@@ -108,7 +108,7 @@ export default function RegisterScreen() {
             navigate('/login')
         } else {
             setIsLoading(false)
-            notifyError(response.data.email[0]);
+            notifyError("Falha ao cadastrar novo usuário. " + response.data.error + ".");
         }
 
       }

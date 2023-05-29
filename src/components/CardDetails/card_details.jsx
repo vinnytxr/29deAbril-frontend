@@ -30,14 +30,14 @@ function CardDetails({ image, course }) {
 
   const verificaInsc = () => {
     const student = course?.students?.find((student) => student.id === user.id)
-    console.log('student verifica: ', student)
+    //console.log('student verifica: ', student)
     return student !== undefined || user.id === course.professor.id
   }
 
   useEffect(() => {
     if (!!user) {
       const isStudentInscrito = verificaInsc()
-      console.log('isStident: ', isStudentInscrito)
+      //console.log('isStident: ', isStudentInscrito)
       setButtonDisabled(isStudentInscrito)
       setcardText(
         isStudentInscrito
@@ -66,7 +66,7 @@ function CardDetails({ image, course }) {
       })
       .catch((error) => {
         setIsLoading(false)
-        console.log(error)
+        //console.log(error)
         alertClicked()
       })
   }
