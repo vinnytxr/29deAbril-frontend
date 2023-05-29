@@ -17,7 +17,7 @@ import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 function CourseDetails() {
-  const { token, logged } = useAuthContext()
+  const { token, logged, user, refreshUserOnContext } = useAuthContext()
   const [data, setData] = useState({})
   const [isFavorited, setFavorited] = useState(false)
 
@@ -37,7 +37,7 @@ function CourseDetails() {
   const { id } = useParams()
 
   useEffect(() => {
-    if (id) {
+    if (id && user) {
       const dataFetch = async () => {
         try {
           const response = await fetch(`${BASE_URL}/courses/courses/${id}`, {
@@ -55,15 +55,16 @@ function CourseDetails() {
               lessonA.id < lessonB.id ? -1 : 1
             )
           }
+          console.log("Favorite ", user.favorite_courses.includes(data.id))
+          setFavorited(user.favorite_courses.includes(data.id))
           setData({ ...data })
-          setFavorited(data.favorited)
         } catch (err) {
           navigate('/404-not-found')
         }
       }
       dataFetch()
     }
-  }, [id])
+  }, [id, user])
 
   const manageBookmark = () => {
     if (isFavorited) {
@@ -75,9 +76,10 @@ function CourseDetails() {
       setFavorited(true)
       saveBookmark()
     }
+    refreshUserOnContext()
   }
 
-  useEffect(() => {console.log({isFavorited})}, [isFavorited])
+  useEffect(() => {console.log({isFavorited})}, [user])
 
   const saveBookmark = async () => {
     const url = `${BASE_URL}/courses/favorites/${data.id}`
