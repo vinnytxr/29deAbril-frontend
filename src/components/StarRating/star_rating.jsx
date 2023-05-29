@@ -1,7 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function StarRating({ value }) {
   const fullStars = Math.floor(value);
@@ -21,12 +20,13 @@ function StarRating({ value }) {
     stars.push(<FontAwesomeIcon key={stars.length} icon={faStar} className="text-secondary" />);
   }
 
-  const tooltip = <Tooltip id="tooltip-star-rating">{value} de 5 estrelas</Tooltip>;
-
   return (
-    <OverlayTrigger placement="top" overlay={tooltip}>
-      <div>{stars}</div>
-    </OverlayTrigger>
+    <div>
+      <div>
+        {stars}
+        <span style={{ marginLeft: '0.5rem', fontSize: '1.2rem', fontWeight: 'bold', }}>{value} / 5 </span>
+      </div>
+    </div>
   );
 }
 

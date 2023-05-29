@@ -31,6 +31,23 @@
     opacity: 1;
 }
 
+.pageDetails .cancel-rating {
+    margin-left: 5px;
+    border: 2px solid #dc3545;
+    background-color: #dc3545;
+}
+  
+.pageDetails .cancel-rating:active {
+    background-color: white;
+    color: #dc3545;
+    border: 2px solid white;
+}
+
+.pageDetails .submit-rating {
+    border: 2px solid #0E6216;
+    background-color: #0E6216;
+}
+
 .pageDetails .link {
     text-decoration: none;
     color: gold;
@@ -46,4 +63,4 @@
     font-weight: bold;
     padding: 0 10px;
     border-radius: 5px;
-  }
+}
