@@ -5,11 +5,10 @@ import Avatar from 'react-avatar'
 import CardCourses from '../../components/CardCourses'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
-import Form from 'react-bootstrap/Form'
-import InputGroup from 'react-bootstrap/InputGroup'
-import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Navbar from 'react-bootstrap/Navbar'
+
+//Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { AuthAPI } from '../../api/auth-api'
@@ -20,87 +19,114 @@ import './style.css'
 
 
 function Home() {
-    const [data, setData] = useState({})
-    const [isFetched, setIsFetched] = useState(false)
+  const [data, setData] = useState({})
+  const [isFetched, setIsFetched] = useState(false)
+  const [searchData, setSearchData] = useState([])
+  const [searchValue, setSearchValue] = useState('')
 
-    const { logged, user } = useAuthContext()
+  const { logged, user } = useAuthContext()
 
-    const getCourses = async (e) => {
-        const responseCourses = await AuthAPI.getCoursesData()
-        if (responseCourses.status === HttpStatus.OK) {
-            setData(responseCourses.data)
-            setIsFetched(true)
-        }
+  const getCourses = async (e) => {
+    const responseCourses = await AuthAPI.getCoursesData()
+    if (responseCourses.status === HttpStatus.OK) {
+      setData(responseCourses.data)
+      setIsFetched(true)
     }
-
-    useEffect(() => {
-        getCourses()
-    }, [])
-
-    return (
-        <>
-         
-            <Col>
-                <Navbar>
-                    <Container fluid>
-                        {logged && user ? <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                            &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
-                        </p> :
-                            <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                                &#128075;&nbsp; BEM-VINDO!
-                            </p>}
-
-                        <Navbar.Toggle />
-                        <Navbar.Collapse className="justify-content-end">
-
-                            <Navbar.Text>
-                                {user &&
-                                    <Avatar
-                                        name={user.name}
-                                        color="#0f5b7a"
-                                        size={30}
-                                        textSizeRatio={2}
-                                        round={true}
-                                    />
-                                }
-                            </Navbar.Text>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
-                <Row className="home-card">
-
-
-                    <div className="col">
-                        <h1 className="mt-3 mb-3 fs-5 fw-bold">Todos os cursos</h1>
-
-                        <InputGroup className="mb-3">
-                            <Form.Control placeholder="Buscar cursos" disabled={true} />
-                            <Button variant="outline-secondary" id="button-addon2" disabled={true}>
-                                <FontAwesomeIcon icon={faMagnifyingGlass} className="me-2" />
-                            </Button>
-                        </InputGroup>
-                        {isFetched ? (
-                            data.results ? (
-                                <Row className="g-4">
-                                    {data.results.map((course) => (
-                                        <Col xs={12} lg={4} key={course.id}>
-                                            <Link to={`/courses/${course.id}`}>
-                                                <CardCourses teste={course} />
-                                            </Link>
-                                        </Col>
-                                    ))}
-                                </Row>
-                            ) : (
-                                <p>Não há cursos disponíveis.</p>
-                            )
-                        ) : (
-                            <p>Carregando...</p>
-                        )}
-                    </div>
-                </Row>
-            </Col>
-        </>
+  }
+  
+  const handleSearch = (e) => {
+    setSearchValue(e.target.value)
+    const filteredData = data.results.filter((curso) =>
+      curso.title.toLowerCase().includes(e.target.value.toLowerCase())
     )
+    setSearchData(filteredData)
+  }
+
+  useEffect(() => {
+    getCourses()
+  }, [])
+
+
+  return (
+    <>
+      <Col>
+        <Navbar>
+          <Container fluid>
+            {logged && user ? (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+              </p>
+            ) : (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; BEM-VINDO!
+              </p>
+            )}
+
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                {user && (
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                )}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+        <Row className="home-card">
+          <div className="col">
+            
+            <h1 className="mt-3 mb-3 fs-5 fw-bold">Todos os cursos</h1>
+
+            <div className="mb-3 container-input" onChange={(e) => handleSearch(e)}>
+              <input placeholder="Buscar cursos" className='input-search'/>
+              <FontAwesomeIcon icon={faMagnifyingGlass} className='icon-search'/>
+            </div>
+            
+
+            {isFetched ? (
+              <>
+                {searchValue ? (
+                  searchData.length > 0 ? (
+                    <Row className="g-4">
+                      {searchData.map((course) => (
+                        <Col xs={12} lg={4} key={course.id}>
+                          <Link to={`/courses/${course.id}`}>
+                            <CardCourses teste={course} />
+                          </Link>
+                        </Col>
+                      ))}
+                    </Row>
+                  ) : (
+                    <p>Nenhum curso encontrado com o termo de busca.</p>
+                  )
+                ) : data.results ? (
+                  <Row className="g-4">
+                    {data.results.map((course) => (
+                      <Col xs={12} lg={4} key={course.id}>
+                        <Link to={`/courses/${course.id}`}>
+                          <CardCourses teste={course} />
+                        </Link>
+                      </Col>
+                    ))}
+                  </Row>
+                ) : (
+                  <p>Não há cursos disponíveis.</p>
+                )}
+              </>
+            ) : (
+              <p>Carregando...</p>
+            )}
+          </div>
+        </Row>
+      </Col>
+    </>
+  )
 }
 
 export default Home
