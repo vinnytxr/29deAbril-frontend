@@ -25,13 +25,13 @@ function TeacherProfile() {
                 try {
                     const response = await fetch(`${BASE_URL}/courses/courses?professor=${id}`)
                     if (response.status < 200 || response.status >= 300) throw new Error(`Curso não encontrado ${id}`)
-                    console.log(response)
+                    //console.log(response)
                     const data = await response.json();
                     // set state when the data received
                     setData({ ...data });
                     setIsFetched(true);
                 } catch (err) {
-                    console.log("ERRO")
+                    //console.log("ERRO")
                     navigate("/404-not-found")
                 }
             }

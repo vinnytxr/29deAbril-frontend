@@ -79,9 +79,10 @@ const UserProfileScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
-    console.log("response: ", response)
+    //console.log("response: ", response)
 
     if (response.status !== HttpStatus.OK) {
+      console.log(response)
       setAuthorizationCode('')
       notifyError("Falha ao alterar permissões.")
     } else {

@@ -65,7 +65,7 @@ const PasswordRecoveryPage = () => {
                 notifySuccess("Requisição para alteração de senha realizada!")
             } else {
                 setIsLoading(false)
-                notifyError(`Falha em requisitar recuperação de senha.\n ${response.data.message}`)
+                notifyError(`Falha em requisitar recuperação de senha.\n ${response.data.error}`)
             }
         }
         setIsLoading(false)

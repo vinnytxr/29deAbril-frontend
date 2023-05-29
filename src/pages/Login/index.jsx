@@ -78,7 +78,8 @@ const LoginPage = () => {
         }
         setIsLoading(false)
       } else {
-        notifyError('Falha ao executar login.')
+        //console.log(responseLogin)
+        notifyError('Falha ao executar login. ' + responseLogin.data.error)
       }
       setIsLoading(false)
     }
