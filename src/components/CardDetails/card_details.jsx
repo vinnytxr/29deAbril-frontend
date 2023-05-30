@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import { useParams, useNavigate } from 'react-router-dom'
-
+import { toast } from 'react-toastify'
 import './card_details.css'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { BASE_URL } from '../../api/default'
@@ -11,15 +11,24 @@ import { Spinner } from 'react-bootstrap'
 function CardDetails({ image, course, onChange }) {
   const { logged, user } = useAuthContext()
 
-  const alertClicked = () => {
-    alert('Erro ao realizar inscrição, tente novamente mais tarde!')
-  }
   const alertClickedLooged = () => {
     setIsLoading(true)
     setButtonDisabled(true)
-    alert('Para realizar inscrição é necessário efetuar login!')
+    notifyAlerta("Para realizar inscrição é necessário efetuar login!")
     setIsLoading(false)
   }
+
+  const notifyAlerta = (texto) =>
+    toast.error(texto, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+  })
 
   const [buttonDisabled, setButtonDisabled] = useState(false)
   const [cardText, setcardText] = useState('')
@@ -68,7 +77,7 @@ function CardDetails({ image, course, onChange }) {
       .catch((error) => {
         setIsLoading(false)
         //console.log(error)
-        alertClicked()
+        notifyAlerta("Erro ao realizar inscrição, tente novamente mais tarde!")
       })
   }
 

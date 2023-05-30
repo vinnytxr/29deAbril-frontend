@@ -65,6 +65,7 @@ const ChangePasswordPage = () => {
             if (response.status === HttpStatus.OK) {
                 notifySuccess("Senha alterada com sucesso.");
                 setIsLoading(false)
+                navigate('/perfil')
             } else {
                 notifyError(response.data.error);
                 setIsLoading(false)
