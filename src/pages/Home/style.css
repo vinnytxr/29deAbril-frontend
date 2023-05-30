@@ -22,3 +22,34 @@ body, html {
     text-decoration: none !important;
     color: black;
 }
+
+.container-input {
+    position: relative; 
+    background-color: white;
+    border: solid 1px lightgrey;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    height: 46px;
+}
+
+.input-search, .input-search:focus, .input-search:hover, .input-search:active{
+    flex: 1;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    box-shadow:none;
+    margin-left: 8px;
+    font-size: 18px;
+    color: grey;
+}
+
+.icon-search {
+    position: absolute; 
+    right: 14px; 
+    top: 50%; 
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: darkgrey;
+}
