@@ -25,10 +25,15 @@ function CourseDetails() {
   const [isFavorited, setFavorited] = useState(false);
   const [rating, setRating] = useState(0);
   const [userRating, setUserRating] = useState(false);
+  const [isStudent, setIsStudent] = useState(false);
   const [allowFavorite, setAllowFavorite] = useState(true)
 
   const handleRatingChange = (newValue) => {
     setRating(newValue);
+  };
+
+  const handleIsStudent = (newValue) => {
+    setIsStudent(newValue);
   };
 
   const notifyError = (texto) =>
@@ -78,7 +83,7 @@ function CourseDetails() {
             )
           }
           //console.log("Favorite ", user.favorite_courses.includes(data.id))
-          setFavorited(user.favorite_courses.includes(data.id))
+          setFavorited(logged && user.favorite_courses.includes(data.id))
           setData({ ...data })
         } catch (err) {
           navigate('/404-not-found')
@@ -202,12 +207,12 @@ function CourseDetails() {
               </div>
             }
           </div>
-          {user && data && user.id !== data?.professor?.id &&
+          {isStudent && user && data && user.id !== data?.professor?.id &&
             <div className="col text-end">
               <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating(); }}>
                 Avaliar curso
               </Button>
-
+              
               <Modal className="pageDetails" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                   <Modal.Title>Avaliar curso</Modal.Title>
@@ -274,15 +279,9 @@ function CourseDetails() {
                   <div className="col">
                     <Card.Text className="mt-5 ms-3 mb-2">
                       Professor:
-                      {!logged ? (
-                        <span>
-                          <strong className='mx-2'>{data?.professor?.name}</strong>
-                        </span>
-                      ) : (
                         <Link to={`/student/courses/professor/${data?.professor?.id}`}>
                           <strong className='mx-2 link'>{data?.professor?.name}</strong>
                         </Link>
-                      )}
                     </Card.Text>
                   </div>
                 </div>
@@ -290,7 +289,7 @@ function CourseDetails() {
 
               {data && data?.students && (
                 <div className="col d-flex justify-content-center align-items-center my-2">
-                  <CardDetails image={data.banner} course={data} />
+                  <CardDetails image={data.banner} course={data} onChange={handleIsStudent} />
                 </div>
               )}
             </div>

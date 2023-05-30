@@ -48,7 +48,7 @@ function TeacherProfile() {
                     </Row>
                 </Col>
             </Row>
-            {isFetched && logged && !!user && data.results ? (
+            {data.results ? (
                 <Row className="mt-3 home-card">
                     <h1 className="mt-3 mb-3 fs-5 fw-bold">Todos os cursos</h1>
 
@@ -56,7 +56,7 @@ function TeacherProfile() {
                         <Row className="g-4">
                             {data.results.map((course) => (
                                 <Col xs={12} lg={4} key={course.id}>
-                                    <Link to={`/student/courses/${course.id}`}>
+                                    <Link to={`/courses/${course.id}`}>
                                         <CardCourses teste={course} />
                                     </Link>
                                 </Col>

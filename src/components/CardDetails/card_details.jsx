@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import './card_details.css'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { BASE_URL } from '../../api/default'
 import { Spinner } from 'react-bootstrap'
 
-function CardDetails({ image, course }) {
+function CardDetails({ image, course, onChange }) {
   const { logged, user } = useAuthContext()
 
   const alertClicked = () => {
@@ -27,6 +27,7 @@ function CardDetails({ image, course }) {
   const [buttonText, setButtonText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { id: courseId } = useParams()
+  const navigate = useNavigate()
 
   const verificaInsc = () => {
     const student = course?.students?.find((student) => student.id === user.id)
@@ -37,7 +38,7 @@ function CardDetails({ image, course }) {
   useEffect(() => {
     if (!!user) {
       const isStudentInscrito = verificaInsc()
-      //console.log('isStident: ', isStudentInscrito)
+      if(isStudentInscrito === true) onChange(true)
       setButtonDisabled(isStudentInscrito)
       setcardText(
         isStudentInscrito

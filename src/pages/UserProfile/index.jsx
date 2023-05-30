@@ -19,12 +19,13 @@ const UserProfileScreen = () => {
   const [editando, setEditando] = useState(false)
   const [aboutText, setAboutText] = useState();
   const [newName, setNewName] = useState();
-  const [newLink, setNewLink] = useState();
+  const [newLink, setNewLink] = useState("https://www.linkedin.com/in/");
   const [formErrors, setFormErrors] = useState({});
   const { logged, user, token, setToken, refreshUserOnContext } = useAuthContext();
   const [authorizationCode, setAuthorizationCode] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [imagesToUpdate, setImagesToUpdate] = useState()
+  const linkEditavel = newLink.substr(newLink.lastIndexOf('/') + 1);
 
   const notifyError = (texto) => toast.error(texto, {
     position: "top-right",
@@ -100,6 +101,9 @@ const UserProfileScreen = () => {
     setNewName(user.name)
     setAboutText(user.about)
     setNewLink(user.contactLink)
+    if(user.contactLink === null){
+      setNewLink("https://www.linkedin.com/in/")
+    }
     setEditando(true)
   }
 
@@ -352,11 +356,14 @@ const UserProfileScreen = () => {
                 <Col>
                     {editando ? (
                       <div className="mb-3">
+                        <span className="ms-1">
+                          Insira seu usuário do LinkedIn: 
+                        </span>
                         <textarea
-                          rows={4}
-                          className="form-control"
-                          value={newLink}
-                          onChange={(e) => setNewLink(e.target.value)}
+                          rows={1}
+                          className="form-control mt-1"
+                          value={linkEditavel}
+                          onChange={(e) => setNewLink(newLink.substr(0, newLink.lastIndexOf('/') + 1) + e.target.value)}
                         />
                       </div>
                     ) : (
