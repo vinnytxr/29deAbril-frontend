@@ -78,7 +78,7 @@ function CourseDetails() {
             )
           }
           //console.log("Favorite ", user.favorite_courses.includes(data.id))
-          setFavorited(user.favorite_courses.includes(data.id))
+          setFavorited(logged && user.favorite_courses.includes(data.id))
           setData({ ...data })
         } catch (err) {
           navigate('/404-not-found')
