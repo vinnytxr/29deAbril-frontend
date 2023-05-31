@@ -17,13 +17,14 @@ export default function RegisterScreen() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
     cpf: '',
     about: 'Conte algo sobre você!',
     role: [1],
     birth: '',
   }
-  const [formValues, setFormValues] = useState(intialValues)
+
+  const initialConfirmPassword = '';
+  const [formValues, setFormValues] = useState({ ...intialValues, confirmPassword: initialConfirmPassword })
   const [formErrors, setFormErrors] = useState({})
   const [isSubmit, setIsSubmit] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -68,6 +69,8 @@ export default function RegisterScreen() {
         const formattedValue = value.replace(/\D/g, '');
 
         setFormValues({ ...formValues, [name]: formattedValue });
+    } else if (name === 'confirmPassword') {
+      setFormValues({ ...formValues, confirmPassword: value });
     } else {
         setFormValues({ ...formValues, [name]: value });
     }
