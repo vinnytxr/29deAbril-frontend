@@ -17,6 +17,7 @@ export default function RegisterScreen() {
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
     cpf: '',
     about: 'Conte algo sobre você!',
     role: [1],
@@ -188,6 +189,12 @@ export default function RegisterScreen() {
             errors.password = "Senha não pode ter mais que 16 caracteres!";
         }
 
+        if (!values.confirmPassword) {
+          errors.confirmPassword = 'Digite a senha novamente!';
+        } else if (values.confirmPassword !== values.password) {
+          errors.confirmPassword = 'As senhas não coincidem!';
+        }
+
         if (!values.birth) {
             errors.birth = "Selecione uma data!";
         } else {
@@ -218,6 +225,9 @@ export default function RegisterScreen() {
           <div className="col">
             <img
               style={{ width: '11em' }}
+              onClick={() => {
+                window.location.href = '/'
+              }}
               src="https://i.ibb.co/r3QPmSt/logo.png"
               alt="logo"
               border="0"
@@ -272,6 +282,19 @@ export default function RegisterScreen() {
             </div>
             <p className="ps-2" style={{ color: 'red' }}>
               {formErrors.password}
+            </p>
+            <div className="mt-3">
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirmar Senha *"
+                className="form-control"
+                value={formValues.confirmPassword}
+                onChange={handleChange}
+              />
+            </div>
+            <p className="ps-2" style={{ color: 'red' }}>
+              {formErrors.confirmPassword}
             </p>
             <div className="mt-3">
               <input
