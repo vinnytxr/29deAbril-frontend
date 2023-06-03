@@ -20,4 +20,5 @@ section.lesson-on-lesson-list span.completed-flag {
     border: 1px solid #0E6216;
     padding: 2px 5px;
     border-radius: 5px;
+    height: fit-content;
 }
