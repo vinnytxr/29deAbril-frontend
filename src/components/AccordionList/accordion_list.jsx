@@ -16,7 +16,12 @@ function AccordionListCourse({ sessions }) {
       {lessons?.map(item => (
         <Card key={item.id}>
           <Accordion.Item eventKey={item.id.toString()} key={item.id}>
-            <Accordion.Header className='accordion-header'>{item.title}</Accordion.Header>
+            <Accordion.Header className='accordion-header'>
+              <section className="lesson-on-lesson-list">
+                <span>{item.title}</span>
+                <span className="completed-flag">Concluído</span>
+              </section>
+            </Accordion.Header>
             <Accordion.Body>
               <ListGroup>
                 <ListGroupItem action onClick={() => navigate(`/student/lessons/${item.id}`)}>

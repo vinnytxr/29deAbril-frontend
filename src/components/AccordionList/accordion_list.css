@@ -6,3 +6,18 @@
 .lesson-accordion * {
     box-shadow: none !important;
 }
+
+section.lesson-on-lesson-list {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+section.lesson-on-lesson-list span.completed-flag {
+    font-weight: bold;
+    color: #0E6216;
+    margin-right: 1rem;
+    border: 1px solid #0E6216;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
