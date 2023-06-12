@@ -94,6 +94,7 @@ export const StudentLessonPage = () => {
 
         await LessonAPI.completeLessonAsStudent(user.id, lesson.id);
         await refreshLesson()
+        refreshUserOnContext()
       }
     }
 
