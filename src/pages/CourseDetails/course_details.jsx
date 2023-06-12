@@ -11,7 +11,7 @@ import StarCourseRating from '../../components/StarCourseRating/star_course'
 import AccordionListCourse from '../../components/AccordionList/accordion_list'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Button, Container } from 'react-bootstrap'
-import { BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
+import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBookmark } from '@fortawesome/free-solid-svg-icons'
 import { useAuthContext } from '../../contexts/AuthContext'
@@ -27,6 +27,8 @@ function CourseDetails() {
   const [userRating, setUserRating] = useState(false);
   const [isStudent, setIsStudent] = useState(false);
   const [allowFavorite, setAllowFavorite] = useState(true)
+  const [comment, setComment] = useState("")
+  const [formErrors, setFormErrors] = useState({})
 
   const handleRatingChange = (newValue) => {
     setRating(newValue);
@@ -142,6 +144,7 @@ function CourseDetails() {
 
   const updateRating = async () => {
     const url = `${BASE_URL}/courses/ratings/update-rating/${data.id}/${user.id}`
+    var errorMessage;
     try {
       const options = {
         method: 'PATCH',
@@ -153,20 +156,24 @@ function CourseDetails() {
         body: JSON.stringify({ rating: rating })
       }
 
-      const response = await fetch(url, options)
+      const response = await fetch(url, options);
       if (response.ok) {
-        const data = await response.json()
-        notifySuccess('Sucesso, agradecemos a sua avaliação!')
-        return new HttpResponse(HttpStatus.OK, data)
-      } else throw new Error('Error on updateRating()')
+        const data = await response.json();
+        AUTH_DEBUG && console.log("AuthAPI::UpdateRating(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on UpdateRating()");
+      }
     } catch (error) {
       console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
     }
   }
 
   const createRating = async () => {
     const url = `${BASE_URL}/courses/ratings`
+    var errorMessage;
     try {
       const options = {
         method: 'POST',
@@ -175,19 +182,67 @@ function CourseDetails() {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({ user: user.id, course: data.id, rating: rating })
+        body: JSON.stringify({ user: user.id, course: data.id, rating: rating, comment: comment })
       }
 
-      const response = await fetch(url, options)
+      const response = await fetch(url, options);
       if (response.ok) {
-        const data = await response.json()
-        notifySuccess('Sucesso, agradecemos a sua avaliação!')
-        return new HttpResponse(HttpStatus.OK, data)
-      } else throw new Error('Error on createRating()')
+        const data = await response.json();
+        AUTH_DEBUG && console.log("AuthAPI::CreateRating(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on CreateRating()");
+      }
     } catch (error) {
       console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
     }
+  }
+
+  const validate = async (e) => {
+    const errors = {}
+    if (comment.length < 10) {
+      errors.comment = "Seu comentário precisa ter mais do que 10 caracteres."
+    }
+    if (comment.length > 130) {
+      errors.comment = "Seu comentário não pode ter mais do que 130 caracteres."
+    }
+    setFormErrors(errors);
+    console.log(Object.keys(errors).length == 0)
+    return Object.keys(errors).length == 0;
+  }
+
+  const fetchComment = async () => {
+    if (validate()) {
+      console.log(userRating)
+      if (!userRating) {
+        console.log("Entrou aqui")
+        const response = await createRating();
+        if (response.status === HttpStatus.OK) {
+          notifySuccess('Sucesso, agradecemos a sua avaliação!');
+          handleClose();
+          isUserRating();
+        } else {
+          //console.log(responseLogin)
+          notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
+        }
+      } else {
+        const response = await updateRating();
+        if (response.status === HttpStatus.OK) {
+          notifySuccess('Sucesso, agradecemos a sua avaliação!');
+          handleClose();
+        } else {
+          //console.log(responseLogin)
+          notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
+        }
+      }
+    }
+  }
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    setComment(value);
   }
 
   const [show, setShow] = useState(false);
@@ -212,7 +267,7 @@ function CourseDetails() {
               <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating(); }}>
                 Avaliar curso
               </Button>
-              
+
               <Modal className="pageDetails" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                   <Modal.Title>Avaliar curso</Modal.Title>
@@ -224,22 +279,22 @@ function CourseDetails() {
                 <Modal.Body className="d-flex justify-content-center align-items-center">
                   <StarCourseRating value={data.rating} onChange={handleRatingChange} />
                 </Modal.Body >
+                <Modal.Body>
+                  <hr />
+                  <p className='ps-2'>&#x2022; Comente com a gente sobre o que achou do curso.</p>
+                  <textarea class="form-control" placeholder='Comentário' onChange={handleChange} name="comment" value={comment} style={{ resize: 'none' }} rows="4"></textarea>
+                </Modal.Body>
                 <Modal.Footer>
                   <Button className="pageDetails mt-3 cancel-rating" onClick={handleClose}>
                     Cancelar
                   </Button>
-                  {!userRating ? (
-                    <>
-                      <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); createRating(); }}>
-                        Salvar
-                      </Button>
-                    </>
-                  ) : (<>
-                    <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); updateRating(); }}>
-                      Salvar
-                    </Button>
-                  </>)
-                  }
+
+
+                  <Button className="pageDetails mt-3 submit-rating" onClick={() => { fetchComment(); }}>
+                    Salvar
+                  </Button>
+
+
                 </Modal.Footer>
               </Modal>
             </div>
@@ -279,9 +334,9 @@ function CourseDetails() {
                   <div className="col">
                     <Card.Text className="mt-5 ms-3 mb-2">
                       Professor:
-                        <Link to={`/student/courses/professor/${data?.professor?.id}`}>
-                          <strong className='mx-2 link'>{data?.professor?.name}</strong>
-                        </Link>
+                      <Link to={`/student/courses/professor/${data?.professor?.id}`}>
+                        <strong className='mx-2 link'>{data?.professor?.name}</strong>
+                      </Link>
                     </Card.Text>
                   </div>
                 </div>

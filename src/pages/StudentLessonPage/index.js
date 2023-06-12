@@ -114,7 +114,13 @@ export const StudentLessonPage = () => {
     if(controle.enrolled) setVideoPlayer({ ...videoPlayer, played });
   }
 
+  const anotar = () => {
+    console.log("Anotação")
+  }
+
   return lesson ? (
+    <>
+    
     <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
       <Row>
         {
@@ -159,7 +165,9 @@ export const StudentLessonPage = () => {
         </Col>
       </Row>
     </Container>
-  ) : <></>;
+    </>
+  )
+   : <></>;
 }
 
 const LinkLesson = ({ title, link, image, inverse }) => {
