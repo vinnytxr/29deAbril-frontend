@@ -7,7 +7,7 @@ import { ImBooks } from 'react-icons/im'
 import { GiArchiveRegister } from 'react-icons/gi'
 import { TbLogin } from 'react-icons/tb'
 import { AiFillHome } from 'react-icons/ai'
-import { BsKeyFill } from 'react-icons/bs'
+import { BsKeyFill, BsReverseListColumnsReverse } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router-dom';
 import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
 import { Roles } from '../../api/default';
@@ -114,9 +114,10 @@ const SideNav = () => {
               <NavText text='ADMIN' />
               <NavGroupFlush>
                 <NavLinkTo title='Gerar Convite' href='/admin/generate-invite' icon={<FAIcon Icon={BsKeyFill} />} />
+                <NavLinkTo title='Gerenciar Professores' href='/admin/manage-teachers' icon={<FAIcon Icon={BsReverseListColumnsReverse} />} />
               </NavGroupFlush>
             </StrictRoute>
-
+            
           </Card.Body>
           <StrictRoute roles={[Roles.STUDENT, Roles.ADMIN, Roles.PROFESSOR]}>
             <Card.Footer style={{backgroundColor: "white"}}>
