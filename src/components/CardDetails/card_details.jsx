@@ -46,6 +46,7 @@ function CardDetails({ image, course, onChange }) {
       const isStudentInscrito = verificaInsc()
       if (isStudentInscrito) {
         onChange(true)
+        setButtonDisabled(isStudentInscrito)
         const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(courseId));
 
         if (!!enrolledCourseInfo) {
