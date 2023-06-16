@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card'
-import { Modal } from 'react-bootstrap'
+import { Col, ListGroup, ListGroupItem, Modal, Row } from 'react-bootstrap'
 import './course_details.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import CardDetails from '../../components/CardDetails/card_details'
@@ -13,7 +13,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Button, Container } from 'react-bootstrap'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBookmark } from '@fortawesome/free-solid-svg-icons'
+import { faBookmark, faRemove } from '@fortawesome/free-solid-svg-icons'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -28,6 +28,8 @@ function CourseDetails() {
   const [isStudent, setIsStudent] = useState(false);
   const [allowFavorite, setAllowFavorite] = useState(true)
   const [comment, setComment] = useState("")
+  const [commentList, setCommentList] = useState([]);
+  const [isCommentFetched, setIsCommentFetched] = useState(false);
   const [formErrors, setFormErrors] = useState({})
 
   const handleRatingChange = (newValue) => {
@@ -91,7 +93,8 @@ function CourseDetails() {
           navigate('/404-not-found')
         }
       }
-      dataFetch()
+      dataFetch();
+      getListRatings();
     }
   }, [id])
 
@@ -182,7 +185,7 @@ function CourseDetails() {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({ user: user.id, course: data.id, rating: rating, comment: comment })
+        body: JSON.stringify({ user_name: user.name.split(' ')[0], user: user.id, course: data.id, rating: rating, comment: comment })
       }
 
       const response = await fetch(url, options);
@@ -193,6 +196,68 @@ function CourseDetails() {
       } else {
         errorMessage = await response.json();
         throw new Error("Error on CreateRating()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
+  const deleteComment = async (idUser) => {
+    console.log("DELETAR")
+    const url = `${BASE_URL}/courses/ratings/update-visibility/${id}/${idUser}/${user.id}`
+    var errorMessage;
+    try {
+      const options = {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ "commentVisibility": false })
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        getListRatings();
+        AUTH_DEBUG && console.log("AuthAPI::CreateRating(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on CreateRating()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
+
+  const getListRatings = async () => {
+    const url = `${BASE_URL}/courses/ratings/list-ratings-course/${id}`
+    var errorMessage;
+    try {
+      const options = {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        setCommentList(data);
+        setIsCommentFetched(true);
+        AUTH_DEBUG && console.log("AuthAPI::getRating(): ", data);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on getRating()");
       }
     } catch (error) {
       console.warn(error)
@@ -223,6 +288,7 @@ function CourseDetails() {
           notifySuccess('Sucesso, agradecemos a sua avaliação!');
           handleClose();
           isUserRating();
+          getListRatings();
         } else {
           //console.log(responseLogin)
           notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
@@ -232,6 +298,8 @@ function CourseDetails() {
         if (response.status === HttpStatus.OK) {
           notifySuccess('Sucesso, agradecemos a sua avaliação!');
           handleClose();
+          isUserRating();
+          getListRatings();
         } else {
           //console.log(responseLogin)
           notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
@@ -415,6 +483,44 @@ function CourseDetails() {
               )}
             </div>
           </div>
+          <Row>
+            <Card
+              style={{
+                padding: '16px',
+              }}
+            >
+              <Row className="mb-4">
+                <Col className="d-flex justify-content-between align-items-center">
+                  <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                    Comentários:
+                  </h1>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <ListGroup>
+                    {isCommentFetched && commentList.map(comment => (comment.commentVisibility
+                      &&
+                      <ListGroupItem className="pb-0" key={comment.user} style={{ display: "flex", flexDirection: "column" }}>
+                        <span className='fw-bold' style={{ display: 'flex', alignItems: 'center' }}>
+                          {comment.user_name}&nbsp; &nbsp;
+                          <StarRating value={comment.rating} textSize={'0.8rem'} starSize={'11'} />
+                        </span>
+
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <p className="mb-1 ps-1">{comment.comment}</p>
+                          {user && data && user.id === data?.professor?.id && <span className='delete mb-1' onClick={() => deleteComment(comment.user)} style={{ marginLeft: "auto", cursor: "pointer" }}>Deletar <FontAwesomeIcon
+                            style={{ color: 'white', fontSize: '16' }}
+                            icon={faRemove}
+                          /></span>}
+                        </div>
+                      </ListGroupItem>
+                    ))}
+                  </ListGroup>
+                </Col>
+              </Row>
+            </Card>
+          </Row>
         </div>
       </div>
     </Container>
