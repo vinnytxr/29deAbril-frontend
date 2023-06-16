@@ -14,7 +14,7 @@ function CardCourses({ teste, showProgress = false }) {
   const [courseInfoFromUserEnrolledCourse, setCourseInfoPromUserEnrolledCourse] = React.useState(null);
 
   React.useEffect(() => {
-    const courseInfoFromUser = UserTools.getEnrolledCourseFromUser();
+    const courseInfoFromUser = UserTools.getEnrolledCourseFromUser(user, teste.id);
     setCourseInfoPromUserEnrolledCourse(courseInfoFromUser);
   }, [user])
 
@@ -25,10 +25,15 @@ function CardCourses({ teste, showProgress = false }) {
 
   return (
     <Card className="cardAula" style={{ width: '15rem' }}>
-      100%
       <Card.Img className="cardAula-img-top" variant="top" src={teste?.banner ?? noImage} />
+      {
+        courseInfoFromUserEnrolledCourse &&
+        <span className="completed-percentage-flag">{courseInfoFromUserEnrolledCourse.completed_percentage}%</span>
+      }
       <Card.Body>
-        <Card.Title className="cardAula-title">{teste.title}</Card.Title>
+        <Card.Title className="cardAula-title">
+          {teste.title}
+        </Card.Title>
         <Card.Text className="cardAula-description">
           {description}
         </Card.Text>

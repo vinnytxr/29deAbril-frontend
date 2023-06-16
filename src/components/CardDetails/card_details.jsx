@@ -55,7 +55,7 @@ function CardDetails({ image, course, onChange }) {
         if (!!enrolledCourseInfo) {
           console.log("56: ", enrolledCourseInfo, user.enrolled_courses)
           let completedPercentage = 0
-          if (enrolledCourseInfo.total_lessons > 0) completedPercentage = parseInt((enrolledCourseInfo.lessons_completed / enrolledCourseInfo.total_lessons) * 100)
+          if (enrolledCourseInfo.total_lessons > 0) completedPercentage = UserTools.getEnrolledCourseFromUser(user, parseInt(courseId)).completed_percentage
           setButtonText(`${completedPercentage}%`)
         }
       } else if (!isProfessor()) {

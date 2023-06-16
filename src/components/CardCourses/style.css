@@ -54,3 +54,11 @@
     background-color: purple;
     color: white;
 }
+
+.cardAula .completed-percentage-flag {
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    color: #0E6216;
+    font-weight: bold;
+}
