@@ -7,6 +7,7 @@ import { HttpStatus } from '../../api/default'
 import CardCourses from '../../components/CardCourses'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
+import { useAuthContext } from '../../contexts/AuthContext'
 
 const StudentCoursesPage = () => {
     const [userData, setUserData] = useState({ name: "" });
@@ -14,6 +15,7 @@ const StudentCoursesPage = () => {
     const [isFetched, setIsFetched] = useState(false);
     const [activePage, setActivePage] = useState(1);
     const [amountPages, setAmountPages] = useState(6);
+
     const navigate = useNavigate();
 
     const pageSize = 6;

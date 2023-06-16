@@ -7,6 +7,7 @@ import './card_details.css'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { BASE_URL } from '../../api/default'
 import { Spinner } from 'react-bootstrap'
+import { UserTools } from '../../tools/user'
 
 function CardDetails({ image, course, onChange }) {
   const { logged, user, refreshUserOnContext } = useAuthContext()
@@ -38,15 +39,17 @@ function CardDetails({ image, course, onChange }) {
   const { id: courseId } = useParams()
   const navigate = useNavigate()
 
-  const verificaInsc = () => !!user.enrolled_courses.find((c) => c.id === parseInt(courseId));
+  const verificaInsc = () => !!UserTools.getEnrolledCourseFromUser(user, parseInt(courseId));
   const isProfessor = () => (user.id === course.professor.id)
 
   useEffect(() => {
-    if (!!user) {
+    if (user) {
       const isStudentInscrito = verificaInsc()
       if (isStudentInscrito) {
         onChange(true)
         setButtonDisabled(isStudentInscrito)
+        setcardText2('')
+        setcardText('')
         const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(courseId));
 
         if (!!enrolledCourseInfo) {
