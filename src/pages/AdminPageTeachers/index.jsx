@@ -6,22 +6,24 @@ import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupIt
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCode, faEnvelope, faShare } from '@fortawesome/free-solid-svg-icons'
+import { faCancel, faCode, faEnvelope, faRemove, faShare } from '@fortawesome/free-solid-svg-icons'
 import { HttpStatus } from '../../api/default'
 import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom'
 
 
 const AdministrateTeachers = () => {
     const { user, token } = useAuthContext();
     const [newCode, setNewCode] = useState("")
     const [email, setEmail] = useState("")
-    const [codes, setCodes] = useState([]);
+    const [teachers, setTeachers] = useState([]);
     const [enableBtn, setEnableBtn] = useState(true)
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingEmail, setIsLoadingEmail] = useState(false)
+    const navigate = useNavigate();
 
     const notifySuccess = () => toast.success("E-mail enviado com sucesso.", {
         position: "top-right",
@@ -46,76 +48,32 @@ const AdministrateTeachers = () => {
     });
 
     useEffect(() => {
-        requestCodes()
+        requestTeachers()
     }, []);
 
-
-    const validate = () => {
-        const errors = {};
-        const regexemail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
-
-        if (newCode === "") {
-            errors.codigo = "Selecione um código para ser enviado."
-        }
-
-        if (email === "") {
-            errors.email = "Digite um email!";
-        } else if (!regexemail.test(email)) {
-            errors.email = "Digite um email com formato válido!";
-        }
-        setErrors(errors)
-        return Object.keys(errors).length
+    const seeProfile = (id) => {
+        navigate("/student/courses/professor/" + id);
     }
 
-    const sendToEmail = async () => {
-        setIsLoadingEmail(true)
-        if (validate() === 0) {
-            const response = await AdminAPI.sendCode(email, newCode, token);
-            if (response.status !== HttpStatus.OK) {
-                setIsLoadingEmail(false)
-                notifyError("Falha ao enviar código por e-mail.");
-            } else {
-                setIsLoadingEmail(false)
-                notifySuccess()
-            }
-        }
-        setIsLoadingEmail(false)
-    }
-
-    
-    const selectCode = (code) => {
-        setNewCode(code)
-    }
-
-    const requestCodes = async () => {
-        const listCodes = await AdminAPI.fetchCodes(token);
-
-        if (listCodes.status !== HttpStatus.OK) {
-            notifyError("Falha ao requisitar lista de códigos.");
-        }
-        setCodes(listCodes.data);
-    }
-
-    const handleClick = async () => {
-        setEnableBtn(false)
-        setIsLoading(true)
-        
-        const response = await AdminAPI.createCode(token);
+    const revokePermissions = async (id) => {
+        const response = await AdminAPI.revokePermissions(token, id);
 
         if (response.status !== HttpStatus.OK) {
-            notifyError("Falha ao requisitar novo código.");
+            notifyError("Falha ao revogar permissão.");
+        }else{
+            requestTeachers();
         }
-
-        setNewCode(response.data.code);
-        
-        requestCodes();
-        setTimeout(() => {setEnableBtn(true);setIsLoading(false);}, 1500)
     }
 
-    const createNewCode = () => {
-        handleClick();
-    }
+    const requestTeachers = async () => {
+        const listTeachers = await AdminAPI.fetchTeachers(token);
 
+        if (listTeachers.status !== HttpStatus.OK) {
+            notifyError("Falha ao requisitar lista de professores.");
+        }else{
+            setTeachers(listTeachers.data);
+        }
+    }
 
     return (
         <>
@@ -144,9 +102,9 @@ const AdministrateTeachers = () => {
                 <Row className="d-flex justify-content-center gap-4">
 
                     <Col>
-                        
 
-                        {codes.length ?
+
+                        {teachers.length ?
                             <Row>
                                 <Card
                                     style={{
@@ -163,15 +121,19 @@ const AdministrateTeachers = () => {
                                     <Row>
                                         <Col>
                                             <ListGroup>
-                                                {codes.map(code => <ListGroupItem key={code.id} style={{ display: "flex" }}>
-                                                    <span className="code-span box">{code.code}</span>
+                                                {teachers.map(teacher => <ListGroupItem key={teacher.id} style={{ display: "flex" }}>
+                                                    <span className="code-span box">{teacher.name}</span>
                                                     <span className='box'>
-                                                        <span className={`flag ${code.professor !== null ? "flag-used" : "flag-not-used"}`}>{code.professor !== null ? "utilizado" : "livre"}</span>
+                                                        <span>{teacher.email}</span>
                                                     </span>
-                                                    {code.professor === null && <span style={{ cursor: "pointer" }} onClick={() => selectCode(code.code)} className='share'>Selecionar <FontAwesomeIcon
+                                                    <span className='box'><span style={{ cursor: "pointer" }} onClick={() => seeProfile(teacher.id)} className='share'>Ver Perfil <FontAwesomeIcon
                                                         style={{ color: 'white', fontSize: '16' }}
                                                         icon={faShare}
-                                                    /></span>}
+                                                    /></span></span>
+                                                    <span style={{ cursor: "pointer" }} onClick={() => revokePermissions(teacher.id)} className='delete'>Revogar Permissões <FontAwesomeIcon
+                                                        style={{ color: 'white', fontSize: '16' }}
+                                                        icon={faRemove}
+                                                    /></span>
                                                 </ListGroupItem>)}
                                             </ListGroup>
                                         </Col>
