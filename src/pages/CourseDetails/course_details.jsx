@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card'
-import { Modal } from 'react-bootstrap'
+import { Col, ListGroup, ListGroupItem, Modal, Row } from 'react-bootstrap'
 import './course_details.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import CardDetails from '../../components/CardDetails/card_details'
@@ -11,9 +11,9 @@ import StarCourseRating from '../../components/StarCourseRating/star_course'
 import AccordionListCourse from '../../components/AccordionList/accordion_list'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Button, Container } from 'react-bootstrap'
-import { BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
+import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBookmark } from '@fortawesome/free-solid-svg-icons'
+import { faBookmark, faRemove } from '@fortawesome/free-solid-svg-icons'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -27,6 +27,10 @@ function CourseDetails() {
   const [userRating, setUserRating] = useState(false);
   const [isStudent, setIsStudent] = useState(false);
   const [allowFavorite, setAllowFavorite] = useState(true)
+  const [comment, setComment] = useState("")
+  const [commentList, setCommentList] = useState([]);
+  const [isCommentFetched, setIsCommentFetched] = useState(false);
+  const [formErrors, setFormErrors] = useState({})
 
   const handleRatingChange = (newValue) => {
     setRating(newValue);
@@ -89,7 +93,8 @@ function CourseDetails() {
           navigate('/404-not-found')
         }
       }
-      dataFetch()
+      dataFetch();
+      getListRatings();
     }
   }, [id])
 
@@ -142,6 +147,7 @@ function CourseDetails() {
 
   const updateRating = async () => {
     const url = `${BASE_URL}/courses/ratings/update-rating/${data.id}/${user.id}`
+    var errorMessage;
     try {
       const options = {
         method: 'PATCH',
@@ -153,20 +159,24 @@ function CourseDetails() {
         body: JSON.stringify({ rating: rating })
       }
 
-      const response = await fetch(url, options)
+      const response = await fetch(url, options);
       if (response.ok) {
-        const data = await response.json()
-        notifySuccess('Sucesso, agradecemos a sua avaliação!')
-        return new HttpResponse(HttpStatus.OK, data)
-      } else throw new Error('Error on updateRating()')
+        const data = await response.json();
+        AUTH_DEBUG && console.log("AuthAPI::UpdateRating(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on UpdateRating()");
+      }
     } catch (error) {
       console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
     }
   }
 
   const createRating = async () => {
     const url = `${BASE_URL}/courses/ratings`
+    var errorMessage;
     try {
       const options = {
         method: 'POST',
@@ -175,19 +185,132 @@ function CourseDetails() {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({ user: user.id, course: data.id, rating: rating })
+        body: JSON.stringify({ user_name: user.name.split(' ')[0], user: user.id, course: data.id, rating: rating, comment: comment })
       }
 
-      const response = await fetch(url, options)
+      const response = await fetch(url, options);
       if (response.ok) {
-        const data = await response.json()
-        notifySuccess('Sucesso, agradecemos a sua avaliação!')
-        return new HttpResponse(HttpStatus.OK, data)
-      } else throw new Error('Error on createRating()')
+        const data = await response.json();
+        AUTH_DEBUG && console.log("AuthAPI::CreateRating(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on CreateRating()");
+      }
     } catch (error) {
       console.warn(error)
-      return new HttpResponse(HttpStatus.ERROR, null)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
     }
+  }
+
+  const deleteComment = async (idUser) => {
+    console.log("DELETAR")
+    const url = `${BASE_URL}/courses/ratings/update-visibility/${id}/${idUser}/${user.id}`
+    var errorMessage;
+    try {
+      const options = {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ "commentVisibility": false })
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        getListRatings();
+        AUTH_DEBUG && console.log("AuthAPI::CreateRating(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on CreateRating()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
+
+  const getListRatings = async () => {
+    const url = `${BASE_URL}/courses/ratings/list-ratings-course/${id}`
+    var errorMessage;
+    try {
+      const options = {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        setCommentList(data);
+        setIsCommentFetched(true);
+        AUTH_DEBUG && console.log("AuthAPI::getRating(): ", data);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on getRating()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
+  const validate = async (e) => {
+    const errors = {}
+    if (comment.length < 10) {
+      errors.comment = "Seu comentário precisa ter mais do que 10 caracteres."
+    }
+    if (comment.length > 130) {
+      errors.comment = "Seu comentário não pode ter mais do que 130 caracteres."
+    }
+    setFormErrors(errors);
+    console.log(Object.keys(errors).length == 0)
+    return Object.keys(errors).length == 0;
+  }
+
+  const fetchComment = async () => {
+    if (validate()) {
+      console.log(userRating)
+      if (!userRating) {
+        console.log("Entrou aqui")
+        const response = await createRating();
+        if (response.status === HttpStatus.OK) {
+          notifySuccess('Sucesso, agradecemos a sua avaliação!');
+          handleClose();
+          isUserRating();
+          getListRatings();
+        } else {
+          //console.log(responseLogin)
+          notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
+        }
+      } else {
+        const response = await updateRating();
+        if (response.status === HttpStatus.OK) {
+          notifySuccess('Sucesso, agradecemos a sua avaliação!');
+          handleClose();
+          isUserRating();
+          getListRatings();
+        } else {
+          //console.log(responseLogin)
+          notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
+        }
+      }
+    }
+  }
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+    setComment(value);
   }
 
   const [show, setShow] = useState(false);
@@ -212,7 +335,7 @@ function CourseDetails() {
               <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating(); }}>
                 Avaliar curso
               </Button>
-              
+
               <Modal className="pageDetails" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                   <Modal.Title>Avaliar curso</Modal.Title>
@@ -224,22 +347,22 @@ function CourseDetails() {
                 <Modal.Body className="d-flex justify-content-center align-items-center">
                   <StarCourseRating value={data.rating} onChange={handleRatingChange} />
                 </Modal.Body >
+                <Modal.Body>
+                  <hr />
+                  <p className='ps-2'>&#x2022; Comente com a gente sobre o que achou do curso.</p>
+                  <textarea class="form-control" placeholder='Comentário' onChange={handleChange} name="comment" value={comment} style={{ resize: 'none' }} rows="4"></textarea>
+                </Modal.Body>
                 <Modal.Footer>
                   <Button className="pageDetails mt-3 cancel-rating" onClick={handleClose}>
                     Cancelar
                   </Button>
-                  {!userRating ? (
-                    <>
-                      <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); createRating(); }}>
-                        Salvar
-                      </Button>
-                    </>
-                  ) : (<>
-                    <Button className="pageDetails mt-3 submit-rating" onClick={() => { handleClose(); updateRating(); }}>
-                      Salvar
-                    </Button>
-                  </>)
-                  }
+
+
+                  <Button className="pageDetails mt-3 submit-rating" onClick={() => { fetchComment(); }}>
+                    Salvar
+                  </Button>
+
+
                 </Modal.Footer>
               </Modal>
             </div>
@@ -279,9 +402,9 @@ function CourseDetails() {
                   <div className="col">
                     <Card.Text className="mt-5 ms-3 mb-2">
                       Professor:
-                        <Link to={`/student/courses/professor/${data?.professor?.id}`}>
-                          <strong className='mx-2 link'>{data?.professor?.name}</strong>
-                        </Link>
+                      <Link to={`/student/courses/professor/${data?.professor?.id}`}>
+                        <strong className='mx-2 link'>{data?.professor?.name}</strong>
+                      </Link>
                     </Card.Text>
                   </div>
                 </div>
@@ -360,6 +483,44 @@ function CourseDetails() {
               )}
             </div>
           </div>
+          <Row>
+            <Card
+              style={{
+                padding: '16px',
+              }}
+            >
+              <Row className="mb-4">
+                <Col className="d-flex justify-content-between align-items-center">
+                  <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                    Comentários:
+                  </h1>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <ListGroup>
+                    {isCommentFetched && commentList.map(comment => (comment.commentVisibility
+                      &&
+                      <ListGroupItem className="pb-0" key={comment.user} style={{ display: "flex", flexDirection: "column" }}>
+                        <span className='fw-bold' style={{ display: 'flex', alignItems: 'center' }}>
+                          {comment.user_name}&nbsp; &nbsp;
+                          <StarRating value={comment.rating} textSize={'0.8rem'} starSize={'11'} />
+                        </span>
+
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <p className="mb-1 ps-1">{comment.comment}</p>
+                          {user && data && user.id === data?.professor?.id && <span className='delete mb-1' onClick={() => deleteComment(comment.user)} style={{ marginLeft: "auto", cursor: "pointer" }}>Deletar <FontAwesomeIcon
+                            style={{ color: 'white', fontSize: '16' }}
+                            icon={faRemove}
+                          /></span>}
+                        </div>
+                      </ListGroupItem>
+                    ))}
+                  </ListGroup>
+                </Col>
+              </Row>
+            </Card>
+          </Row>
         </div>
       </div>
     </Container>

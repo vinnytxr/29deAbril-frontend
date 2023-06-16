@@ -10,7 +10,7 @@ import Navbar from 'react-bootstrap/Navbar'
 
 //Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
 import { useAuthContext } from '../../contexts/AuthContext'
@@ -33,7 +33,7 @@ function Home() {
       setIsFetched(true)
     }
   }
-  
+
   const handleSearch = (e) => {
     setSearchValue(e.target.value)
     const filteredData = data.results.filter((curso) =>
@@ -47,11 +47,14 @@ function Home() {
   }, [])
 
 
+
   return (
     <>
-      <Col>
-        <Navbar>
-          <Container fluid>
+
+      <Container fluid>
+
+        <Col>
+          <Navbar>
             {logged && user ? (
               <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
                 &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
@@ -76,25 +79,37 @@ function Home() {
                 )}
               </Navbar.Text>
             </Navbar.Collapse>
-          </Container>
-        </Navbar>
-        <Row className="home-card">
-          <div className="col">
-            
-            <h1 className="mt-3 mb-3 fs-5 fw-bold">Todos os cursos</h1>
+          </Navbar>
+          <Row className="home-card">
+            <div className="col">
 
-            <div className="mb-3 container-input" onChange={(e) => handleSearch(e)}>
-              <input placeholder="Buscar cursos" className='input-search'/>
-              <FontAwesomeIcon icon={faMagnifyingGlass} className='icon-search'/>
-            </div>
-            
+              <h1 className="mt-3 mb-3 fs-5 fw-bold">Todos os cursos</h1>
 
-            {isFetched ? (
-              <>
-                {searchValue ? (
-                  searchData.length > 0 ? (
+              <div className="mb-3 container-input" onChange={(e) => handleSearch(e)}>
+                <input placeholder="Buscar cursos" className='input-search' />
+                <FontAwesomeIcon icon={faMagnifyingGlass} className='icon-search' />
+              </div>
+
+
+              {isFetched ? (
+                <>
+                  {searchValue ? (
+                    searchData.length > 0 ? (
+                      <Row className="g-4">
+                        {searchData.map((course) => (
+                          <Col xs={12} lg={4} key={course.id}>
+                            <Link to={`/courses/${course.id}`}>
+                              <CardCourses teste={course} />
+                            </Link>
+                          </Col>
+                        ))}
+                      </Row>
+                    ) : (
+                      <p>Nenhum curso encontrado com o termo de busca.</p>
+                    )
+                  ) : data.results ? (
                     <Row className="g-4">
-                      {searchData.map((course) => (
+                      {data.results.map((course) => (
                         <Col xs={12} lg={4} key={course.id}>
                           <Link to={`/courses/${course.id}`}>
                             <CardCourses teste={course} />
@@ -103,28 +118,16 @@ function Home() {
                       ))}
                     </Row>
                   ) : (
-                    <p>Nenhum curso encontrado com o termo de busca.</p>
-                  )
-                ) : data.results ? (
-                  <Row className="g-4">
-                    {data.results.map((course) => (
-                      <Col xs={12} lg={4} key={course.id}>
-                        <Link to={`/courses/${course.id}`}>
-                          <CardCourses teste={course} />
-                        </Link>
-                      </Col>
-                    ))}
-                  </Row>
-                ) : (
-                  <p>Não há cursos disponíveis.</p>
-                )}
-              </>
-            ) : (
-              <p>Carregando...</p>
-            )}
-          </div>
-        </Row>
-      </Col>
+                    <p>Não há cursos disponíveis.</p>
+                  )}
+                </>
+              ) : (
+                <p>Carregando...</p>
+              )}
+            </div>
+          </Row>
+        </Col>
+      </Container>
     </>
   )
 }
