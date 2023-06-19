@@ -28,6 +28,7 @@ import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
 import ChangePasswordPage from '../pages/ChangePassword';
 import BookmarksPage from '../pages/BookmarksPage/bookmark_page';
+import NotesPage from '../pages/NotesPage';
 
 const SidebarLayout = () => (
   <>
@@ -66,6 +67,7 @@ function DefaultRoutes() {
             <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><StudentLessonPage /></StrictRoute>} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseDetails /></StrictRoute>} />
             <Route path="/student/courses/professor/:id" element={<TeacherProfile />} />
+            <Route path="/student/notes" element={<StrictRoute roles={[Roles.STUDENT]}><NotesPage /></StrictRoute>} />
             <Route path="/student/courses/rating/" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseRating /></StrictRoute>} />
             <Route path="/professor/courses" element={<StrictRoute roles={[Roles.PROFESSOR]}><ProfessorCoursesPage /></StrictRoute>} />
             <Route path="/student/marked-courses" element={<StrictRoute roles={[Roles.STUDENT]}><BookmarksPage /></StrictRoute>} />

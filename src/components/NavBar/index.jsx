@@ -1,16 +1,17 @@
 import React from 'react';
 import './style.css'
 import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
-import { SiBookstack } from 'react-icons/si'
+import { SiBookstack, SiNotepadplusplus } from 'react-icons/si'
 import { FaBookmark, FaUser } from 'react-icons/fa'
 import { ImBooks } from 'react-icons/im'
 import { GiArchiveRegister } from 'react-icons/gi'
-import { TbLogin } from 'react-icons/tb'
+import { TbLogin, TbNote } from 'react-icons/tb'
 import { AiFillHome } from 'react-icons/ai'
 import { BsKeyFill, BsReverseListColumnsReverse } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router-dom';
 import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
 import { Roles } from '../../api/default';
+import { faNoteSticky } from '@fortawesome/free-solid-svg-icons';
 
 
 const NavLinkTo = ({ href, title, icon }) => (
@@ -96,6 +97,7 @@ const SideNav = () => {
               <NavText text='ALUNO' />
               <NavGroupFlush>
                 {/* <NavLinkTo title='Cursos' href='/student/courses' icon={<FAIcon Icon={ImBooks} />} /> */}
+                <NavLinkTo title='Minhas Notas' href='/student/notes' icon={<FAIcon Icon={TbNote} />} />
                 <NavLinkTo title='Bookmarks' href='/student/marked-courses' icon={<FAIcon Icon={FaBookmark} />} />
                 <NavLinkTo title='Meus cursos' href='/student/enrolled-courses' icon={<FAIcon Icon={SiBookstack} />} />
               </NavGroupFlush>

@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 
 
 import './styles.css'
+import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default';
 
 const DEFAULT_VIDEO_PLAYER_STATE = {
   playing: false,
@@ -29,7 +30,7 @@ export const StudentLessonPage = () => {
   const [videoDuration, setVideoDuration] = React.useState(null);
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState('');
-  const { user, refreshUserOnContext } = useAuthContext();
+  const { user, refreshUserOnContext, token } = useAuthContext();
 
   const notifySuccess = (texto) => toast.success(texto, {
     position: "top-right",
@@ -129,9 +130,48 @@ export const StudentLessonPage = () => {
   const handleCloseModal = (clear) => { if (clear) setNote(''); setShowModal(false) }
   const handleShowModal = () => { videoPlayer.playing = false; setShowModal(true) };
 
+  const fetchNote = async (time, note) => {
+    const url = `${BASE_URL}/anotation/`;
+    var errorMessage;
+    try {
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'jwt': token,
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({ user: id, time: time, note: note, link: "https://www.google.com.br", course:lesson.course, lesson:lesson.id })
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        AUTH_DEBUG && console.log("AuthAPI::FetchNote(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on FetchNote()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
   const handleSubmit = async (e) => {
     handleCloseModal(false)
     e.preventDefault();
+    const response = await fetchNote(getTime(videoPlayer.playedSeconds), note)
+    if (response.status !== HttpStatus.OK) {
+      console.log(response)
+      notifyError("Falha ao enviar anotação.")
+    } else {
+      refreshUserOnContext()
+      notifySuccess("Anotação salva.");
+      setNote("")
+      handleCloseModal()
+    }
     /* const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
      //console.log("response: ", response)
  
@@ -155,7 +195,7 @@ export const StudentLessonPage = () => {
   return lesson ? (
     <>
       {React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")}
-
+{console.log(lesson)}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Faça sua Anotação</Modal.Title>
