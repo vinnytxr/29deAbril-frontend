@@ -38,7 +38,7 @@ function CourseDetails() {
   const isEnrolled = () => !!user.enrolled_courses.find((c) => c.id === parseInt(id));
   const isCompletedCourse = () => {
     const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(id))
-    if(!!enrolledCourseInfo && enrolledCourseInfo.completed) return true
+    if (!!enrolledCourseInfo && enrolledCourseInfo.completed) return true
     return false;
   }
 
@@ -345,9 +345,14 @@ function CourseDetails() {
           </div>
           {isStudent && user && data && user.id !== data?.professor?.id &&
             <div className="col text-end">
-              <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating(); }}>
+              <Button className="mt-2 detail-header-btn" onClick={() => { handleShow(); isUserRating(); }}>
                 Avaliar curso
               </Button>
+              { 
+                <Button className="mt-2 detail-header-btn" onClick={() => { window.location.replace(`${BASE_URL}/lessons/lessons/generate-certificate/${data.id}/${user.id}`) }} style={{ marginLeft: '15px' }}>
+                  Certificado
+                </Button>
+              }
 
               <Modal className="pageDetails" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
