@@ -7,6 +7,7 @@ import { BsFillPlayFill } from 'react-icons/bs';
 import { Button } from 'react-bootstrap';
 import ReactPlayer from 'react-player'
 import { toast } from 'react-toastify';
+import { UserTools } from '../../tools/user'
 
 import './styles.css'
 
@@ -29,7 +30,7 @@ export const StudentLessonPage = () => {
 
   const notifySuccess = (texto) => toast.success(texto, {
     position: "top-right",
-    autoClose: 3500,
+    autoClose: 4500,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: true,
@@ -89,11 +90,17 @@ export const StudentLessonPage = () => {
   React.useEffect(() => {
     const completeLesson = async () => {
       if (videoPlayer.played > 0.95 && !videoPlayer.completed && !isProfessorOfLessonCourse()) {
-        notifySuccess("Parabéns, você concluiu a aula!")
+        await LessonAPI.completeLessonAsStudent(user.id, lesson.id);
         setVideoPlayer({ ...videoPlayer, completed: true })
 
-        await LessonAPI.completeLessonAsStudent(user.id, lesson.id);
+        const courseInfoFromUserEnrolledCourse = UserTools.getEnrolledCourseFromUser(user, lesson.course ?? -1);
+
+        if(courseInfoFromUserEnrolledCourse.lessons_completed >= courseInfoFromUserEnrolledCourse.total_lessons - 1)
+          notifySuccess("Parabéns, você concluiu o curso, certificado disponibilizado!")
+        else notifySuccess("Parabéns, você concluiu a aula!")
+
         await refreshLesson()
+        refreshUserOnContext()
       }
     }
 

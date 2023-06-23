@@ -32,6 +32,16 @@ function CourseDetails() {
   const [isCommentFetched, setIsCommentFetched] = useState(false);
   const [formErrors, setFormErrors] = useState({})
 
+  const navigate = useNavigate()
+  const { id } = useParams()
+
+  const isEnrolled = () => !!user.enrolled_courses.find((c) => c.id === parseInt(id));
+  const isCompletedCourse = () => {
+    const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(id))
+    if(!!enrolledCourseInfo && enrolledCourseInfo.completed) return true
+    return false;
+  }
+
   const handleRatingChange = (newValue) => {
     setRating(newValue);
   };
@@ -63,9 +73,6 @@ function CourseDetails() {
       progress: undefined,
       theme: 'light',
     })
-
-  const navigate = useNavigate()
-  const { id } = useParams()
 
   useEffect(() => {
     if (id) {
@@ -327,6 +334,12 @@ function CourseDetails() {
               user && data && user.id === data?.professor?.id &&
               <div className="col-md-12 mt-3">
                 <span className='flag-is-professor'>Você é o professor deste curso</span>
+              </div>
+            }
+            {
+              user && isEnrolled() && isCompletedCourse() &&
+              <div className="col-md-12 mt-3">
+                <span className='flag-is-professor'>Você completou este curso</span>
               </div>
             }
           </div>

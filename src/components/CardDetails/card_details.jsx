@@ -7,9 +7,10 @@ import './card_details.css'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { BASE_URL } from '../../api/default'
 import { Spinner } from 'react-bootstrap'
+import { UserTools } from '../../tools/user'
 
 function CardDetails({ image, course, onChange }) {
-  const { logged, user } = useAuthContext()
+  const { logged, user, refreshUserOnContext } = useAuthContext()
 
   const alertClickedLooged = () => {
     setIsLoading(true)
@@ -28,7 +29,7 @@ function CardDetails({ image, course, onChange }) {
       draggable: true,
       progress: undefined,
       theme: 'light',
-  })
+    })
 
   const [buttonDisabled, setButtonDisabled] = useState(false)
   const [cardText, setcardText] = useState('')
@@ -38,24 +39,35 @@ function CardDetails({ image, course, onChange }) {
   const { id: courseId } = useParams()
   const navigate = useNavigate()
 
-  const verificaInsc = () => {
-    const student = course?.students?.find((student) => student.id === user.id)
-    //console.log('student verifica: ', student)
-    return student !== undefined || user.id === course.professor.id
-  }
+  const verificaInsc = () => !!UserTools.getEnrolledCourseFromUser(user, parseInt(courseId));
+  const isProfessor = () => (user.id === course.professor.id)
 
   useEffect(() => {
-    if (!!user) {
+    if (user) {
       const isStudentInscrito = verificaInsc()
-      if(isStudentInscrito === true) onChange(true)
-      setButtonDisabled(isStudentInscrito)
-      setcardText(
-        isStudentInscrito
-          ? 'Oba! As aula estão disponíveis!'
-          : 'Gostou do conteúdo do curso?'
-      )
-      setcardText2(isStudentInscrito ? 'Aproveite!' : 'Inscreva-se já!')
-      setButtonText(isStudentInscrito ? 'Inscrito' : 'Inscrever-se')
+      if (isStudentInscrito) {
+        onChange(true)
+        setButtonDisabled(isStudentInscrito)
+        setcardText2('')
+        setcardText('')
+        const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(courseId));
+
+        if (!!enrolledCourseInfo) {
+          console.log("56: ", enrolledCourseInfo, user.enrolled_courses)
+          let completedPercentage = 0
+          if (enrolledCourseInfo.total_lessons > 0) completedPercentage = UserTools.getEnrolledCourseFromUser(user, parseInt(courseId)).completed_percentage
+          setButtonText(`${completedPercentage}%`)
+        }
+      } else if (!isProfessor()) {
+        setButtonText('Inscrever-se')
+        setButtonDisabled(isStudentInscrito)
+        setcardText('Gostou do conteúdo do curso?')
+        setcardText2(isStudentInscrito ? 'Aproveite o curso!' : 'Inscreva-se já!')
+      } else if(isProfessor()) {
+        setButtonDisabled(true)
+        setButtonText('Professor')
+      }
+        
     }
   }, [user])
 
@@ -70,9 +82,11 @@ function CardDetails({ image, course, onChange }) {
       .then((data) => {
         setIsLoading(false)
         setButtonDisabled(true)
-        setcardText('Oba! As aula estão disponíveis!')
-        setcardText2('Aproveite!')
-        setButtonText('Inscrito')
+        // setcardText('Oba! As aula estão disponíveis!')
+        // setcardText2('Aproveite!')
+        refreshUserOnContext()
+        // setButtonText('Inscrito')
+        console.log("refreshUser")
       })
       .catch((error) => {
         setIsLoading(false)
@@ -88,27 +102,27 @@ function CardDetails({ image, course, onChange }) {
         <Card.Body>
           <Card.Title className="text-color">{cardText}</Card.Title>
           <Card.Text className="text-color">{cardText2}</Card.Text>
-          <Button
-            onClick={inscricaoCursoAPI}
-            disabled={buttonDisabled}
-            className="btn-success"
-          >
-            {isLoading ? (
-              <>
-                <Spinner
-                  className="me-2"
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-                Matriculando
-              </>
-            ) : (
-              buttonText
-            )}
-          </Button>
+            <Button
+              onClick={inscricaoCursoAPI}
+              disabled={buttonDisabled}
+              className="btn-success"
+            >
+              {isLoading ? (
+                <>
+                  <Spinner
+                    className="me-2"
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                  Matriculando
+                </>
+              ) : (
+                buttonText
+              )}
+            </Button>
         </Card.Body>
       </Card>
     </div>
