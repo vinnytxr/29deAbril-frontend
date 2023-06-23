@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AuthContext, useAuthContext } from '../../contexts/AuthContext';
-import { Container, Row, Col, Modal, Form } from 'react-bootstrap';
+import { Container, Row, Col, Modal, Form, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { LessonAPI } from './api';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BsFillPlayFill } from 'react-icons/bs';
@@ -11,6 +11,8 @@ import { toast } from 'react-toastify';
 
 import './styles.css'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShare } from '@fortawesome/free-solid-svg-icons';
 
 const DEFAULT_VIDEO_PLAYER_STATE = {
   playing: false,
@@ -30,6 +32,7 @@ export const StudentLessonPage = () => {
   const [videoDuration, setVideoDuration] = React.useState(null);
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState('');
+  const [notes, setNotes] = useState([]);
   const { user, refreshUserOnContext, token } = useAuthContext();
 
   const notifySuccess = (texto) => toast.success(texto, {
@@ -89,6 +92,7 @@ export const StudentLessonPage = () => {
 
     if (id) refreshLesson();
     if (window) window.scrollTo(0, 0);
+    requestNotes();
   }, [id]);
 
   React.useEffect(() => {
@@ -141,7 +145,7 @@ export const StudentLessonPage = () => {
           'jwt': token,
           Accept: 'application/json'
         },
-        body: JSON.stringify({ user: id, time: time, note: note, link: "https://www.google.com.br", course:lesson.course, lesson:lesson.id })
+        body: JSON.stringify({ user: user.id, time: time, note: note, link: "https://www.google.com.br", course: lesson.course, lesson: lesson.id })
       }
 
       const response = await fetch(url, options);
@@ -159,6 +163,46 @@ export const StudentLessonPage = () => {
     }
   }
 
+  const fetchAnotations = async () => {
+    console.log(user.id)
+    const url = `${BASE_URL}/anotation/list-notes-lesson/${user.id}/${id}/`;
+    var errorMessage;
+    try {
+      const options = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'jwt': token,
+          Accept: 'application/json'
+        }
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data)
+        AUTH_DEBUG && console.log("AuthAPI::fetchAnotations(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on fetchAnotations()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
+  const requestNotes = async () => {
+    const listNotes = await fetchAnotations();
+    console.log(listNotes.data)
+    if (listNotes.status !== HttpStatus.OK) {
+      notifyError("Falha ao requisitar lista de códigos.");
+    }
+    setNotes(listNotes.data);
+  }
+
+
   const handleSubmit = async (e) => {
     handleCloseModal(false)
     e.preventDefault();
@@ -170,6 +214,7 @@ export const StudentLessonPage = () => {
       refreshUserOnContext()
       notifySuccess("Anotação salva.");
       setNote("")
+      requestNotes();
       handleCloseModal()
     }
     /* const response = await ProfileAPI.putInvite(user.id, authorizationCode, token);
@@ -195,7 +240,7 @@ export const StudentLessonPage = () => {
   return lesson ? (
     <>
       {React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")}
-{console.log(lesson)}
+      {console.log(lesson)}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Faça sua Anotação</Modal.Title>
@@ -253,6 +298,36 @@ export const StudentLessonPage = () => {
               {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}
             </section>
           </Col>
+          {notes && notes.length ?
+            <Row>
+              <Card
+                style={{
+                  padding: '16px',
+                }}
+                className='mt-5'
+              >
+                <Row className="mb-4">
+                  <Col className="d-flex justify-content-between align-items-center">
+                    <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                      Lista de anotações da aula:
+                    </h1>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {notes.map(note => (
+                      <Card key={note.id}>
+                        <Card.Body className="d-flex align-items-center">
+                          <span className="ms-3">{note.time}</span>
+                          <span className="ms-3">{note.note}</span>
+                        </Card.Body>
+                      </Card>
+                    ))}
+                  </Col>
+                </Row>
+              </Card>
+            </Row> : <></>
+          }
         </Row>
       </Container>
     </>

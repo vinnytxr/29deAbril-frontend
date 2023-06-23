@@ -4,7 +4,7 @@
 }
 
 .box{
-  width: 10rem;
+  width: 15rem;
 }
 
 .flag {
@@ -21,7 +21,7 @@
   background-color: rgb(209, 209, 9);
 }
 
-.share {
+.goto {
   padding: 2px 10px;
   background-color: #2d3d94;
   border-radius: 10px;

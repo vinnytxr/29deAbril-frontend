@@ -12,17 +12,19 @@ import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { HttpResponse } from '../CreateCourse/api'
+import { useNavigate } from 'react-router-dom'
 
 
 const NotesPage = () => {
     const { user, token } = useAuthContext();
     const [newCode, setNewCode] = useState("")
     const [email, setEmail] = useState("")
-    const [codes, setCodes] = useState([]);
+    const [notes, setNotes] = useState([]);
     const [enableBtn, setEnableBtn] = useState(true)
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingEmail, setIsLoadingEmail] = useState(false)
+    const navigate = useNavigate();
 
     const notifySuccess = () => toast.success("E-mail enviado com sucesso.", {
         position: "top-right",
@@ -51,11 +53,12 @@ const NotesPage = () => {
     }, [token]);
 
 
-  
 
 
-    const fetchCodes = async () => {
-        const url = `${BASE_URL}/anotation/`;
+
+    const fetchAnotations = async () => {
+        console.log(user.id)
+        const url = `${BASE_URL}/anotation/list-notes/${user.id}/`;
         var errorMessage;
         try {
             const options = {
@@ -66,30 +69,30 @@ const NotesPage = () => {
                     Accept: 'application/json'
                 }
             }
-    
+
             const response = await fetch(url, options);
             if (response.ok) {
                 const data = await response.json();
-                AUTH_DEBUG && console.log("AuthAPI::FetchCodes(): ", data.token);
+                AUTH_DEBUG && console.log("AuthAPI::fetchAnotations(): ", data.token);
                 return new HttpResponse(HttpStatus.OK, data);
             } else {
                 errorMessage = await response.json();
-                throw new Error("Error on FetchCodes()");
+                throw new Error("Error on fetchAnotations()");
             }
         } catch (error) {
             console.warn(error)
             return new HttpResponse(HttpStatus.ERROR, errorMessage);
         }
     }
-    
+
 
     const requestCodes = async () => {
-        const listCodes = await fetchCodes();
-
-        if (listCodes.status !== HttpStatus.OK) {
+        const listNotes = await fetchAnotations();
+        console.log(listNotes.data)
+        if (listNotes.status !== HttpStatus.OK) {
             notifyError("Falha ao requisitar lista de códigos.");
         }
-        setCodes(listCodes.data.results);
+        setNotes(listNotes.data);
     }
 
 
@@ -99,7 +102,7 @@ const NotesPage = () => {
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
                     <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                        &#128075;&nbsp; Hey, Administrador!
+                        &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
                     </p>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
@@ -119,10 +122,8 @@ const NotesPage = () => {
 
             <Container fluid className='mb-3'>
                 <Row className="d-flex justify-content-center gap-4">
-
                     <Col>
-                        
-                        {codes && codes.length ?
+                        {notes && notes.length ?
                             <Row>
                                 <Card
                                     style={{
@@ -132,18 +133,28 @@ const NotesPage = () => {
                                     <Row className="mb-4">
                                         <Col className="d-flex justify-content-between align-items-center">
                                             <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
-                                                Códigos gerados:
+                                                Lista de anotações:
                                             </h1>
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col>
-                                            <ListGroup>
-                                                {codes.map(code => <ListGroupItem key={code.id} style={{ display: "flex" }}>
-                                                    <span className="code-span box">{code.user}</span>
-                                                    <span className="code-span box">{code.note}</span>
-                                                </ListGroupItem>)}
-                                            </ListGroup>
+                                            {notes.map(notelist => (
+                                                <ListGroup key={notelist.course}>
+                                                    <p className='mb-0 mt-3 ps-2'>Anotações do curso: {notelist.titulo}</p>
+                                                    {notelist.notes.map(note => (
+                                                        <ListGroupItem key={note.id} style={{ display: "flex" }}>
+                                                            <span className="code-span box">{note.titulo}</span>
+                                                            <span className="ms-3">{note.time}</span>
+                                                            <span style={{ cursor: 'pointer' }} className="ms-3 goto" onClick={() => { navigate("/student/lessons/" + note.lesson) }}>Ir para aula <FontAwesomeIcon
+                                                                style={{ color: 'white', fontSize: '16' }}
+                                                                icon={faShare}
+                                                            /></span>
+                                                            <span className="ms-3">{note.note}</span>
+                                                        </ListGroupItem>
+                                                    ))}
+                                                </ListGroup>
+                                            ))}
                                         </Col>
                                     </Row>
                                 </Card>
