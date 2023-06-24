@@ -18,6 +18,8 @@ import { useAuthContext } from '../../contexts/AuthContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { BookmarkAPI } from '../../api/bookmark'
+import { UserTools } from '../../tools/user'
+import { HiDownload } from "react-icons/hi"
 
 function CourseDetails() {
   const { token, logged, user, refreshUserOnContext } = useAuthContext()
@@ -31,14 +33,22 @@ function CourseDetails() {
   const [commentList, setCommentList] = useState([]);
   const [isCommentFetched, setIsCommentFetched] = useState(false);
   const [formErrors, setFormErrors] = useState({})
-
   const navigate = useNavigate()
   const { id } = useParams()
+
+  const showCertificateBtn = () => {
+    const result = UserTools.getEnrolledCourseFromUser(user, parseInt(id))
+
+    if (result && result.completed_percentage > 0) return true;
+    return false
+  }
+
+
 
   const isEnrolled = () => !!user.enrolled_courses.find((c) => c.id === parseInt(id));
   const isCompletedCourse = () => {
     const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(id))
-    if(!!enrolledCourseInfo && enrolledCourseInfo.completed) return true
+    if (!!enrolledCourseInfo && enrolledCourseInfo.completed) return true
     return false;
   }
 
@@ -328,59 +338,65 @@ function CourseDetails() {
   return (
     <Container flex="true" className="pageDetails course-details mb-4">
       <div className="row">
-        <div className="row mt-2">
-          <div className="col">
-            {
-              user && data && user.id === data?.professor?.id &&
-              <div className="col-md-12 mt-3">
-                <span className='flag-is-professor'>Você é o professor deste curso</span>
-              </div>
-            }
-            {
-              user && isEnrolled() && isCompletedCourse() &&
-              <div className="col-md-12 mt-3">
-                <span className='flag-is-professor'>Você completou este curso</span>
-              </div>
-            }
-          </div>
-          {isStudent && user && data && user.id !== data?.professor?.id &&
-            <div className="col text-end">
-              <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating(); }}>
-                Avaliar curso
-              </Button>
-
-              <Modal className="pageDetails" show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Avaliar curso</Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="d-flex justify-content-center align-items-center">
-                  Ficamos felizes pela conclusão de seu aprendizado!<br>
-                  </br> Avalie o curso e nos ajude com seu feedback!
-                </Modal.Body>
-                <Modal.Body className="d-flex justify-content-center align-items-center">
-                  <StarCourseRating value={data.rating} onChange={handleRatingChange} />
-                </Modal.Body >
-                <Modal.Body>
-                  <hr />
-                  <p className='ps-2'>&#x2022; Comente com a gente sobre o que achou do curso.</p>
-                  <textarea class="form-control" placeholder='Comentário' onChange={handleChange} name="comment" value={comment} style={{ resize: 'none' }} rows="4"></textarea>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button className="pageDetails mt-3 cancel-rating" onClick={handleClose}>
-                    Cancelar
-                  </Button>
-
-
-                  <Button className="pageDetails mt-3 submit-rating" onClick={() => { fetchComment(); }}>
-                    Salvar
-                  </Button>
-
-
-                </Modal.Footer>
-              </Modal>
+        <div className="col-md-4">
+          {
+            user && data && user.id === data?.professor?.id &&
+            <div className="col-md-12 mt-3">
+              <span className='flag-is-professor'>Você é o professor deste curso</span>
+            </div>
+          }
+          {
+            user && isEnrolled() && isCompletedCourse() &&
+            <div className="col-md-12 mt-3">
+              <span className='flag-is-professor'>Você completou este curso</span>
             </div>
           }
         </div>
+        {isStudent && user && data && user.id !== data?.professor?.id &&
+          <div className="col-md-8 text-end">
+            <Button className="mt-2 detail-header-btn" onClick={() => { handleShow(); isUserRating(); }}>
+              Avaliar curso
+            </Button>
+            {showCertificateBtn() &&
+              <Button className="mt-2 detail-header-btn" onClick={() => { window.location.replace(`${BASE_URL}/lessons/lessons/generate-certificate/${data.id}/${user.id}`) }} style={{ marginLeft: '15px' }}>
+                <HiDownload className="download-certificate-icon" />
+                Certificado
+              </Button>
+            }
+
+            <Modal className="pageDetails" show={show} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Avaliar curso</Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="d-flex justify-content-center align-items-center">
+                Ficamos felizes pela conclusão de seu aprendizado!<br>
+                </br> Avalie o curso e nos ajude com seu feedback!
+              </Modal.Body>
+              <Modal.Body className="d-flex justify-content-center align-items-center">
+                <StarCourseRating value={data.rating} onChange={handleRatingChange} />
+              </Modal.Body >
+              <Modal.Body>
+                <hr />
+                <p className='ps-2'>&#x2022; Comente com a gente sobre o que achou do curso.</p>
+                <textarea class="form-control" placeholder='Comentário' onChange={handleChange} name="comment" value={comment} style={{ resize: 'none' }} rows="4"></textarea>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button className="pageDetails mt-3 cancel-rating" onClick={handleClose}>
+                  Cancelar
+                </Button>
+
+
+                <Button className="pageDetails mt-3 submit-rating" onClick={() => { fetchComment(); }}>
+                  Salvar
+                </Button>
+
+
+              </Modal.Footer>
+            </Modal>
+          </div>
+        }
+      </div>
+      <div>
 
         <div className="col mt-1">
           <Card className="custom-bg">
