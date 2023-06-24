@@ -65,6 +65,16 @@
     color: #0E6216;
 }
 
+.course-details .download-certificate-icon {
+    margin-right: 5px;
+    fill: white;
+    font-size: 20px;
+}
+
+.course-details .detail-header-btn:active .download-certificate-icon {
+    fill: #0E6216;
+}
+
 .pageDetails a {
     text-decoration: none;
     color: gold;

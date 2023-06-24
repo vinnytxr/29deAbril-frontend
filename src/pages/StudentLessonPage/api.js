@@ -36,7 +36,7 @@ const getLesson = async (id) => {
 
 const completeLessonAsStudent = async (idStudent, idLesson) => {
     try {
-        const url = `${BASE_URL}/lessons/lessons/complete-course/${idLesson}/${idStudent}`;
+        const url = `${BASE_URL}/lessons/lessons/complete-lesson/${idLesson}/${idStudent}`;
         const options = {
             method: 'POST',
             headers: {
