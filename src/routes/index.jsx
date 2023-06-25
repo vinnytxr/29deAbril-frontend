@@ -27,6 +27,7 @@ import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
 import ChangePasswordPage from '../pages/ChangePassword';
 import BookmarksPage from '../pages/BookmarksPage/bookmark_page';
+import { EditCategoryPage } from '../pages/EditCategoryPage';
 
 const SidebarLayout = () => (
   <>
@@ -71,6 +72,7 @@ function DefaultRoutes() {
             <Route path="/student/enrolled-courses" element={<StrictRoute roles={[Roles.STUDENT]}><StudentCoursesPage /></StrictRoute>} />
             <Route path="/professor/courses/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewCourseScreen /></StrictRoute>} />
             <Route path="/professor/courses/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditCourseScreen /></StrictRoute>} />
+            <Route path="/professor/courses/edit/:id/categories" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditCategoryPage /></StrictRoute>} />
             <Route path="/professor/courses/:courseId/lessons/create" element={<StrictRoute roles={[Roles.PROFESSOR]}><NewLessonScreen /></StrictRoute>} />
             <Route path="/professor/lessons/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditLessonScreen /></StrictRoute>} />
             <Route path="/perfil" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><UserProfileScreen /></StrictRoute>} />
