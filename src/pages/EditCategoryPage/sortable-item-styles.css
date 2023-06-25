@@ -1,0 +1,61 @@
+.edit-category-page button {
+  box-shadow: none !important;
+}
+
+.edit-category-page input {
+  outline: none !important;
+}
+
+.sortable-item, .sortable-item * {
+  user-select: none;
+}
+
+.rm-category-btn *, .save-category-btn *, .add-category-btn * {
+  color: white;
+}
+
+
+.rm-category-btn, .rm-category-btn:hover {
+  width: 49%;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.rm-category-btn:active {
+  background-color: transparent !important;
+  border-color: #dc3545 !important;
+}
+
+.rm-category-btn:active * {
+  color: #dc3545 !important;
+}
+
+.save-category-btn, .save-category-btn:hover {
+  width: 49%;
+  background-color: #0E6216;
+  border-color: #0E6216;
+}
+
+.save-category-btn:active {
+  background-color: transparent !important;
+  border-color: #0E6216 !important;
+}
+
+.save-category-btn:active * {
+  color: #0E6216 !important;
+}
+
+.add-category-btn, .add-category-btn:hover {
+  width: 80px;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.add-category-btn:active {
+  background-color: transparent !important;
+  border-color: #0d6efd !important;
+}
+
+.add-category-btn:active * {
+  color: #0d6efd !important;
+}
