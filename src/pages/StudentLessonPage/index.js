@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AuthContext, useAuthContext } from '../../contexts/AuthContext';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col} from 'react-bootstrap';
 import { LessonAPI } from './api';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BsFillPlayFill } from 'react-icons/bs';
 import { Button } from 'react-bootstrap';
 import ReactPlayer from 'react-player'
 import { toast } from 'react-toastify';
+import QuestionCourse from '../../components/QuestionCourse/question_course';
 
 import './styles.css'
 
@@ -47,7 +48,7 @@ export const StudentLessonPage = () => {
     draggable: true,
     progress: undefined,
     theme: "light",
-});
+  });
 
   const navigate = useNavigate();
 
@@ -147,6 +148,9 @@ export const StudentLessonPage = () => {
         </Col>
         <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
+        </Col>
+        <Col xs={12} className="mb-4">
+          <QuestionCourse dataLesson={lesson}/>
         </Col>
         <Col xs={12}>
           <section style={{ display: 'flex', justifyContent: 'space-between' }}>
