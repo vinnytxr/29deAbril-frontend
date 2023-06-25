@@ -1,6 +1,6 @@
 import './styles.css'
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -9,23 +9,22 @@ import { SortableItem } from './sortable-item';
 import { FaTrash } from 'react-icons/fa';
 import { IoSave } from 'react-icons/io5';
 import { FaPlus } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import { CategoryAPI } from '../../api/category';
+import { HttpStatus } from '../../api/default';
 
 export function EditCategoryPage() {
-  const [languages, setLanguages] = useState([
-    'javascript',
-    'python',
-    'typescript',
-    'a',
-    'b',
-    'c',
-    'd',
-    'e',
-    'f',
-    'g',
-    'h'
-  ]);
+  const [categories, setCategories] = React.useState([])
 
-  return (
+  const [pageState, setPageState] = React.useState({ error: false, loading: true })
+
+  const { id } = useParams();
+
+  React.useEffect(() => {
+    getInitialData()
+  }, [id])
+
+  return !pageState.error && !pageState.loading ? (
     <Container className='pt-3 edit-category-page'>
       <Row>
         <Col xs={7}>
@@ -35,15 +34,15 @@ export function EditCategoryPage() {
           >
             <h3 className='text-center'>Categorias do curso</h3>
             <SortableContext
-              items={languages}
+              items={categories.map(c => c.id)}
               strategy={verticalListSortingStrategy}
-              disabled={true}
+              disabled={false}
             >
               <section
                 style={{ 'height': '80vh', 'overflow-y': 'scroll', 'overflow-x': 'scroll', 'border': '1px solid green' }}
                 className='px-5 category-dnd-container'
               >
-                {languages.map(language => <SortableItem key={language} id={language} />)}
+                {categories.map(categorie => <SortableItem key={categorie.id} id={categorie.id} />)}
               </section>
             </SortableContext>
           </DndContext>
@@ -62,7 +61,7 @@ export function EditCategoryPage() {
                 const inputElement = document.getElementById('create-course-category-input')
                 const inputValue = inputElement.value;
 
-                if (inputValue) setLanguages([...languages, inputValue]);
+                console.log(inputValue)
 
                 inputElement.value = '';
               }}
@@ -77,7 +76,7 @@ export function EditCategoryPage() {
             id='edit-course-category-input'
             type='text'
             className='w-100 me-1 px-1'
-            style={{ 'font-size': '14px', 'text-align':'center' }}
+            style={{ 'font-size': '14px', 'text-align': 'center' }}
             autoComplete='off'
             spellCheck={false}
           />
@@ -87,7 +86,7 @@ export function EditCategoryPage() {
                 const inputElement = document.getElementById('edit-course-category-input')
                 const inputValue = inputElement.value;
 
-                if (inputValue) setLanguages([...languages.slice(0, 3), inputValue, ...languages.slice(3+1)]);
+                console.log(inputValue)
 
                 inputElement.value = '';
               }}
@@ -100,7 +99,7 @@ export function EditCategoryPage() {
                 const inputElement = document.getElementById('edit-course-category-input')
                 const inputValue = inputElement.value;
 
-                if (inputValue) setLanguages([...languages, inputValue]);
+                console.log(inputValue)
 
                 inputElement.value = '';
               }}
@@ -113,20 +112,46 @@ export function EditCategoryPage() {
         </Col>
       </Row>
     </Container>
-  );
+  ) : <></>;
+
+  async function getInitialData() {
+    const response = await CategoryAPI.getCategoriesByCourse(id);
+
+    if (response.status === HttpStatus.OK && response.data) {
+      setCategories(response.data.categories);
+      setPageState({ error: false, loading: false });
+    }
+    else setPageState({ error: true, loading: false });
+  }
 
   function handleDragEnd(event) {
     console.log("Drag end called")
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      setLanguages(items => {
-        const activeIndex = items.indexOf(active.id);
-        const overIndex = items.indexOf(over.id);
+      console.log(active.id, over.id)
+      setCategories(items => {
+        console.log('items', items)
+        const activeIndex = items.map(i => i.id).indexOf(active.id);
+        const overIndex = items.map(i => i.id).indexOf(over.id);
 
-        console.log(arrayMove(items, activeIndex, overIndex))
-        return arrayMove(items, activeIndex, overIndex);
+        const orderedCategories = arrayMove(items, activeIndex, overIndex);
+
+        (async () => {
+          const r = await CategoryAPI.updateCourseCategoriesOrder(id, orderedCategories.map(c => c.id));
+          console.log('update: ', r);
+        })()
+
+        return orderedCategories;
       })
+
+      // setLanguages(items => {
+      //   const activeIndex = items.indexOf(active.id);
+      //   const overIndex = items.indexOf(over.id);
+
+      //   console.log(arrayMove(items, activeIndex, overIndex))
+      //   return arrayMove(items, activeIndex, overIndex);
+      // })
     }
   }
 }
