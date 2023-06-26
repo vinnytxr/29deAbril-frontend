@@ -16,9 +16,11 @@ import { HttpStatus } from '../../api/default';
 export function EditCategoryPage() {
   const [categories, setCategories] = React.useState([])
 
-  const [pageState, setPageState] = React.useState({ error: false, loading: true })
+  const [pageState, setPageState] = React.useState({ error: false, loading: true, showCategoryOptions: false, selectedCategoryId: null, allowOptionsBtn: true })
 
   const { id } = useParams();
+
+  const inputEditCategoryRef = React.useRef(null)
 
   React.useEffect(() => {
     getInitialData()
@@ -36,25 +38,25 @@ export function EditCategoryPage() {
             <SortableContext
               items={categories.map(c => c.id)}
               strategy={verticalListSortingStrategy}
-              disabled={false}
+              disabled={!pageState.allowOptionsBtn}
             >
               <section
-                style={{ 'height': '80vh', 'overflow-y': 'scroll', 'overflow-x': 'scroll', 'border': '1px solid green' }}
+                style={{ 'height': '80vh', 'overflowY': 'scroll', 'overflowX': 'scroll', 'border': '0px solid green' }}
                 className='px-5 category-dnd-container'
               >
-                {categories.map(categorie => <SortableItem key={categorie.id} id={categorie.id} />)}
+                {categories.map(category => <SortableItem key={category.id} id={category.id} showCategoryOptions={showCategoryOptions} name={category.name} count={category.lessons.length} />)}
               </section>
             </SortableContext>
           </DndContext>
         </Col>
         <Col xs={5}>
           <h3 className='text-center'>Criar nova categoria</h3>
-          <div className='w-100 d-flex flex-row justify-content-between'>
+          <div className='w-100 d-flex flex-row justify-content-between mt-4'>
             <input
               id='create-course-category-input'
               type='text'
               className='w-100 me-1 px-1'
-              style={{ 'font-size': '14px' }}
+              style={{ 'fontSize': '14px' }}
             />
             <Button
               onClick={() => {
@@ -71,57 +73,86 @@ export function EditCategoryPage() {
             </Button>
           </div>
 
-          <h3 className='text-center mt-5'>Opções da Categoria</h3>
+          {pageState.showCategoryOptions && <h3 className='text-center mt-5'>Opções da Categoria</h3>}
           <input
             id='edit-course-category-input'
+            ref={inputEditCategoryRef}
             type='text'
             className='w-100 me-1 px-1'
-            style={{ 'font-size': '14px', 'text-align': 'center' }}
+            style={{ 'fontSize': '14px', 'textAlign': 'center', visibility: pageState.showCategoryOptions ? 'visible': 'hidden' }}
             autoComplete='off'
             spellCheck={false}
+            disabled={!pageState.allowOptionsBtn}
           />
-          <div className='w-100 d-flex flex-row justify-content-between mt-2'>
-            <Button
-              onClick={() => {
-                const inputElement = document.getElementById('edit-course-category-input')
-                const inputValue = inputElement.value;
 
-                console.log(inputValue)
+          {
+            pageState.showCategoryOptions &&
+            <>
+              <div className='w-100 d-flex flex-row justify-content-between mt-2'>
+                <Button
+                  onClick={handleUpdateCategory}
+                  disabled={!pageState.allowOptionsBtn}
+                  className='save-category-btn'
+                >
+                  <IoSave />
+                </Button>
+                <Button
+                  onClick={() => {
+                    const inputElement = document.getElementById('edit-course-category-input')
+                    const inputValue = inputElement.value;
 
-                inputElement.value = '';
-              }}
-              className='save-category-btn'
-            >
-              <IoSave />
-            </Button>
-            <Button
-              onClick={() => {
-                const inputElement = document.getElementById('edit-course-category-input')
-                const inputValue = inputElement.value;
+                    console.log(inputValue)
 
-                console.log(inputValue)
-
-                inputElement.value = '';
-              }}
-              className='rm-category-btn'
-            >
-              <FaTrash />
-            </Button>
-          </div>
+                    inputElement.value = '';
+                  }}
+                  disabled={!pageState.allowOptionsBtn}
+                  className='rm-category-btn'
+                >
+                  <FaTrash />
+                </Button>
+              </div>
+            </> || <h6 className='text-justify pt-5' >Use duplo clique na categoria para ver outras opções, ou arraste o card para editar a ordem das categorias!</h6>
+          }
 
         </Col>
       </Row>
     </Container>
   ) : <></>;
 
+  function showCategoryOptions(categoryId) {
+    const category = categories.find(c => c.id == categoryId)
+
+    console.log('ref', inputEditCategoryRef)
+
+    if (category && inputEditCategoryRef.current) {
+
+      inputEditCategoryRef.current.value = category.name;
+
+      setPageState({ ...pageState, showCategoryOptions: true, selectedCategoryId: categoryId })
+    }
+  }
+
   async function getInitialData() {
     const response = await CategoryAPI.getCategoriesByCourse(id);
 
     if (response.status === HttpStatus.OK && response.data) {
       setCategories(response.data.categories);
-      setPageState({ error: false, loading: false });
+
+      setTimeout(() => setPageState({ ...pageState, error: false, loading: false, allowOptionsBtn: true }), 1000)
     }
-    else setPageState({ error: true, loading: false });
+    else setPageState({ ...pageState, error: true, loading: false, allowOptionsBtn: true });
+  }
+
+  async function handleUpdateCategory() {
+    const categoryId = pageState.selectedCategoryId;
+    const category = categories.find(c => c.id == categoryId)
+
+    if (!!category && inputEditCategoryRef.current) {
+      setPageState({ ...pageState, allowOptionsBtn: false });
+      const updateBody = { name: inputEditCategoryRef.current.value, lessons_order: category.lessons_order }
+      await CategoryAPI.updateCategory(category.id, updateBody);
+      getInitialData();
+    }
   }
 
   function handleDragEnd(event) {
