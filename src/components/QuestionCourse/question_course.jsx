@@ -296,14 +296,13 @@ const QuestionCourse = ({dataLesson}) => {
                           <ListGroupItem key={reply.id} className='mt-2'>
                             <Row>
                               <Col xs={1}>
-                                {reply.user.photo ? <img src={`http://portal-aulas-api.fly.dev${reply.user.photo}`} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
+                                {reply.user.photo ? <img src={`http://portal-aulas-api.fly.dev${item.user.photo}`} style={{width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
                                   : <Avatar
-                                      name={reply.user.name && reply.user.name.split(' ')[0]}
-                                      color="#0f5b7a"
-                                      size={150}
-                                      textSizeRatio={2}
-                                      round={true}
-                                      style={{ cursor: 'pointer' }}
+                                  name={item.user.name && item.user.name.split(' ')[0]}
+                                  color="#0E6216"
+                                  size={50}
+                                  round={true}
+                                  style={{ cursor: 'pointer' }}
                                 />}
                               </Col>
                               <Col>
