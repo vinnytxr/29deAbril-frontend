@@ -12,15 +12,17 @@ import { FaPlus } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { CategoryAPI } from '../../api/category';
 import { HttpStatus } from '../../api/default';
+import { toast } from 'react-toastify'
 
 export function EditCategoryPage() {
   const [categories, setCategories] = React.useState([])
 
-  const [pageState, setPageState] = React.useState({ error: false, loading: true, showCategoryOptions: false, selectedCategoryId: null, allowOptionsBtn: true })
+  const [pageState, setPageState] = React.useState({ error: false, loading: true, showCategoryOptions: false, selectedCategoryId: null, allowOptionsBtn: true, allowCreateCategory: true })
 
   const { id } = useParams();
 
   const inputEditCategoryRef = React.useRef(null)
+  const inputCreateCategoryRef = React.useRef(null)
 
   React.useEffect(() => {
     getInitialData()
@@ -54,20 +56,16 @@ export function EditCategoryPage() {
           <div className='w-100 d-flex flex-row justify-content-between mt-4'>
             <input
               id='create-course-category-input'
+              ref={inputCreateCategoryRef}
               type='text'
               className='w-100 me-1 px-1'
               style={{ 'fontSize': '14px' }}
+              disabled={!pageState.allowCreateCategory}
             />
             <Button
-              onClick={() => {
-                const inputElement = document.getElementById('create-course-category-input')
-                const inputValue = inputElement.value;
-
-                console.log(inputValue)
-
-                inputElement.value = '';
-              }}
+              onClick={handleCreateCategory}
               className='add-category-btn'
+              disabled={!pageState.allowCreateCategory}
             >
               <FaPlus />
             </Button>
@@ -79,7 +77,7 @@ export function EditCategoryPage() {
             ref={inputEditCategoryRef}
             type='text'
             className='w-100 me-1 px-1'
-            style={{ 'fontSize': '14px', 'textAlign': 'center', visibility: pageState.showCategoryOptions ? 'visible': 'hidden' }}
+            style={{ 'fontSize': '14px', 'textAlign': 'center', visibility: pageState.showCategoryOptions ? 'visible' : 'hidden' }}
             autoComplete='off'
             spellCheck={false}
             disabled={!pageState.allowOptionsBtn}
@@ -97,14 +95,7 @@ export function EditCategoryPage() {
                   <IoSave />
                 </Button>
                 <Button
-                  onClick={() => {
-                    const inputElement = document.getElementById('edit-course-category-input')
-                    const inputValue = inputElement.value;
-
-                    console.log(inputValue)
-
-                    inputElement.value = '';
-                  }}
+                  onClick={handleDeleteCategory}
                   disabled={!pageState.allowOptionsBtn}
                   className='rm-category-btn'
                 >
@@ -138,9 +129,9 @@ export function EditCategoryPage() {
     if (response.status === HttpStatus.OK && response.data) {
       setCategories(response.data.categories);
 
-      setTimeout(() => setPageState({ ...pageState, error: false, loading: false, allowOptionsBtn: true }), 1000)
+      setTimeout(() => setPageState({ ...pageState, error: false, loading: false, allowOptionsBtn: true, allowCreateCategory: true }), 1000)
     }
-    else setPageState({ ...pageState, error: true, loading: false, allowOptionsBtn: true });
+    else setPageState({ ...pageState, error: true, loading: false, allowOptionsBtn: true, allowCreateCategory: true });
   }
 
   async function handleUpdateCategory() {
@@ -151,6 +142,31 @@ export function EditCategoryPage() {
       setPageState({ ...pageState, allowOptionsBtn: false });
       const updateBody = { name: inputEditCategoryRef.current.value, lessons_order: category.lessons_order }
       await CategoryAPI.updateCategory(category.id, updateBody);
+      getInitialData();
+    }
+  }
+
+  async function handleDeleteCategory() {
+    const categoryId = pageState.selectedCategoryId;
+    const category = categories.find(c => c.id == categoryId)
+
+    if (category && category.lessons.length > 0)
+      notifyError("Apenas categorias vazias podem ser deletadas!")
+    else if(categories.length <= 1)
+      notifyError("O curso deve possuir ao menos uma categoria!")  
+    else if (category && categoryId) {
+      setPageState({ ...pageState, allowOptionsBtn: false });
+      await CategoryAPI.deleteCategory(categoryId);
+      await getInitialData();
+      setTimeout(() => setPageState({ ...pageState, error: false, loading: false, allowOptionsBtn: true, showCategoryOptions: false, selectedCategoryId: null }), 1000)
+    }
+  }
+
+  async function handleCreateCategory() {
+    if (inputCreateCategoryRef.current) {
+      setPageState({ ...pageState, allowCreateCategory: false });
+      await CategoryAPI.createCategory(id, inputCreateCategoryRef.current.value)
+      inputCreateCategoryRef.current.value = ''
       getInitialData();
     }
   }
@@ -175,14 +191,20 @@ export function EditCategoryPage() {
 
         return orderedCategories;
       })
-
-      // setLanguages(items => {
-      //   const activeIndex = items.indexOf(active.id);
-      //   const overIndex = items.indexOf(over.id);
-
-      //   console.log(arrayMove(items, activeIndex, overIndex))
-      //   return arrayMove(items, activeIndex, overIndex);
-      // })
     }
   }
+
+  function notifyError(texto) {
+    toast.error(texto, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    })
+  }
+
 }

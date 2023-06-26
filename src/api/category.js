@@ -3,7 +3,9 @@ import { BASE_URL, HttpResponse, HttpStatus } from "./default";
 export const CategoryAPI = {
   getCategoriesByCourse,
   updateCourseCategoriesOrder,
-  updateCategory
+  updateCategory,
+  deleteCategory,
+  createCategory
 }
 
 function isAIntegerArray(arr) {
@@ -99,3 +101,52 @@ async function updateCategory (categoryId, body) {
     return new HttpResponse(HttpStatus.ERROR, null);
   }
 };
+
+async function deleteCategory (categoryId) {
+  try {
+    const url = `${BASE_URL}/courses/categories/${categoryId}`
+    const options = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+      },
+    }
+    const response = await fetch(url, options)
+    if (response.ok)
+      return new HttpResponse(HttpStatus.OK, null)
+    throw new Error("CategoryAPI::deleteCategory()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
+async function createCategory (courseId, categoryName) {
+  try {
+    const url = `${BASE_URL}/courses/categories`
+
+    const body = {
+      name: categoryName,
+      course: courseId,
+      lessons_order: []
+    }
+
+    const options = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+    const response = await fetch(url, options)
+    if (response.ok) {
+      const data = await response.json()
+      return new HttpResponse(HttpStatus.OK, data)
+    }
+    throw new Error("CategoryAPI::createCategory()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
