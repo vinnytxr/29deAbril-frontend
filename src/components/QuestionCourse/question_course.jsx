@@ -13,7 +13,7 @@ import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
 import './question_course.css'
 
 const QuestionCourse = ({dataLesson}) => {
-  const { token } = useAuthContext();
+  const { token, user } = useAuthContext();
   const [data, setData] = useState({});
   const [replyA, setReplyA] = useState(false);
   const [editReply, setEditReply] = useState(false);
@@ -101,7 +101,7 @@ const QuestionCourse = ({dataLesson}) => {
     if (response.status === HttpStatus.OK) {
       notifySuccess("Pergunta enviada com sucesso!")
       refreshQuestions()
-      setFormValores(resetValores());
+      setFormValores(resetValores())
       refreshQuestions()
     } else { 
       notifyError("Erro ao enviar pergunta, tente novamente!")
@@ -113,7 +113,7 @@ const QuestionCourse = ({dataLesson}) => {
     const response = await QuestionsAPI.createReply(formReply.content, id, idQuestion, token)
     if (response.status === HttpStatus.OK) {
       notifySuccess("Resposta enviada com sucesso!")
-      setFormReply(resetValores());
+      setFormReply(resetValores())
       refreshQuestions()
     } else { 
       notifyError("Erro ao enviar resposta, tente novamente!")
@@ -136,8 +136,9 @@ const QuestionCourse = ({dataLesson}) => {
     const response = await QuestionsAPI.updateQuestion(formEditReply.content, id, idQuestion, token)
     if (response.status === HttpStatus.OK) {
       notifySuccess("Resposta editada com sucesso!")
+      setEditQuestion(false)
       setEditReply(false)
-      setFormEditReply(resetValores());
+      setFormEditReply(resetValores())
       refreshQuestions()
     } else { 
       notifyError("Erro ao editar resposta, tente novamente!")
@@ -205,29 +206,34 @@ const QuestionCourse = ({dataLesson}) => {
                 <Accordion.Item eventKey={item.id.toString()} key={item.id}>
                   <Accordion.Header className='accordion-header'>
                     <Row>
-                      <Col xs={2}>
-                        {item.user.photo ? <img src={`http://portal-aulas-api.fly.dev${item.user.photo}`} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
-                          : <Avatar
-                          name={item.user.name && item.user.name.split(' ')[0]}
-                          color="#0f5b7a"
-                          size={150}
-                          textSizeRatio={2}
-                          round={true}
-                          style={{ cursor: 'pointer' }}
-                        />}
-                      </Col>
-                      <Col xs={10}>
-                        <Row>
+                      <Row>
+                        <Col>
+                          {item.user.photo ? <img src={`http://portal-aulas-api.fly.dev${item.user.photo}`} style={{width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
+                            : <Avatar
+                            name={item.user.name && item.user.name.split(' ')[0]}
+                            color="#0E6216"
+                            size={50}
+                            round={true}
+                            style={{ cursor: 'pointer' }}
+                          />}
+                        </Col>
+                      </Row>
+                      <Row className='mt-1'>
+                        <div style={{fontWeight: 'bold',  fontSize: '18px',  color: '#0E6216'}}>
                           {item.user.name}
-                        </Row>
+                        </div>
+                      </Row>
+                      <Row>
                         {editQuestion && editFormId === item.id ?(
                           <></>
                         ) : (
-                          <Row className='mt-2'>
-                            {item.content}
+                          <Row className='mt-3' >
+                            <div style={{ overflowWrap: 'break-word' }}>
+                              {item.content}
+                            </div>
                           </Row>
                         )}
-                      </Col>
+                      </Row>
                     </Row>
                   </Accordion.Header>
                   <Accordion.Body>
@@ -260,7 +266,7 @@ const QuestionCourse = ({dataLesson}) => {
                             </Form.Label>
                           </Form>
                         }
-
+                        
                         {editQuestion && editFormId === item.id ? (
                           <>
                             <Button className="questionLesson submit-question" onClick={() => upQuestion(item.id)}>
