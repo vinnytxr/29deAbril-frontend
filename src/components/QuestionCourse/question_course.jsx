@@ -1,4 +1,4 @@
-import { useState, useEffect  } from 'react';
+import { useState, useEffect } from 'react';
 import { HttpStatus, QuestionsAPI } from './api';
 import { useAuthContext } from '../../contexts/AuthContext'
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -9,10 +9,10 @@ import Avatar from 'react-avatar';
 import { useParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faTrash, faEdit, faXmark } from '@fortawesome/free-solid-svg-icons'
 import './question_course.css'
 
-const QuestionCourse = ({dataLesson}) => {
+const QuestionCourse = ({ dataLesson }) => {
   const { token, user } = useAuthContext();
   const [data, setData] = useState({});
   const [replyA, setReplyA] = useState(false);
@@ -23,33 +23,33 @@ const QuestionCourse = ({dataLesson}) => {
   const { id } = useParams();
 
   const notifyError = (texto) =>
-  toast.error(texto, {
-    position: 'top-right',
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: 'light',
-  })
+    toast.error(texto, {
+      position: 'top-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    })
 
   const notifySuccess = (texto) =>
-  toast.success(texto, {
-    position: 'top-right',
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: 'light',
-  })
+    toast.success(texto, {
+      position: 'top-right',
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    })
 
   const resetValores = () => {
-      return {
-        content: '',
-      }
+    return {
+      content: '',
+    }
   }
 
   const [estado, setEstado] = useState({
@@ -103,7 +103,7 @@ const QuestionCourse = ({dataLesson}) => {
       refreshQuestions()
       setFormValores(resetValores())
       refreshQuestions()
-    } else { 
+    } else {
       notifyError("Erro ao enviar pergunta, tente novamente!")
       new Error('Error on addQuestion()')
     }
@@ -115,7 +115,7 @@ const QuestionCourse = ({dataLesson}) => {
       notifySuccess("Resposta enviada com sucesso!")
       setFormReply(resetValores())
       refreshQuestions()
-    } else { 
+    } else {
       notifyError("Erro ao enviar resposta, tente novamente!")
       new Error('Error on addReply()')
     }
@@ -124,25 +124,32 @@ const QuestionCourse = ({dataLesson}) => {
   const rmQuestion = async (idQuestion) => {
     const response = await QuestionsAPI.deleteQuestion(id, idQuestion, token)
     if (response.status === HttpStatus.OK) {
-        refreshQuestions()
-        notifySuccess("Removido com sucesso!")
-    } else { 
+      refreshQuestions()
+      notifySuccess("Removido com sucesso!")
+    } else {
       notifyError("Erro ao remover resposta, tente novamente!")
       new Error('Error on rmQuestion()')
     }
   }
 
-  const upQuestion = async (idQuestion) => {
-    const response = await QuestionsAPI.updateQuestion(formEditReply.content, id, idQuestion, token)
-    if (response.status === HttpStatus.OK) {
+  const upQuestion = async (replyContent, idQuestion) => {
+    if (formEditReply.content !== replyContent) {
+      const response = await QuestionsAPI.updateQuestion(formEditReply.content, id, idQuestion, token)
+      if (response.status === HttpStatus.OK) {
+        notifySuccess("Resposta editada com sucesso!")
+        setEditQuestion(false)
+        setEditReply(false)
+        setFormEditReply(resetValores())
+        refreshQuestions()
+      } else {
+        notifyError("Erro ao editar resposta, tente novamente!")
+        new Error('Error on upQuestion()')
+      }
+    } else {
       notifySuccess("Resposta editada com sucesso!")
       setEditQuestion(false)
       setEditReply(false)
       setFormEditReply(resetValores())
-      refreshQuestions()
-    } else { 
-      notifyError("Erro ao editar resposta, tente novamente!")
-      new Error('Error on upQuestion()')
     }
   }
 
@@ -150,7 +157,7 @@ const QuestionCourse = ({dataLesson}) => {
     <div className="questionLesson">
       <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }}
         onClick={handleShow}>
-          Perguntas
+        Perguntas
       </Button>
 
       <Modal
@@ -168,7 +175,7 @@ const QuestionCourse = ({dataLesson}) => {
         <Modal.Body>
           <Form>
             <Form.Label className="w-100 mt-3">
-              Perguntas ou dúvidas sobre o conteúdo?!  
+              Perguntas ou dúvidas sobre o conteúdo?!
               <Form.Control
                 className="input-content"
                 spellCheck="false"
@@ -189,6 +196,7 @@ const QuestionCourse = ({dataLesson}) => {
                     content: formValores.content.trim().length >= 3,
                   })
                 }
+                maxLength={1024}
               />
             </Form.Label>
           </Form>
@@ -208,27 +216,27 @@ const QuestionCourse = ({dataLesson}) => {
                     <Row>
                       <Row>
                         <Col>
-                          {item.user.photo ? <img src={`http://portal-aulas-api.fly.dev${item.user.photo}`} style={{width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
+                          {item.user.photo ? <img src={`http://portal-aulas-api.fly.dev${item.user.photo}`} style={{ width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
                             : <Avatar
-                            name={item.user.name && item.user.name.split(' ')[0]}
-                            color="#0E6216"
-                            size={50}
-                            round={true}
-                            style={{ cursor: 'pointer' }}
-                          />}
+                              name={item.user.name && item.user.name.split(' ')[0]}
+                              color="#0E6216"
+                              size={50}
+                              round={true}
+                              style={{ cursor: 'pointer' }}
+                            />}
                         </Col>
                       </Row>
                       <Row className='mt-1'>
-                        <div style={{fontWeight: 'bold',  fontSize: '18px',  color: '#0E6216'}}>
+                        <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216' }}>
                           {item.user.name}
                         </div>
                       </Row>
                       <Row>
-                        {editQuestion && editFormId === item.id ?(
+                        {editQuestion && editFormId === item.id ? (
                           <></>
                         ) : (
                           <Row className='mt-3' >
-                            <div style={{ overflowWrap: 'break-word' }}>
+                            <div className="text-justify" style={{ overflowWrap: 'break-word' }}>
                               {item.content}
                             </div>
                           </Row>
@@ -239,7 +247,7 @@ const QuestionCourse = ({dataLesson}) => {
                   <Accordion.Body>
                     <Row className='my-1'>
                       <Col className="questionLesson">
-                        {editQuestion && editFormId === item.id && 
+                        {editQuestion && editFormId === item.id &&
                           <Form>
                             <Form.Label className="w-100 mt-3">
                               <Form.Control
@@ -262,32 +270,35 @@ const QuestionCourse = ({dataLesson}) => {
                                     edit: formEditReply.content.trim().length >= 3,
                                   })
                                 }
+                                maxLength={1024}
                               />
                             </Form.Label>
                           </Form>
                         }
-                        
-                        {editQuestion && editFormId === item.id ? (
-                          <>
-                            <Button className="questionLesson submit-question" onClick={() => upQuestion(item.id)}>
-                              Salvar
-                            </Button>
+                        <Row className='me-1 mt-1' style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            {editQuestion && editFormId === item.id ? (
+                              <>
+                                <Button className="questionLesson submit-question" style={{ width: '100px' }} onClick={() => upQuestion(item.content, item.id)}>
+                                  Salvar
+                                </Button>
 
-                            <Button className="questionLesson cancel-question" onClick={() => {setEditQuestion(false); setEditFormId(null)}}>
-                              Cancelar
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button className="questionLesson submit-question" onClick={() => {setFormEditReply({ ...formEditReply, content: item.content }); setEditQuestion(true); setEditFormId(item.id)}}>
-                              Editar Pergunta
-                            </Button>
+                                <Button className="questionLesson cancel-question" style={{ width: '100px' }} onClick={() => { setEditQuestion(false); setEditFormId(null) }}>
+                                  Cancelar
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button className="questionLesson submit-question" style={{ width: '150px' }} 
+                                  onClick={() => { setFormEditReply({ ...formEditReply, content: item.content }); setEditQuestion(true); setEditFormId(item.id) }}>
+                                  Editar pergunta
+                                </Button>
 
-                            <Button className="questionLesson cancel-question" onClick={() => rmQuestion(item.id)}>
-                              Deletar Pergunta - <FontAwesomeIcon icon={faTrash} />
-                            </Button>
-                          </>
-                        )}
+                                <Button className="questionLesson cancel-question" style={{ width: '100px' }} onClick={() => rmQuestion(item.id)}>
+                                  Deletar <FontAwesomeIcon icon={faTrash} />
+                                </Button>
+                              </>
+                            )}
+                        </Row>
                       </Col>
                     </Row>
                     {item.replies.length > 0 && (
@@ -295,21 +306,25 @@ const QuestionCourse = ({dataLesson}) => {
                         {item.replies.map(reply => (
                           <ListGroupItem key={reply.id} className='mt-2'>
                             <Row>
-                              <Col xs={1}>
-                                {reply.user.photo ? <img src={`http://portal-aulas-api.fly.dev${item.user.photo}`} style={{width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
-                                  : <Avatar
-                                  name={item.user.name && item.user.name.split(' ')[0]}
-                                  color="#0E6216"
-                                  size={50}
-                                  round={true}
-                                  style={{ cursor: 'pointer' }}
-                                />}
-                              </Col>
+                              <Row>
+                                <Col xs={1}>
+                                  {reply.user.photo ? <img src={`http://portal-aulas-api.fly.dev${reply.user.photo}`} style={{ width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                                    : <Avatar
+                                      name={item.user.name && item.user.name.split(' ')[0]}
+                                      color="#0E6216"
+                                      size={50}
+                                      round={true}
+                                      style={{ cursor: 'pointer' }}
+                                    />}
+                                </Col>
+                              </Row>
+                              <Row style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216' }}>
+                                <div>
+                                  {reply.user.name}
+                                </div>
+                              </Row>
                               <Col>
-                                <Row>
-                                  {item.user.name}
-                                </Row>
-                                { editReply && editFormId === reply.id ? (
+                                {editReply && editFormId === reply.id ? (
                                   <>
                                     <Form>
                                       <Form.Label className="w-100 mt-3">
@@ -333,42 +348,40 @@ const QuestionCourse = ({dataLesson}) => {
                                               edit: formEditReply.content.trim().length >= 3,
                                             })
                                           }
+                                          maxLength={1024}
                                         />
                                       </Form.Label>
                                     </Form>
                                   </>
-                                ):<>
-                                    <Row>
+                                ) : <>
+                                  <Row className="text-justify">
+                                    <div>
                                       {reply.content}
-                                    </Row>
-                                  </>
+                                    </div>
+                                  </Row>
+                                </>
                                 }
                               </Col>
                             </Row>
-                            <Row>
-                              <Col className='col-9'>
-                              </Col>
-                              <Col className='col-3'>
-                              { editReply && editFormId === reply.id ? (
+                            <Row className='me-1 mt-1' style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                              {editReply && editFormId === reply.id ? (
                                 <>
-                                  <Button className="questionLesson submit-question" onClick={() => upQuestion(reply.id)}>
+                                  <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => upQuestion(reply.content, reply.id)}>
                                     Salvar
                                   </Button>
-                                  <Button className="questionLesson cancel-question" onClick={() => {setEditReply(false); setEditFormId(null)}}>
-                                    Cancelar
+                                  <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => { setEditReply(false); setEditFormId(null) }}>
+                                    <FontAwesomeIcon icon={faXmark} />
                                   </Button>
                                 </>
-                                ) : <>
-                                  <Button className="questionLesson submit-question" onClick={() => {setFormEditReply({ ...formEditReply, content: reply.content }); setEditReply(true); setEditFormId(reply.id)}}>
-                                    Editar <FontAwesomeIcon icon={faEdit} />
-                                  </Button>
-                                  <Button className="questionLesson cancel-question" onClick={() => rmQuestion(reply.id)}>
-                                    <FontAwesomeIcon icon={faTrash} />
-                                  </Button>
-                                </>
-                                }
-                                
-                              </Col>
+                              ) : <>
+                                <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => { setFormEditReply({ ...formEditReply, content: reply.content }); setEditReply(true); setEditFormId(reply.id) }}>
+                                  Editar <FontAwesomeIcon icon={faEdit} />
+                                </Button>
+                                <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => rmQuestion(reply.id)}>
+                                  <FontAwesomeIcon icon={faTrash} />
+                                </Button>
+                              </>
+                              }
                             </Row>
                           </ListGroupItem>
                         ))}
@@ -385,7 +398,7 @@ const QuestionCourse = ({dataLesson}) => {
                       <Row className='mt-4'>
                         <Form>
                           <Form.Label className="w-100 mt-3">
-                            Insira a sua resposta!  
+                            Insira a sua resposta!
                             <Form.Control
                               className="input-content"
                               spellCheck="false"
@@ -410,8 +423,8 @@ const QuestionCourse = ({dataLesson}) => {
                           </Form.Label>
                         </Form>
                         <Modal.Footer>
-                          <Button className="questionLesson cancel-question"  onClick={() => {setReplyA(false); setFormReply(resetValores())}}>Cancelar</Button>
-                          <Button className="questionLesson submit-question" onClick={() => {addReply(item.id)}}>Enviar</Button>
+                          <Button className="questionLesson cancel-question" onClick={() => { setReplyA(false); setFormReply(resetValores()) }}>Cancelar</Button>
+                          <Button className="questionLesson submit-question" onClick={() => { addReply(item.id) }}>Enviar</Button>
                         </Modal.Footer>
                       </Row>
                     )}
