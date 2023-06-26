@@ -8,6 +8,7 @@ import { Container, Col, Row, Form, Button, Alert } from 'react-bootstrap'
 import { HttpStatus, LessonAPI } from './api'
 import { cut } from '../../tools/string'
 import noImage from './no-image.png'
+import { CategoryAPI } from '../../api/category'
 import './style.css'
 
 const PostFormStatus = {
@@ -15,6 +16,16 @@ const PostFormStatus = {
   ENVIANDO: 'ENVIANDO',
   ERRO: 'ERRO',
   NULL: 'NULL',
+}
+
+function compareObjects(a, b, idFirst) {
+  if (a.id === idFirst) {
+    return -1;
+  } else if (b.id === idFirst) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 export const NewLessonScreen = () => {
@@ -25,6 +36,7 @@ export const NewLessonScreen = () => {
       content: '',
       videos: [],
       useBannerFromVideo: false,
+      categoryId: null,
     }
   }
 
@@ -40,6 +52,7 @@ export const NewLessonScreen = () => {
   const [formValores, setFormValores] = useState(resetValores())
   const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL)
   const [editable, setEditable] = useState(true)
+  const [categories, setCategories] = useState([])
 
   const navigate = useNavigate()
 
@@ -52,9 +65,17 @@ export const NewLessonScreen = () => {
     [formValores.files]
   )
 
+  useEffect(() => {
+    getCategories()
+  }, [])
+
   const setTitle = (e) => {
     setEstado({ ...estado, title: undefined })
     setFormValores({ ...formValores, title: cut(e?.target?.value ?? '', 64) })
+  }
+
+  const setCategoryId = (e) => {
+    setFormValores({ ...formValores, categoryId: e?.target?.value })
   }
 
   const setContent = (e) => {
@@ -88,6 +109,8 @@ export const NewLessonScreen = () => {
       post.append('banner', formValores.files[0])
 
     if (formValores.videos.length) post.append('video', formValores.videos[0])
+
+    if (formValores.categoryId) post.append("category", formValores.categoryId)
 
     LessonAPI.registerLesson(post).then((response) => {
       setEditable(false)
@@ -163,6 +186,18 @@ export const NewLessonScreen = () => {
                 <Row>
                   <Col xs={12} className="pl0">
                     <Form.Label className="w-100 mt-3">
+                      Categoria da aula
+                      <Form.Select
+                        style={{ boxShadow: 'none' }}
+                        onChange={setCategoryId}
+                        disabled={!editable}
+                      >
+                        {categories.sort((a, b) => compareObjects(a, b, formValores.categoryId)).map(c => <option value={c.id} key={c.id}>{c.name}</option>)}
+                      </Form.Select>
+                    </Form.Label>
+                  </Col>
+                  <Col xs={12} className="pl0">
+                    <Form.Label className="w-100 mt-3">
                       Titulo da aula
                       <Form.Control
                         className="input-title"
@@ -225,9 +260,8 @@ export const NewLessonScreen = () => {
                     <span>Thumbnail da aula</span>
                     <label htmlFor="input-files-ftc" style={{ width: '100%' }}>
                       <img
-                        className={`image-for-input-file ${
-                          estado.files === false ? 'error' : ''
-                        }`}
+                        className={`image-for-input-file ${estado.files === false ? 'error' : ''
+                          }`}
                         src={
                           formValores.files.length
                             ? URL.createObjectURL(formValores.files[0])
@@ -245,20 +279,18 @@ export const NewLessonScreen = () => {
                   </Col>
                   <Col xs={12} className="file-input-span mb-3">
                     <span
-                      className={`${
-                        !!estado.files
-                          ? 'ok'
-                          : estado.files === false
+                      className={`${!!estado.files
+                        ? 'ok'
+                        : estado.files === false
                           ? 'error'
                           : ''
-                      }`}
+                        }`}
                     >
                       {formValores.files.length > 0
-                        ? `${formValores.files.length} ${
-                            formValores.files.length > 1
-                              ? 'imagens selecionadas'
-                              : 'imagem selecionada'
-                          }`
+                        ? `${formValores.files.length} ${formValores.files.length > 1
+                          ? 'imagens selecionadas'
+                          : 'imagem selecionada'
+                        }`
                         : 'Nenhuma imagem selecionada'}
                     </span>
                   </Col>
@@ -287,20 +319,18 @@ export const NewLessonScreen = () => {
                   </Col>
                   <Col xs={12} className="file-input-span mb-3">
                     <span
-                      className={`${
-                        !!estado.videos
-                          ? 'ok'
-                          : estado.videos === false
+                      className={`${!!estado.videos
+                        ? 'ok'
+                        : estado.videos === false
                           ? 'error'
                           : ''
-                      }`}
+                        }`}
                     >
                       {formValores.videos.length > 0
-                        ? `${formValores.videos.length} ${
-                            formValores.videos.length > 1
-                              ? 'videos selecionados'
-                              : 'video selecionado'
-                          }`
+                        ? `${formValores.videos.length} ${formValores.videos.length > 1
+                          ? 'videos selecionados'
+                          : 'video selecionado'
+                        }`
                         : 'Nenhum video selecionado'}
                     </span>
                   </Col>
@@ -344,15 +374,15 @@ export const NewLessonScreen = () => {
                         postFormSuccess === PostFormStatus.ENVIADO
                           ? 'success'
                           : postFormSuccess === PostFormStatus.ENVIANDO
-                          ? 'primary'
-                          : 'danger'
+                            ? 'primary'
+                            : 'danger'
                       }
                     >
                       {postFormSuccess === PostFormStatus.ENVIADO
                         ? 'Aula cadastrada com sucesso !'
                         : postFormSuccess === PostFormStatus.ENVIANDO
-                        ? 'Enviando ...'
-                        : 'Houve um erro ao cadastrar aula, por favor, tente novamente mais tarde!'}
+                          ? 'Enviando ...'
+                          : 'Houve um erro ao cadastrar aula, por favor, tente novamente mais tarde!'}
                     </Alert>
                   </Col>
                 </Row>
@@ -363,6 +393,14 @@ export const NewLessonScreen = () => {
       </Container>
     </section>
   )
+
+  async function getCategories() {
+    const response = await CategoryAPI.getCategoriesByCourse(courseId);
+
+    if (response.status == HttpStatus.OK && response.data) {
+      setCategories(response.data.categories);
+    }
+  }
 }
 
 export default NewLessonScreen

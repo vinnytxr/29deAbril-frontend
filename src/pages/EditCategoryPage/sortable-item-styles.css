@@ -1,0 +1,9 @@
+.sortable-item, .sortable-item * {
+  user-select: none;
+}
+
+.sortable-item-category .count {
+  position: absolute;
+  right: 6px;
+  top: 3px;
+}

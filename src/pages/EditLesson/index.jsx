@@ -8,8 +8,9 @@ import { Container, Col, Row, Form, Button, Alert, Modal } from 'react-bootstrap
 import { HttpStatus, LessonAPI } from "./api";
 import { cut } from "../../tools/string";
 import { useAuthContext } from "../../contexts/AuthContext";
-import noImage from './no-image.png'
-import './style.css'
+import { CategoryAPI } from "../../api/category";
+import noImage from './no-image.png';
+import './style.css';
 
 const PostFormStatus = {
     ENVIADO: 'ENVIADO',
@@ -22,8 +23,19 @@ const isString = value => typeof value === 'string' || value instanceof String;
 const imageBeUpdated = value => !(isString(value) && value.slice(0, 5).includes('http'))
 const videoBeUpdated = value => !(isString(value) && value.slice(0, 5).includes('http'))
 
+function compareObjects(a, b, idFirst) {
+    if (a.id === idFirst) {
+        return -1;
+    } else if (b.id === idFirst) {
+        return 1;
+    } else {
+        return 0; 
+    }
+}
+
 export const EditLessonScreen = () => {
     const [lessonExists, setLessonExists] = useState(undefined);
+    const [categories, setCategories] = useState([])
 
     const resetValores = () => {
         return {
@@ -33,6 +45,7 @@ export const EditLessonScreen = () => {
             videos: [],
             useBannerFromVideo: false,
             course: null,
+            caegoryId: null,
         };
     };
 
@@ -75,6 +88,10 @@ export const EditLessonScreen = () => {
         setFormValores({ ...formValores, content: cut(e?.target?.value, 1024) })
     }
 
+    const setCategoryId = (e) => {
+        setFormValores({ ...formValores, categoryId: e?.target?.value })
+    }
+
     const sendForm = async () => {
         var estadoAux = {
             title: formValores.title.trim().length >= 3,
@@ -102,6 +119,9 @@ export const EditLessonScreen = () => {
 
         if (formValores.useBannerFromVideo)
             post.append("useframe", 1)
+
+        if (formValores.categoryId)
+            post.append("category", formValores.categoryId)
 
         LessonAPI.updateLesson(post, id).then(response => {
             setEditable(false)
@@ -161,12 +181,14 @@ export const EditLessonScreen = () => {
         const response = await LessonAPI.getLesson(id)
         if (response.status === HttpStatus.OK && !!response.data) {
             const lesson = response.data
+            getCategories(lesson.course);
             setFormValores({
                 title: lesson.title,
                 content: lesson.content,
                 files: [lesson.banner],
                 videos: [lesson.video],
-                course: lesson.course
+                course: lesson.course,
+                categoryId: lesson.category.id
             })
             setLessonExists(true)
         } else setLessonExists(false)
@@ -239,6 +261,18 @@ export const EditLessonScreen = () => {
                         <Col xs={12} lg={7}>
                             <Container fluid>
                                 <Row>
+                                    <Col xs={12} className="pl0">
+                                        <Form.Label className="w-100 mt-3">
+                                            Categoria da aula
+                                            <Form.Select
+                                                style={{ boxShadow: 'none' }}
+                                                onChange={setCategoryId}
+                                                disabled={!editable}
+                                            >
+                                                {categories.sort((a, b) => compareObjects(a, b, formValores.categoryId)).map(c => <option value={c.id} key={c.id}>{c.name}</option>)}
+                                            </Form.Select>
+                                        </Form.Label>
+                                    </Col>
                                     <Col xs={12} className="pl0">
                                         <Form.Label className="w-100 mt-3">
                                             Titulo da aula
@@ -364,6 +398,14 @@ export const EditLessonScreen = () => {
             </Container>
         </section >
     ) : <></>;
+
+    async function getCategories(courseId) {
+        const response = await CategoryAPI.getCategoriesByCourse(courseId);
+
+        if (response.status == HttpStatus.OK && response.data) {
+            setCategories(response.data.categories);
+        }
+    }
 }
 
 export default EditLessonScreen
