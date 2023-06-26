@@ -81,8 +81,6 @@ export const EditCourseScreen = () => {
     }
   }, [id])
 
-  useEffect(() => console.log('cat: ', categories), [categories])
-
   const setDescription = (e) => {
     setEstado({ ...estado, description: undefined })
     setFormValores({ ...formValores, description: e?.target?.value })
@@ -120,7 +118,6 @@ export const EditCourseScreen = () => {
     post.append("professor", user.id);
 
     if (formValores.files.length && imageBeUpdated(formValores.files[0])) {
-      //console.log('banner be updated')
       post.append("banner", formValores.files[0]);
     }
 

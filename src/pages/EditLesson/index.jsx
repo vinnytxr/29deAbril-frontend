@@ -25,13 +25,13 @@ const videoBeUpdated = value => !(isString(value) && value.slice(0, 5).includes(
 
 function compareObjects(a, b, idFirst) {
     if (a.id === idFirst) {
-      return -1; // Coloca o objeto com ID 2 no início
+        return -1;
     } else if (b.id === idFirst) {
-      return 1; // Mantém a ordem atual se b tiver o ID 2
+        return 1;
     } else {
-      return 0; // Mantém a ordem dos outros objetos
+        return 0; 
     }
-  }
+}
 
 export const EditLessonScreen = () => {
     const [lessonExists, setLessonExists] = useState(undefined);
@@ -66,8 +66,6 @@ export const EditLessonScreen = () => {
 
     const navigate = useNavigate();
 
-    useEffect(() => console.log('categories', categories), [categories])
-
     useEffect(
 
         () =>
@@ -91,8 +89,7 @@ export const EditLessonScreen = () => {
     }
 
     const setCategoryId = (e) => {
-        console.log('categoryId', e.target.value)
-        setFormValores({...formValores, categoryId: e?.target?.value})
+        setFormValores({ ...formValores, categoryId: e?.target?.value })
     }
 
     const sendForm = async () => {
@@ -125,7 +122,7 @@ export const EditLessonScreen = () => {
 
         if (formValores.categoryId)
             post.append("category", formValores.categoryId)
-            
+
         LessonAPI.updateLesson(post, id).then(response => {
             setEditable(false)
             setTimeout(() => {
@@ -267,8 +264,8 @@ export const EditLessonScreen = () => {
                                     <Col xs={12} className="pl0">
                                         <Form.Label className="w-100 mt-3">
                                             Categoria da aula
-                                            <Form.Select 
-                                                style={{ boxShadow: 'none' }} 
+                                            <Form.Select
+                                                style={{ boxShadow: 'none' }}
                                                 onChange={setCategoryId}
                                                 disabled={!editable}
                                             >
