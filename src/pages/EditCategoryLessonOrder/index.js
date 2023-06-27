@@ -12,7 +12,7 @@ import { HttpStatus } from '../../api/default';
 import { toast } from 'react-toastify'
 
 export function EditCategoryLessonsOrder() {
-  const [categories, setCategories] = React.useState([])
+  const [lessons, setLessons] = React.useState([])
 
   const [pageState, setPageState] = React.useState({ error: false, loading: true })
 
@@ -25,14 +25,14 @@ export function EditCategoryLessonsOrder() {
   return !pageState.error && !pageState.loading ? (
     <Container className='pt-3 edit-category-page'>
       <Row>
-        <Col xs={7}>
+        <Col xs={12}>
           <DndContext
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
             <h3 className='text-center'>Alterar ordem das aulas</h3>
             <SortableContext
-              items={categories.map(c => c.id)}
+              items={lessons.map(c => c.id)}
               strategy={verticalListSortingStrategy}
               disabled={false}
             >
@@ -40,7 +40,7 @@ export function EditCategoryLessonsOrder() {
                 style={{ 'height': '80vh', 'overflowY': 'scroll', 'overflowX': 'scroll', 'border': '0px solid green' }}
                 className='px-5 category-dnd-container'
               >
-                {categories.map(category => <SortableItem key={category.id} id={category.id} name={category.title} />)}
+                {lessons.map(category => <SortableItem key={category.id} id={category.id} name={category.title} img={category.banner}/>)}
               </section>
             </SortableContext>
           </DndContext>
@@ -53,7 +53,7 @@ export function EditCategoryLessonsOrder() {
     const response = await CategoryAPI.getCategoryById(categoryId);
 
     if (response.status === HttpStatus.OK && response.data) {
-      setCategories(response.data.lessons);
+      setLessons(response.data.lessons);
 
       setTimeout(() => setPageState({ ...pageState, error: false, loading: false }), 1000)
     }
@@ -66,19 +66,21 @@ export function EditCategoryLessonsOrder() {
 
     if (active.id !== over.id) {
       console.log(active.id, over.id)
-      setCategories(items => {
+      setLessons(items => {
         console.log('items', items)
         const activeIndex = items.map(i => i.id).indexOf(active.id);
         const overIndex = items.map(i => i.id).indexOf(over.id);
 
-        const orderedCategories = arrayMove(items, activeIndex, overIndex);
+        const orderedlessons = arrayMove(items, activeIndex, overIndex);
 
-        // (async () => {
-        //   const r = await CategoryAPI.updateCourseCategoriesOrder(id, orderedCategories.map(c => c.id));
-        //   console.log('update: ', r);
-        // })()
+        (async () => {
+          const r = await CategoryAPI.updateCategory(categoryId, {'lessons_order': orderedlessons.map(c => c.id)});
+          console.log('r:', r)
+        })()
 
-        return orderedCategories;
+        console.log('new:', orderedlessons)
+
+        return orderedlessons;
       })
     }
   }

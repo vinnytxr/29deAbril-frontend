@@ -33,6 +33,11 @@ async function getCategoriesByCourse (courseId) {
         data.categories.sort((x, y) => data.order.indexOf(x.id) - data.order.indexOf(y.id));
       else throw new Error("CategoryAPI::getCategoryByCourse() on categories or order: ", data);
 
+      for (let i = 0; i < data.categories.length; i++){
+        if(data.categories[i].lessons && data.categories[i].lessons_order && isAIntegerArray(data.categories[i].lessons_order))
+        data.categories[i].lessons.sort((x, y) => data.categories[i].lessons_order.indexOf(x.id) - data.categories[i].lessons_order.indexOf(y.id));
+      }
+
       return new HttpResponse(HttpStatus.OK, data)
     }
 
@@ -168,9 +173,10 @@ async function getCategoryById (categoryId) {
     if (response.ok) {
       const data = await response.json()
 
-      // if(data.categories && data.order && isAIntegerArray(data.order))
-      //   data.categories.sort((x, y) => data.order.indexOf(x.id) - data.order.indexOf(y.id));
-      // else throw new Error("CategoryAPI::getCategoryByYd() on categories or order: ", data);
+      if(data.lessons && data.lessons_order && isAIntegerArray(data.lessons_order))
+        data.lessons.sort((x, y) => data.lessons_order.indexOf(x.id) - data.lessons_order.indexOf(y.id));
+
+      else throw new Error("CategoryAPI::getCategoryByYd() on categories or order: ", data);
 
       return new HttpResponse(HttpStatus.OK, data)
     }
