@@ -1,6 +1,7 @@
 import { BASE_URL, HttpResponse, HttpStatus } from "./default";
 
 export const CategoryAPI = {
+  getCategoryById,
   getCategoriesByCourse,
   updateCourseCategoriesOrder,
   updateCategory,
@@ -145,6 +146,36 @@ async function createCategory (courseId, categoryName) {
       return new HttpResponse(HttpStatus.OK, data)
     }
     throw new Error("CategoryAPI::createCategory()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
+async function getCategoryById (categoryId) {
+  try {
+    const url = `${BASE_URL}/courses/categories/${categoryId}`
+
+    const options = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    }
+
+    const response = await fetch(url, options)
+
+    if (response.ok) {
+      const data = await response.json()
+
+      // if(data.categories && data.order && isAIntegerArray(data.order))
+      //   data.categories.sort((x, y) => data.order.indexOf(x.id) - data.order.indexOf(y.id));
+      // else throw new Error("CategoryAPI::getCategoryByYd() on categories or order: ", data);
+
+      return new HttpResponse(HttpStatus.OK, data)
+    }
+
+    throw new Error("CategoryAPI::getCategoryById()")
   } catch (error) {
     console.warn(error);
     return new HttpResponse(HttpStatus.ERROR, null);

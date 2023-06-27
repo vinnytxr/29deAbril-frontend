@@ -606,6 +606,11 @@ export const EditCourseScreen = () => {
                               </section>
                             </Accordion.Header>
                             <Accordion.Body>
+                              <Button className="btn-edit-lessons-order mb-3"
+                                onClick={() => navigate(`/professor/courses/edit/category-lessons-order/${category.id}`)}
+                              >
+                                Editar ordem das aulas
+                              </Button>
                               {
                                 category.lessons.map((l, idx) => (
                                   <Card body className='mb-2' onClick={() => navigate(`/professor/lessons/edit/${l.id}`)} style={{ 'cursor': 'pointer' }}>

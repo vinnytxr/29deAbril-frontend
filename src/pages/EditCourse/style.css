@@ -199,8 +199,21 @@ body {
 }
 
 
-.accordion-categories button {
+.accordion-categories h2 button {
   box-shadow: none !important;
   background-color: white !important;
   color: black !important;
+}
+
+.btn-edit-lessons-order {
+  padding: 0 5px;
+  background-color:  white;
+  color: #adb5bd;
+  border-color: #adb5bd;
+}
+
+.btn-edit-lessons-order:hover, .btn-edit-lessons-order:active {
+  background-color:  white;
+  color: rgb(68, 67, 67);
+  border-color: rgb(68, 67, 67);
 }
