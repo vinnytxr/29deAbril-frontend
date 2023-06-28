@@ -66,7 +66,7 @@ function DefaultRoutes() {
           <Route element={<SidebarLayout />}>
             <Route path='/' element={<Home />} />
             <Route path="/courses/:id" element={<CourseDetails />} />
-            <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><StudentLessonPage /></StrictRoute>} />
+            <Route path="/student/lessons/:id" element={<StudentLessonPage />} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseDetails /></StrictRoute>} />
             <Route path="/student/courses/professor/:id" element={<TeacherProfile />} />
             <Route path="/student/notes" element={<StrictRoute roles={[Roles.STUDENT]}><NotesPage /></StrictRoute>} />

@@ -35,7 +35,7 @@ export const StudentLessonPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState('');
   const [notes, setNotes] = useState([]);
-  const { user, refreshUserOnContext, token } = useAuthContext();
+  const { user, refreshUserOnContext, token, logged } = useAuthContext();
 
   const notifySuccess = (texto) => toast.success(texto, {
     position: "top-right",
@@ -288,7 +288,7 @@ export const StudentLessonPage = () => {
     handleShowModal();
   }
 
-  return lesson ? (
+  return lesson && logged ? (
     <>
       {React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")}
       {/* {console.log(lesson)} */}
@@ -384,7 +384,7 @@ export const StudentLessonPage = () => {
       </Container>
     </>
   )
-    : <></>;
+    : <h3 className='mt-5 w-100 text-center'>Você precisar realizar login para ver os recursos da aula!</h3>;
 }
 
 const LinkLesson = ({ title, link, image, inverse }) => {
