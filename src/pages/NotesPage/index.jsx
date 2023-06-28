@@ -68,7 +68,7 @@ const NotesPage = () => {
             }
 
             const response = await fetch(url, options);
-            console.log("response of", (response.ok == true))
+            //console.log("response of", (response.ok == true))
             if (response.ok == true) {
                 const data = await response.json();
                 AUTH_DEBUG && console.log("AuthAPI::deleteAnotations(): ", data.token);
@@ -86,7 +86,7 @@ const NotesPage = () => {
 
 
     const fetchAnotations = async () => {
-        console.log(user.id)
+        //console.log(user.id)
         const url = `${BASE_URL}/anotation/list-notes/${user.id}/`;
         var errorMessage;
         try {
@@ -116,7 +116,7 @@ const NotesPage = () => {
 
     const deleteNote = async (noteid) => {
         const response = await fetchDelete(noteid);
-        console.log("Response de baixo",response.status)
+        //console.log("Response de baixo",response.status)
         if (response.status == 400) {
             notifySuccess("Nota deletada com sucesso.");
             requestCodes();
@@ -127,7 +127,7 @@ const NotesPage = () => {
 
     const requestCodes = async () => {
         const listNotes = await fetchAnotations();
-        console.log(listNotes.data)
+        //console.log(listNotes.data)
         if (listNotes.status !== HttpStatus.OK) {
             notifyError("Falha ao requisitar lista de códigos.");
         }
