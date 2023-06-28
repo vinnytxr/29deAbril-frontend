@@ -52,7 +52,7 @@ export const EditCourseScreen = () => {
   const [formValores, setFormValores] = useState(resetValores())
   const [postFormSuccess, setPostFormStatus] = useState(PostFormStatus.NULL)
   const [editable, setEditable] = useState(false)
-  const [editableLearning, seteditableLearning] = useState(true);
+  const [editableLearningId, setEditableLearningId] = useState(undefined);
   const [learnings, setLearnings] = useState([])
   const [lessons, setLessons] = useState([])
   const [learningValues, setLearningValues] = useState([]);
@@ -202,7 +202,7 @@ export const EditCourseScreen = () => {
   }
 
   const upLearning = async (value, id) => { //terminei aqui verificar os campos
-    seteditableLearning(true)
+    setEditableLearningId(undefined)
     if (!value.name || !value.name.length) return
     const response = await CourseAPI.updateLearning(value, id)
     if (response.status === HttpStatus.OK) refreshLearnings()
@@ -484,31 +484,45 @@ export const EditCourseScreen = () => {
                       style={{ display: 'flex', flexDirection: 'row' }}
                       key={learning.id}
                     >
-                      <Form.Control
-                        className="input-learning"
-                        value={learningValues[learning.id] || learning.name}
-                        disabled={editableLearning}
-                        style={{ width: '90%' }}
-                        onChange={(event) => {
-                          const updatedValues = [...learningValues];
-                          updatedValues[learning.id] = event.target.value;
-                          setLearningValues(updatedValues);
-                        }}
-                      />
-                      {editableLearning ? (
-                        <Button className="edit-learning"
-                          onClick={() => seteditableLearning(false)}
-                        >
-                          Editar
-                        </Button>
+                      {editableLearningId === learning.id ? (
+                        <Form.Control
+                          className="input-learning"
+                          value={learningValues[learning.id] || learning.name}
+                          style={{ width: '90%' }}
+                          onChange={(event) => {
+                            const updatedValues = [...learningValues];
+                            updatedValues[learning.id] = event.target.value;
+                            setLearningValues(updatedValues);
+                          }}
+                        />
                       ) : (
+                        <Form.Control
+                          className="input-learning"
+                          value={learningValues[learning.id] || learning.name}
+                          disabled={true}
+                          style={{ width: '90%' }}
+                        />
+                      )}
+                      {editableLearningId === learning.id ? (
                         <Button className="edit-learning"
                           onClick={() => upLearning({ name: learningValues[learning.id] }, learning.id)}
                         >
                           Salvar
                         </Button>
+                      ) : (
+                        <Button className="edit-learning"
+                          onClick={() => setEditableLearningId(learning.id)}
+                        >
+                          Editar
+                        </Button>
                       )}
-                      {editableLearning &&
+                      {editableLearningId === learning.id ? (
+                        <Button className="cancel-learning"
+                          onClick={() => setEditableLearningId(undefined)}
+                        >
+                          Cancelar
+                        </Button>
+                      ) : (
                         <Button
                           className="remove-learning"
                           style={{ width: '50px' }}
@@ -526,12 +540,8 @@ export const EditCourseScreen = () => {
                           ) : (
                             <FontAwesomeIcon icon={faTrash} />
                           )}
-                        </Button>}
-                      {!editableLearning && <Button className="cancel-learning"
-                        onClick={() => seteditableLearning(true)}
-                      >
-                        Cancelar
-                      </Button>}
+                        </Button>
+                      )}
                     </Col>
                   ))}
                   <Col xs={12}>
@@ -552,7 +562,12 @@ export const EditCourseScreen = () => {
                             setLearningInput(
                               cut(e?.target?.value ?? learningInput, 128)
                             )
-                          }
+                          } //desativa a tecla enter
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                            }
+                          }}
                         />
                       </Form.Label>
                       <Button

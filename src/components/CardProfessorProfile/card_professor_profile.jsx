@@ -3,7 +3,7 @@ import { Row, Col, Container } from 'react-bootstrap';
 import Avatar from 'react-avatar';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import { AiFillLinkedin } from 'react-icons/ai';
+import { AiFillLinkedin, AiFillInstagram } from 'react-icons/ai';
 import StarRating from '../StarRating/star_rating';
 import { AuthAPI } from '../../api/auth-api';
 import { HttpStatus } from '../../api/default';
@@ -16,7 +16,7 @@ function CardProfessorProfile() {
     const [data, setData] = useState({});
     const [isFetched, setIsFetched] = useState(false);
 
-    const { id } = useParams(); //Alterar o curso que deseja visualizar, quando for integrar vou deixar direto na função
+    const { id } = useParams();
 
     useEffect(() => {
         const getProfessorPerfil = async () => {
@@ -100,20 +100,28 @@ function CardProfessorProfile() {
                                         </Card.Text>
                                     </Col>
                                 </Row> */}
-                                <Row className="mt-2 mb-2">
-                                    <Row>
-                                        <Card.Title className="fw-bold mt-2 fs-5" style={{ color: '#727273' }}>
-                                            Redes sociais
-                                        </Card.Title>
+                                {data.contactLink && 
+                                    <Row className="mt-2 mb-2">
+                                        <Row>
+                                            <Card.Title className="fw-bold mt-2 fs-5" style={{ color: '#727273' }}>
+                                                Redes sociais
+                                            </Card.Title>
+                                        </Row>
+                                        <Row>
+                                            <Col className='col-2'>
+                                                {data.contactLink.includes('linkedin') ? (
+                                                    <Button variant="outline-light" href={data.contactLink} target="_blank">
+                                                        <AiFillLinkedin style={{ color: '#0072b1', fontSize: '25' }} />
+                                                    </Button>
+                                                ) : data.contactLink.includes('instagram') ? (
+                                                    <Button variant="outline-light" href={data.contactLink} target="_blank">
+                                                        <AiFillInstagram style={{ color: '#E1306C', fontSize: '25' }} />
+                                                    </Button>
+                                                ) : null}
+                                            </Col>
+                                        </Row>
                                     </Row>
-                                    <Row>
-                                        <Col className='col-2'>
-                                            <Button variant="outline-light" href={data.contactLink} target="_blank">
-                                                <AiFillLinkedin style={{ color: '#0072b1', fontSize: '25' }} />
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                </Row>
+                                }
                             </Col>
                         </Row>
                     </Card>
