@@ -112,8 +112,6 @@ export const NewLessonScreen = () => {
 
     if (formValores.categoryId) post.append("category", formValores.categoryId)
 
-    console.log('categoryId', formValores.categoryId)
-
     LessonAPI.registerLesson(post).then((response) => {
       setEditable(false)
       setTimeout(() => {
