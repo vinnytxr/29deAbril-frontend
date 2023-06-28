@@ -17,6 +17,7 @@ import UserProfileScreen from '../pages/UserProfile'
 import ProfessorCoursesPage from '../pages/ProfessorCourses';
 import CourseDetails from '../pages/CourseDetails/course_details';
 import AdministrationPage from '../pages/AdminPage';
+import AdministrateTeachers from '../pages/AdminPageTeachers';
 import StudentCoursesPage from '../pages/StudentCourses/student_courses';
 import { StudentLessonPage } from '../pages/StudentLessonPage';
 import EditLessonScreen from '../pages/EditLesson';
@@ -27,6 +28,7 @@ import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
 import ChangePasswordPage from '../pages/ChangePassword';
 import BookmarksPage from '../pages/BookmarksPage/bookmark_page';
+import NotesPage from '../pages/NotesPage';
 import { EditCategoryPage } from '../pages/EditCategoryPage';
 import { EditCategoryLessonsOrder } from '../pages/EditCategoryLessonOrder';
 
@@ -67,6 +69,7 @@ function DefaultRoutes() {
             <Route path="/student/lessons/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><StudentLessonPage /></StrictRoute>} />
             <Route path="/student/courses/:id" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseDetails /></StrictRoute>} />
             <Route path="/student/courses/professor/:id" element={<TeacherProfile />} />
+            <Route path="/student/notes" element={<StrictRoute roles={[Roles.STUDENT]}><NotesPage /></StrictRoute>} />
             <Route path="/student/courses/rating/" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><CourseRating /></StrictRoute>} />
             <Route path="/professor/courses" element={<StrictRoute roles={[Roles.PROFESSOR]}><ProfessorCoursesPage /></StrictRoute>} />
             <Route path="/student/marked-courses" element={<StrictRoute roles={[Roles.STUDENT]}><BookmarksPage /></StrictRoute>} />
@@ -79,6 +82,7 @@ function DefaultRoutes() {
             <Route path="/professor/lessons/edit/:id" element={<StrictRoute roles={[Roles.PROFESSOR]}><EditLessonScreen /></StrictRoute>} />
             <Route path="/perfil" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><UserProfileScreen /></StrictRoute>} />
             <Route path="/admin/generate-invite" element={<StrictRoute roles={[Roles.ADMIN]}><AdministrationPage /></StrictRoute>} />
+            <Route path="/admin/manage-teachers" element={<StrictRoute roles={[Roles.ADMIN]}><AdministrateTeachers /></StrictRoute>} />
             <Route path='/logout' element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]} children={<Logout />} />} />
             <Route path="*" element={< h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Ops! Você está perdido ?!<br />Esta rota não existe ;(</h2>} />
           </Route>
