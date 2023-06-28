@@ -1,5 +1,5 @@
 const getEnrolledCourseFromUser = (user, courseId) => {
-  console.log(typeof user === 'object', user)
+  //console.log(typeof user === 'object', user)
   if(user && typeof user === 'object' && user.hasOwnProperty('enrolled_courses'))
     return user.enrolled_courses.find((c) => c.id === courseId) ?? null;
   else

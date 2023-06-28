@@ -82,7 +82,7 @@ const UserProfileScreen = () => {
     //console.log("response: ", response)
 
     if (response.status !== HttpStatus.OK) {
-      console.log(response)
+      //console.log(response)
       setAuthorizationCode('')
       notifyError("Falha ao alterar permissões.")
     } else {

@@ -154,6 +154,38 @@ const QuestionCourse = ({ dataLesson }) => {
     }
   }
 
+  const rmReply= async (idQuestion) => {
+    const response = await QuestionsAPI.deleteReply(id, idQuestion, token)
+    if (response.status === HttpStatus.OK) {
+      refreshQuestions()
+      notifySuccess("Removido com sucesso!")
+    } else {
+      notifyError("Erro ao remover resposta, tente novamente!")
+      new Error('Error on rmReply()')
+    }
+  }
+
+  const upReply = async (replyContent, idQuestion) => {
+    if (formEditReply.content !== replyContent) {
+      const response = await QuestionsAPI.updateReply(formEditReply.content, id, idQuestion, token)
+      if (response.status === HttpStatus.OK) {
+        notifySuccess("Resposta alterada com sucesso!")
+        setEditQuestion(false)
+        setEditReply(false)
+        setFormEditReply(resetValores())
+        refreshQuestions()
+      } else {
+        notifyError("Erro ao alterada resposta, tente novamente!")
+        new Error('Error on upReply()')
+      }
+    } else {
+      notifySuccess("Resposta alterada com sucesso!")
+      setEditQuestion(false)
+      setEditReply(false)
+      setFormEditReply(resetValores())
+    }
+  }
+
   return (
     <div className="questionLesson">
       <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }}
@@ -370,7 +402,7 @@ const QuestionCourse = ({ dataLesson }) => {
                               <Row className='me-1 mt-1' style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 {editReply && editFormId === reply.id ? (
                                   <>
-                                    <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => upQuestion(reply.content, reply.id)}>
+                                    <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => upReply(reply.content, reply.id)}>
                                       Salvar
                                     </Button>
                                     <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => { setEditReply(false); setEditFormId(null) }}>
@@ -381,7 +413,7 @@ const QuestionCourse = ({ dataLesson }) => {
                                   <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => { setFormEditReply({ ...formEditReply, content: reply.content }); setEditReply(true); setEditFormId(reply.id) }}>
                                     Editar <FontAwesomeIcon icon={faEdit} />
                                   </Button>
-                                  <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => rmQuestion(reply.id)}>
+                                  <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => rmReply(reply.id)}>
                                     <FontAwesomeIcon icon={faTrash} />
                                   </Button>
                                 </>
@@ -429,7 +461,7 @@ const QuestionCourse = ({ dataLesson }) => {
                         </Form>
                         <Modal.Footer>
                           <Button className="questionLesson cancel-question" onClick={() => { setReplyA(false); setFormReply(resetValores()) }}>Cancelar</Button>
-                          <Button className="questionLesson submit-question" onClick={() => { addReply(item.id) }}>Enviar</Button>
+                          <Button className="questionLesson submit-question" onClick={() => { setReplyA(false); addReply(item.id) }}>Enviar</Button>
                         </Modal.Footer>
                       </Row>
                     )}

@@ -36,7 +36,7 @@ export const StudentLessonPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [note, setNote] = useState('');
   const [notes, setNotes] = useState([]);
-  const { user, refreshUserOnContext, token } = useAuthContext();
+  const { user, refreshUserOnContext, token, logged } = useAuthContext();
 
   const notifySuccess = (texto) => toast.success(texto, {
     position: "top-right",
@@ -106,7 +106,7 @@ export const StudentLessonPage = () => {
 
         const courseInfoFromUserEnrolledCourse = UserTools.getEnrolledCourseFromUser(user, lesson.course ?? -1);
 
-        if(courseInfoFromUserEnrolledCourse.lessons_completed >= courseInfoFromUserEnrolledCourse.total_lessons - 1)
+        if (courseInfoFromUserEnrolledCourse.lessons_completed >= courseInfoFromUserEnrolledCourse.total_lessons - 1)
           notifySuccess("Parabéns, você concluiu o curso, certificado disponibilizado!")
         else notifySuccess("Parabéns, você concluiu a aula!")
 
@@ -129,12 +129,12 @@ export const StudentLessonPage = () => {
   }
 
   const handleOnProgress = ({ played, playedSeconds }) => {
-    console.log(playedSeconds)
+    //console.log(playedSeconds)
     if (controle.enrolled) setVideoPlayer({ ...videoPlayer, played, playedSeconds });
   }
 
   const getTime = (seconds) => {
-    console.log(seconds)
+    //console.log(seconds)
     const m = Math.floor(seconds % 3600 / 60).toString().padStart(2, '0'),
       s = Math.floor(seconds % 60).toString().padStart(2, '0');
     return (seconds == undefined ? "00:00" : m + ':' + s);
@@ -204,7 +204,7 @@ export const StudentLessonPage = () => {
 
   const requestNotes = async () => {
     const listNotes = await fetchAnotations();
-    console.log(listNotes.data)
+    //console.log(listNotes.data)
     if (listNotes.status !== HttpStatus.OK) {
       notifyError("Falha ao requisitar lista de códigos.");
     }
@@ -217,7 +217,7 @@ export const StudentLessonPage = () => {
     e.preventDefault();
     const response = await fetchNote(Math.floor(videoPlayer.playedSeconds), note)
     if (response.status !== HttpStatus.OK) {
-      console.log(response)
+      //console.log(response)
       notifyError("Falha ao enviar anotação.")
     } else {
       refreshUserOnContext()
@@ -240,59 +240,59 @@ export const StudentLessonPage = () => {
      }*/
   }
 
-    
+
 
   const fetchDelete = async (noteid) => {
     const url = `${BASE_URL}/anotation/${noteid}/`;
     var errorMessage;
     try {
-        const options = {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'jwt': token,
-                Accept: 'application/json'
-            }
+      const options = {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'jwt': token,
+          Accept: 'application/json'
         }
+      }
 
-        const response = await fetch(url, options);
-        console.log("response of", (response.ok == true))
-        if (response.ok == true) {
-            const data = await response.json();
-            AUTH_DEBUG && console.log("AuthAPI::deleteAnotations(): ", data.token);
-            return new HttpResponse(HttpStatus.OK, data);
-        } else {
-            errorMessage = await response.json();
-            throw new Error("Error on deleteAnotations()");
-        }
+      const response = await fetch(url, options);
+      console.log("response of", (response.ok == true))
+      if (response.ok == true) {
+        const data = await response.json();
+        AUTH_DEBUG && console.log("AuthAPI::deleteAnotations(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on deleteAnotations()");
+      }
     } catch (error) {
-        console.warn(error)
-        return new HttpResponse(HttpStatus.ERROR, errorMessage);
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
     }
-}
+  }
 
-  
+
   const deleteNote = async (noteid) => {
     const response = await fetchDelete(noteid);
-    console.log("Response de baixo",response.status)
+    //console.log("Response de baixo",response.status)
     if (response.status == 400) {
-        notifySuccess("Nota deletada com sucesso.");
-        requestNotes();
-    }else{
-        notifyError("Falha ao deletar nota.");
+      notifySuccess("Nota deletada com sucesso.");
+      requestNotes();
+    } else {
+      notifyError("Falha ao deletar nota.");
     }
-}
+  }
 
 
   const anotar = () => {
-    console.log("Anotação");
+    //console.log("Anotação");
     handleShowModal();
   }
 
   return lesson ? (
     <>
-      {React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")}
-      {console.log(lesson)}
+      {logged && React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")}
+      {/* {console.log(lesson)} */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Faça sua Anotação</Modal.Title>
@@ -346,15 +346,17 @@ export const StudentLessonPage = () => {
               <QuestionCourse dataLesson={lesson}/>
             </Col>
           }
-          <Col xs={12}>
-            <section style={{ display: 'flex', justifyContent: 'space-between' }}>
-              {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
-              <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
-                Ver todas as aulas
-              </Button>
-              {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}
-            </section>
-          </Col>
+          { logged && 
+            <Col xs={12}>
+              <section style={{ display: 'flex', justifyContent: 'space-between' }}>
+                {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
+                <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
+                  Ver todas as aulas
+                </Button>
+                {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}
+              </section>
+            </Col>
+          }
           {notes && notes.length ?
             <Row>
               <Card
@@ -375,7 +377,7 @@ export const StudentLessonPage = () => {
                     {notes.map(note => (
                       <Card key={note.id} className='mt-1'>
                         <Card.Body className='p-1'>
-                         <CardAnotation notetime={note.time} notenote={note.note} notedelete={() => deleteNote(note.id)}></CardAnotation>
+                          <CardAnotation notetime={note.time} notenote={note.note} notedelete={() => deleteNote(note.id)}></CardAnotation>
                           {/* <span className="ms-3">{note.time}</span>
                           <span className="ms-3">{note.note}</span> */}
                         </Card.Body>
@@ -390,7 +392,7 @@ export const StudentLessonPage = () => {
       </Container>
     </>
   )
-    : <></>;
+    : logged ? <></> : <h3 className='mt-5 w-100 text-center'>Você precisar realizar login para ver os recursos da aula!</h3>;
 }
 
 const LinkLesson = ({ title, link, image, inverse }) => {

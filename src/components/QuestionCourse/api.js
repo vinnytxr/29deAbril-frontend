@@ -132,11 +132,57 @@ const updateQuestion = async (comment, idCourse, idQuestion, token) => {
     return new HttpResponse(HttpStatus.ERROR, null);
   }
 }
+
+const deleteReply = async (idCourse, idQuestion, token) => {
+  try {
+    const url = `${BASE_URL}/lessons/lessons/${idCourse}/comments/${idQuestion}/reply`
+    const options = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        jwt: token,
+      },
+    }
+    const response = await fetch(url, options)
+    if (response.ok)
+      return new HttpResponse(HttpStatus.OK, null)
+  throw new Error("QuestionAPI::deleteReply()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
+const updateReply= async (comment, idCourse, idQuestion, token) => {
+  try {
+    const url = `${BASE_URL}/lessons/lessons/${idCourse}/comments/${idQuestion}/reply`
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        jwt: token,
+      },
+      body: JSON.stringify({ content: comment })
+    }
+    const response = await fetch(url, options)
+    if (response.ok) {
+      const data = await response.json()
+      return new HttpResponse(HttpStatus.OK, data)
+    }
+    throw new Error("QuestionAPI::updateReply()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
   
 export const QuestionsAPI = {
   getQuestions,
   createQuestion,
-  createReply,
   deleteQuestion,
   updateQuestion,
+  createReply,
+  deleteReply,
+  updateReply,
 }
