@@ -128,12 +128,12 @@ export const StudentLessonPage = () => {
   }
 
   const handleOnProgress = ({ played, playedSeconds }) => {
-    console.log(playedSeconds)
+    //console.log(playedSeconds)
     if (controle.enrolled) setVideoPlayer({ ...videoPlayer, played, playedSeconds });
   }
 
   const getTime = (seconds) => {
-    console.log(seconds)
+    //console.log(seconds)
     const m = Math.floor(seconds % 3600 / 60).toString().padStart(2, '0'),
       s = Math.floor(seconds % 60).toString().padStart(2, '0');
     return (seconds == undefined ? "00:00" : m + ':' + s);
@@ -203,7 +203,7 @@ export const StudentLessonPage = () => {
 
   const requestNotes = async () => {
     const listNotes = await fetchAnotations();
-    console.log(listNotes.data)
+    //console.log(listNotes.data)
     if (listNotes.status !== HttpStatus.OK) {
       notifyError("Falha ao requisitar lista de códigos.");
     }
@@ -216,7 +216,7 @@ export const StudentLessonPage = () => {
     e.preventDefault();
     const response = await fetchNote(Math.floor(videoPlayer.playedSeconds), note)
     if (response.status !== HttpStatus.OK) {
-      console.log(response)
+      //console.log(response)
       notifyError("Falha ao enviar anotação.")
     } else {
       refreshUserOnContext()
@@ -273,7 +273,7 @@ export const StudentLessonPage = () => {
   
   const deleteNote = async (noteid) => {
     const response = await fetchDelete(noteid);
-    console.log("Response de baixo",response.status)
+    //console.log("Response de baixo",response.status)
     if (response.status == 400) {
         notifySuccess("Nota deletada com sucesso.");
         requestNotes();
@@ -284,14 +284,14 @@ export const StudentLessonPage = () => {
 
 
   const anotar = () => {
-    console.log("Anotação");
+    //console.log("Anotação");
     handleShowModal();
   }
 
   return lesson ? (
     <>
       {React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")}
-      {console.log(lesson)}
+      {/* {console.log(lesson)} */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Faça sua Anotação</Modal.Title>

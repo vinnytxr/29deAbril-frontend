@@ -1,8 +1,8 @@
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from "./default"
 
 const revokePermissions = async (jwt, id) => {
-    console.log("token", jwt)
-    console.log("id", id)
+    //console.log("token", jwt)
+    //console.log("id", id)
     const url = `${BASE_URL}/user/prof-permission/${id}/`;
     var errorMessage;
     try {

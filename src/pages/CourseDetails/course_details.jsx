@@ -34,6 +34,7 @@ function CourseDetails() {
   const [isCommentFetched, setIsCommentFetched] = useState(false);
   const [formErrors, setFormErrors] = useState({})
   const [categories, setCategories] = useState([])
+  const [showComments, setShowComments] = useState(false);
 
   const navigate = useNavigate()
   const { id } = useParams()
@@ -92,6 +93,17 @@ function CourseDetails() {
       getListRatings();
     }
   }, [id])
+
+  useEffect(() => {
+    const hasVisibleComments = checkCommentVisibility();
+    if(hasVisibleComments){
+      setShowComments(true)
+    }
+  }, [commentList])
+
+const checkCommentVisibility = () => {
+  return commentList.some(item => item.commentVisibility === true);
+}
 
   const dataFetch = async () => {
     try {
@@ -225,7 +237,7 @@ function CourseDetails() {
   }
 
   const deleteComment = async (idUser) => {
-    console.log("DELETAR")
+    //console.log("DELETAR")
     const url = `${BASE_URL}/courses/ratings/update-visibility/${id}/${idUser}/${user.id}`
     var errorMessage;
     try {
@@ -242,7 +254,8 @@ function CourseDetails() {
       const response = await fetch(url, options);
       if (response.ok) {
         const data = await response.json();
-        getListRatings();
+        await getListRatings();
+        setShowComments(checkCommentVisibility());
         AUTH_DEBUG && console.log("AuthAPI::CreateRating(): ", data.token);
         return new HttpResponse(HttpStatus.OK, data);
       } else {
@@ -295,16 +308,17 @@ function CourseDetails() {
       errors.comment = "Seu comentário não pode ter mais do que 130 caracteres."
     }
     setFormErrors(errors);
-    console.log(Object.keys(errors).length == 0)
+    //console.log(Object.keys(errors).length == 0)
     return Object.keys(errors).length == 0;
   }
 
   const fetchComment = async () => {
     if (validate()) {
-      console.log(userRating)
+      //console.log(userRating)
       if (!userRating) {
-        console.log("Entrou aqui")
+        //console.log("Entrou aqui")
         const response = await createRating();
+        console.log(response)
         if (response.status === HttpStatus.OK) {
           notifySuccess('Sucesso, agradecemos a sua avaliação!');
           handleClose();
@@ -416,11 +430,11 @@ function CourseDetails() {
                       disabled={!allowFavorite}
                       className="button-bookmark"
                     >
-                      <FontAwesomeIcon
+                      {logged && <FontAwesomeIcon
                         color={isFavorited ? 'gold' : 'lightwhite'}
                         opacity={isFavorited ? 1 : 0.7}
                         icon={faBookmark}
-                      />
+                      />}
                     </Button>
                   )}
                 </Card.Title>
@@ -527,7 +541,7 @@ function CourseDetails() {
                 <Row>
                   <Col>
                     <ListGroup>
-                      {isCommentFetched && (commentList.length > 0 ? commentList.map(comment => (comment.commentVisibility
+                      {isCommentFetched && (showComments ? commentList.map(comment => (comment.commentVisibility
                         &&
                         <ListGroupItem className="pb-0" key={comment.user} style={{ display: "flex", flexDirection: "column" }}>
                           <span className='fw-bold' style={{ display: 'flex', alignItems: 'center' }}>
