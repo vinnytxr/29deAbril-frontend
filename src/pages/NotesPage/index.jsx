@@ -6,13 +6,14 @@ import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupIt
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCode, faEnvelope, faShare } from '@fortawesome/free-solid-svg-icons'
+import { faCode, faEnvelope, faShare, faX } from '@fortawesome/free-solid-svg-icons'
 import { AUTH_DEBUG, BASE_URL, HttpStatus } from '../../api/default'
 import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { HttpResponse } from '../CreateCourse/api'
 import { useNavigate } from 'react-router-dom'
+import CardAnotation from '../../components/Note/CardAnotation'
 
 
 const NotesPage = () => {
@@ -26,7 +27,7 @@ const NotesPage = () => {
     const [isLoadingEmail, setIsLoadingEmail] = useState(false)
     const navigate = useNavigate();
 
-    const notifySuccess = () => toast.success("E-mail enviado com sucesso.", {
+    const notifySuccess = (texto) => toast.success(texto, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -53,6 +54,34 @@ const NotesPage = () => {
     }, [token]);
 
 
+    const fetchDelete = async (noteid) => {
+        const url = `${BASE_URL}/anotation/${noteid}/`;
+        var errorMessage;
+        try {
+            const options = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'jwt': token,
+                    Accept: 'application/json'
+                }
+            }
+
+            const response = await fetch(url, options);
+            console.log("response of", (response.ok == true))
+            if (response.ok == true) {
+                const data = await response.json();
+                AUTH_DEBUG && console.log("AuthAPI::deleteAnotations(): ", data.token);
+                return new HttpResponse(HttpStatus.OK, data);
+            } else {
+                errorMessage = await response.json();
+                throw new Error("Error on deleteAnotations()");
+            }
+        } catch (error) {
+            console.warn(error)
+            return new HttpResponse(HttpStatus.ERROR, errorMessage);
+        }
+    }
 
 
 
@@ -85,6 +114,16 @@ const NotesPage = () => {
         }
     }
 
+    const deleteNote = async (noteid) => {
+        const response = await fetchDelete(noteid);
+        console.log("Response de baixo",response.status)
+        if (response.status == 400) {
+            notifySuccess("Nota deletada com sucesso.");
+            requestCodes();
+        }else{
+            notifyError("Falha ao deletar nota.");
+        }
+    }
 
     const requestCodes = async () => {
         const listNotes = await fetchAnotations();
@@ -120,7 +159,7 @@ const NotesPage = () => {
                 </Container>
             </Navbar>
 
-            <Container fluid className='mb-3'>
+            <Container className='col-12 mb-3'>
                 <Row className="d-flex justify-content-center gap-4">
                     <Col>
                         {notes && notes.length ?
@@ -141,16 +180,23 @@ const NotesPage = () => {
                                         <Col>
                                             {notes.map(notelist => (
                                                 <ListGroup key={notelist.course}>
-                                                    <p className='mb-0 mt-3 ps-2'>Anotações do curso: {notelist.titulo}</p>
+                                                    <p className='mb-0 mt-3 ps-2 fw-bold'>Anotações do curso: {notelist.titulo}</p>
                                                     {notelist.notes.map(note => (
-                                                        <ListGroupItem key={note.id} style={{ display: "flex" }}>
-                                                            <span className="code-span box">{note.titulo}</span>
+                                                        <ListGroupItem key={note.id}>
+
+
+                                                            <CardAnotation noteid={note.id} notetitulo={note.titulo} notetime={note.time} notenote={note.note} notelesson={note.lesson} notedelete={() => deleteNote(note.id)}></CardAnotation>
+                                                            {/* <span className="code-span box">{note.titulo}</span>
                                                             <span className="ms-3">{note.time}</span>
                                                             <span style={{ cursor: 'pointer' }} className="ms-3 goto" onClick={() => { navigate("/student/lessons/" + note.lesson) }}>Ir para aula <FontAwesomeIcon
                                                                 style={{ color: 'white', fontSize: '16' }}
                                                                 icon={faShare}
                                                             /></span>
                                                             <span className="ms-3">{note.note}</span>
+                                                            <span style={{ cursor: 'pointer', backgroundColor:"red" }} className="ms-3 goto" onClick={() => { deleteNote(note.id) }}>Deletar nota <FontAwesomeIcon
+                                                                style={{ color: 'white', fontSize: '16' }}
+                                                                icon={faX}
+                                                            /></span> */}
                                                         </ListGroupItem>
                                                     ))}
                                                 </ListGroup>

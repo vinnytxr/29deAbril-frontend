@@ -13,6 +13,7 @@ import './styles.css'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShare } from '@fortawesome/free-solid-svg-icons';
+import CardAnotation from '../../components/Note/CardAnotation';
 
 const DEFAULT_VIDEO_PLAYER_STATE = {
   playing: false,
@@ -206,7 +207,7 @@ export const StudentLessonPage = () => {
   const handleSubmit = async (e) => {
     handleCloseModal(false)
     e.preventDefault();
-    const response = await fetchNote(getTime(videoPlayer.playedSeconds), note)
+    const response = await fetchNote(Math.floor(videoPlayer.playedSeconds), note)
     if (response.status !== HttpStatus.OK) {
       console.log(response)
       notifyError("Falha ao enviar anotação.")
@@ -230,6 +231,49 @@ export const StudentLessonPage = () => {
        handleCloseModal()
      }*/
   }
+
+    
+
+  const fetchDelete = async (noteid) => {
+    const url = `${BASE_URL}/anotation/${noteid}/`;
+    var errorMessage;
+    try {
+        const options = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'jwt': token,
+                Accept: 'application/json'
+            }
+        }
+
+        const response = await fetch(url, options);
+        console.log("response of", (response.ok == true))
+        if (response.ok == true) {
+            const data = await response.json();
+            AUTH_DEBUG && console.log("AuthAPI::deleteAnotations(): ", data.token);
+            return new HttpResponse(HttpStatus.OK, data);
+        } else {
+            errorMessage = await response.json();
+            throw new Error("Error on deleteAnotations()");
+        }
+    } catch (error) {
+        console.warn(error)
+        return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+}
+
+  
+  const deleteNote = async (noteid) => {
+    const response = await fetchDelete(noteid);
+    console.log("Response de baixo",response.status)
+    if (response.status == 400) {
+        notifySuccess("Nota deletada com sucesso.");
+        requestNotes();
+    }else{
+        notifyError("Falha ao deletar nota.");
+    }
+}
 
 
   const anotar = () => {
@@ -316,10 +360,11 @@ export const StudentLessonPage = () => {
                 <Row>
                   <Col>
                     {notes.map(note => (
-                      <Card key={note.id}>
-                        <Card.Body className="d-flex align-items-center">
-                          <span className="ms-3">{note.time}</span>
-                          <span className="ms-3">{note.note}</span>
+                      <Card key={note.id} className='mt-1'>
+                        <Card.Body className='p-1'>
+                         <CardAnotation notetime={note.time} notenote={note.note} notedelete={() => deleteNote(note.id)}></CardAnotation>
+                          {/* <span className="ms-3">{note.time}</span>
+                          <span className="ms-3">{note.note}</span> */}
                         </Card.Body>
                       </Card>
                     ))}
