@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card'
-import { Modal } from 'react-bootstrap'
+import { Col, ListGroup, ListGroupItem, Modal, Row, Accordion } from 'react-bootstrap'
 import './course_details.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import CardDetails from '../../components/CardDetails/card_details'
@@ -8,16 +8,18 @@ import CheckDetails from '../../components/CheckDetails/check_details'
 import CheckCourseInformation from '../../components/CheckCourseInformation/check_course_information'
 import StarRating from '../../components/StarRating/star_rating'
 import StarCourseRating from '../../components/StarCourseRating/star_course'
-import AccordionListCourse from '../../components/AccordionList/accordion_list'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Button, Container } from 'react-bootstrap'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBookmark } from '@fortawesome/free-solid-svg-icons'
+import { faBookmark, faRemove } from '@fortawesome/free-solid-svg-icons'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { BookmarkAPI } from '../../api/bookmark'
+import { UserTools } from '../../tools/user'
+import { HiDownload } from "react-icons/hi"
+import { CategoryAPI } from '../../api/category'
 
 function CourseDetails() {
   const { token, logged, user, refreshUserOnContext } = useAuthContext()
@@ -28,7 +30,29 @@ function CourseDetails() {
   const [isStudent, setIsStudent] = useState(false);
   const [allowFavorite, setAllowFavorite] = useState(true)
   const [comment, setComment] = useState("")
+  const [commentList, setCommentList] = useState([]);
+  const [isCommentFetched, setIsCommentFetched] = useState(false);
   const [formErrors, setFormErrors] = useState({})
+  const [categories, setCategories] = useState([])
+
+  const navigate = useNavigate()
+  const { id } = useParams()
+
+  const showCertificateBtn = () => {
+    const result = UserTools.getEnrolledCourseFromUser(user, parseInt(id))
+
+    if (result && result.completed_percentage > 0) return true;
+    return false
+  }
+
+
+
+  const isEnrolled = () => !!user.enrolled_courses.find((c) => c.id === parseInt(id));
+  const isCompletedCourse = () => {
+    const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(id))
+    if (!!enrolledCourseInfo && enrolledCourseInfo.completed) return true
+    return false;
+  }
 
   const handleRatingChange = (newValue) => {
     setRating(newValue);
@@ -62,9 +86,6 @@ function CourseDetails() {
       theme: 'light',
     })
 
-  const navigate = useNavigate()
-  const { id } = useParams()
-
   useEffect(() => {
     if (id) {
       const dataFetch = async () => {
@@ -87,11 +108,13 @@ function CourseDetails() {
           //console.log("Favorite ", user.favorite_courses.includes(data.id))
           setFavorited(logged && user.favorite_courses.includes(data.id))
           setData({ ...data })
+          getCategories();
         } catch (err) {
           navigate('/404-not-found')
         }
       }
-      dataFetch()
+      dataFetch();
+      getListRatings();
     }
   }, [id])
 
@@ -182,7 +205,7 @@ function CourseDetails() {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({ user: user.id, course: data.id, rating: rating, comment: comment })
+        body: JSON.stringify({ user_name: user.name.split(' ')[0], user: user.id, course: data.id, rating: rating, comment: comment })
       }
 
       const response = await fetch(url, options);
@@ -193,6 +216,68 @@ function CourseDetails() {
       } else {
         errorMessage = await response.json();
         throw new Error("Error on CreateRating()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
+  const deleteComment = async (idUser) => {
+    console.log("DELETAR")
+    const url = `${BASE_URL}/courses/ratings/update-visibility/${id}/${idUser}/${user.id}`
+    var errorMessage;
+    try {
+      const options = {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ "commentVisibility": false })
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        getListRatings();
+        AUTH_DEBUG && console.log("AuthAPI::CreateRating(): ", data.token);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on CreateRating()");
+      }
+    } catch (error) {
+      console.warn(error)
+      return new HttpResponse(HttpStatus.ERROR, errorMessage);
+    }
+  }
+
+
+  const getListRatings = async () => {
+    const url = `${BASE_URL}/courses/ratings/list-ratings-course/${id}`
+    var errorMessage;
+    try {
+      const options = {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        }
+      }
+
+      const response = await fetch(url, options);
+      if (response.ok) {
+        const data = await response.json();
+        setCommentList(data);
+        setIsCommentFetched(true);
+        AUTH_DEBUG && console.log("AuthAPI::getRating(): ", data);
+        return new HttpResponse(HttpStatus.OK, data);
+      } else {
+        errorMessage = await response.json();
+        throw new Error("Error on getRating()");
       }
     } catch (error) {
       console.warn(error)
@@ -223,6 +308,7 @@ function CourseDetails() {
           notifySuccess('Sucesso, agradecemos a sua avaliação!');
           handleClose();
           isUserRating();
+          getListRatings();
         } else {
           //console.log(responseLogin)
           notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
@@ -232,6 +318,8 @@ function CourseDetails() {
         if (response.status === HttpStatus.OK) {
           notifySuccess('Sucesso, agradecemos a sua avaliação!');
           handleClose();
+          isUserRating();
+          getListRatings();
         } else {
           //console.log(responseLogin)
           notifyError('Falha ao executar enviar avaliação. ' + response.data.error)
@@ -253,53 +341,65 @@ function CourseDetails() {
   return (
     <Container flex="true" className="pageDetails course-details mb-4">
       <div className="row">
-        <div className="row mt-2">
-          <div className="col">
-            {
-              user && data && user.id === data?.professor?.id &&
-              <div className="col-md-12 mt-3">
-                <span className='flag-is-professor'>Você é o professor deste curso</span>
-              </div>
-            }
-          </div>
-          {isStudent && user && data && user.id !== data?.professor?.id &&
-            <div className="col text-end">
-              <Button className="pageDetails mt-2 submit-rating" onClick={() => { handleShow(); isUserRating(); }}>
-                Avaliar curso
-              </Button>
-
-              <Modal className="pageDetails" show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Avaliar curso</Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="d-flex justify-content-center align-items-center">
-                  Ficamos felizes pela conclusão de seu aprendizado!<br>
-                  </br> Avalie o curso e nos ajude com seu feedback!
-                </Modal.Body>
-                <Modal.Body className="d-flex justify-content-center align-items-center">
-                  <StarCourseRating value={data.rating} onChange={handleRatingChange} />
-                </Modal.Body >
-                <Modal.Body>
-                  <hr />
-                  <p className='ps-2'>&#x2022; Comente com a gente sobre o que achou do curso.</p>
-                  <textarea class="form-control" placeholder='Comentário' onChange={handleChange} name="comment" value={comment} style={{ resize: 'none' }} rows="4"></textarea>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button className="pageDetails mt-3 cancel-rating" onClick={handleClose}>
-                    Cancelar
-                  </Button>
-
-
-                  <Button className="pageDetails mt-3 submit-rating" onClick={() => { fetchComment(); }}>
-                    Salvar
-                  </Button>
-
-
-                </Modal.Footer>
-              </Modal>
+        <div className="col-md-4">
+          {
+            user && data && user.id === data?.professor?.id &&
+            <div className="col-md-12 mt-3">
+              <span className='flag-is-professor'>Você é o professor deste curso</span>
+            </div>
+          }
+          {
+            user && isEnrolled() && isCompletedCourse() &&
+            <div className="col-md-12 mt-3">
+              <span className='flag-is-professor'>Você completou este curso</span>
             </div>
           }
         </div>
+        {isStudent && user && data && user.id !== data?.professor?.id &&
+          <div className="col-md-8 text-end">
+            <Button className="mt-2 detail-header-btn" onClick={() => { handleShow(); isUserRating(); }}>
+              Avaliar curso
+            </Button>
+            {showCertificateBtn() &&
+              <Button className="mt-2 detail-header-btn" onClick={() => { window.location.replace(`${BASE_URL}/lessons/lessons/generate-certificate/${data.id}/${user.id}`) }} style={{ marginLeft: '15px' }}>
+                <HiDownload className="download-certificate-icon" />
+                Certificado
+              </Button>
+            }
+
+            <Modal className="pageDetails" show={show} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Avaliar curso</Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="d-flex justify-content-center align-items-center">
+                Ficamos felizes pela conclusão de seu aprendizado!<br>
+                </br> Avalie o curso e nos ajude com seu feedback!
+              </Modal.Body>
+              <Modal.Body className="d-flex justify-content-center align-items-center">
+                <StarCourseRating value={data.rating} onChange={handleRatingChange} />
+              </Modal.Body >
+              <Modal.Body>
+                <hr />
+                <p className='ps-2'>&#x2022; Comente com a gente sobre o que achou do curso.</p>
+                <textarea class="form-control" placeholder='Comentário' onChange={handleChange} name="comment" value={comment} style={{ resize: 'none' }} rows="4"></textarea>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button className="pageDetails mt-3 cancel-rating" onClick={handleClose}>
+                  Cancelar
+                </Button>
+
+
+                <Button className="pageDetails mt-3 submit-rating" onClick={() => { fetchComment(); }}>
+                  Salvar
+                </Button>
+
+
+              </Modal.Footer>
+            </Modal>
+          </div>
+        }
+      </div>
+      <div>
 
         <div className="col mt-1">
           <Card className="custom-bg">
@@ -396,29 +496,111 @@ function CourseDetails() {
               </Card>
             </div>
           </div>
+          <Row>
+            <Col xs={12} className="mb-3 mt-3">
+              <Card className="body-card ">
+                <Card.Text className="my-2 ms-3 fw-bold">
+                  Categorias e aulas do curso:
+                </Card.Text>
+                <Categories categories={categories} />
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Card
+              style={{
+                padding: '16px',
+              }}
+            >
+              <Row className="mb-4">
+                <Col className="d-flex justify-content-between align-items-center">
+                  <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                    Comentários:
+                  </h1>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <ListGroup>
+                    {isCommentFetched && commentList.map(comment => (comment.commentVisibility
+                      &&
+                      <ListGroupItem className="pb-0" key={comment.user} style={{ display: "flex", flexDirection: "column" }}>
+                        <span className='fw-bold' style={{ display: 'flex', alignItems: 'center' }}>
+                          {comment.user_name}&nbsp; &nbsp;
+                          <StarRating value={comment.rating} textSize={'0.8rem'} starSize={'11'} />
+                        </span>
 
-          <div className="row">
-            <div className="col mt-3">
-              {data?.lessons?.length ? (
-                <Card className="body-card ">
-                  <div className="row">
-                    <Card.Text className="my-2 ms-3 fw-bold">
-                      Aulas do curso:
-                    </Card.Text>
-                    <div>
-                      <AccordionListCourse sessions={data} />
-                    </div>
-                  </div>
-                </Card>
-              ) : (
-                <></>
-              )}
-            </div>
-          </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <p className="mb-1 ps-1">{comment.comment}</p>
+                          {user && data && user.id === data?.professor?.id && <span className='delete mb-1' onClick={() => deleteComment(comment.user)} style={{ marginLeft: "auto", cursor: "pointer" }}>Deletar <FontAwesomeIcon
+                            style={{ color: 'white', fontSize: '16' }}
+                            icon={faRemove}
+                          /></span>}
+                        </div>
+                      </ListGroupItem>
+                    ))}
+                  </ListGroup>
+                </Col>
+              </Row>
+            </Card>
+          </Row>
         </div>
       </div>
     </Container>
   )
+
+  async function getCategories() {
+    const response = await CategoryAPI.getCategoriesByCourse(id);
+
+    if (response.status == HttpStatus.OK && response.data) {
+      setCategories(response.data.categories);
+    }
+  }
 }
 
 export default CourseDetails
+
+const userCompleteTheLesson = (lesson, loggedUserId) => {
+  if (lesson.users_who_completed.includes(loggedUserId))
+    return true;
+  return false;
+}
+
+const Categories = ({ categories }) => {
+  const navigate = useNavigate();
+  const { user, logged } = useAuthContext();
+
+  return categories && categories.length ? (
+    <Accordion className='accordion-categories'>
+      {
+        categories.map((category, categoryIdx) => (
+          <Accordion.Item eventKey={`${categoryIdx}`} key={categoryIdx}>
+            <Accordion.Header>
+              <section className='w-100 d-flex flex-row justify-content-between'>
+                <span>{category.name}</span>
+                <span className='me-4'>{category.lessons.length}</span>
+              </section>
+            </Accordion.Header>
+            <Accordion.Body>
+              {
+                category.lessons.map((l, idx) => (
+                  <Card body className='mb-2' onClick={() => navigate(`/student/lessons/${l.id}`)} style={{ 'cursor': 'pointer' }} key={idx}>
+                    {/* <section style={{ 'position': 'relative' }} className='w-100'> */}
+                    <img src={`${BASE_URL}${l.banner}`} style={{ 'width': '150px', 'aspectRatio': '16/9', 'borderRadius': '10px', 'marginRight': '1rem' }} />
+                    {l.title}
+                    {
+                      user && logged && userCompleteTheLesson(l, user.id) &&
+                      <span className="completed-flag">Concluído</span>
+                    }
+                    {/* </section> */}
+                  </Card>
+                ))
+              }
+            </Accordion.Body>
+          </Accordion.Item>
+
+        ))
+      }
+    </Accordion>
+  ) : <></>;
+}

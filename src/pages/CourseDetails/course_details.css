@@ -53,6 +53,28 @@
     color: gold;
 }
 
+.course-details .detail-header-btn {
+    border: 2px solid #0E6216;
+    background-color: #0E6216;
+    color: white;
+}
+
+.course-details .detail-header-btn:active {
+    border: 2px solid #0E6216;
+    background-color: white;
+    color: #0E6216;
+}
+
+.course-details .download-certificate-icon {
+    margin-right: 5px;
+    fill: white;
+    font-size: 20px;
+}
+
+.course-details .detail-header-btn:active .download-certificate-icon {
+    fill: #0E6216;
+}
+
 .pageDetails a {
     text-decoration: none;
     color: gold;
@@ -63,4 +85,25 @@
     font-weight: bold;
     padding: 0 10px;
     border-radius: 5px;
+}
+
+.delete {
+    padding: 2px 10px;
+    background-color: #c42f2f;
+    border-radius: 10px;
+    text-align: right;
+    color: white;
+  }
+
+
+  .accordion-categories span.completed-flag {
+    font-weight: bold;
+    color: #0E6216;
+    border: 1px solid #0E6216;
+    padding: 2px 5px;
+    border-radius: 5px;
+    height: fit-content;
+    position: absolute;
+    right: 5px;
+    top: 5px;
 }
