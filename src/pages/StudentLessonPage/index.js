@@ -162,9 +162,11 @@ export const StudentLessonPage = () => {
         <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
         </Col>
-        <Col xs={12} className="mb-4">
-          <QuestionCourse dataLesson={lesson}/>
-        </Col>
+        {(controle.enrolled || isProfessorOfLessonCourse()) &&
+          <Col xs={12} className="mb-4">
+            <QuestionCourse dataLesson={lesson}/>
+          </Col>
+        }
         <Col xs={12}>
           <section style={{ display: 'flex', justifyContent: 'space-between' }}>
             {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
