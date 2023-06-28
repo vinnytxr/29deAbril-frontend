@@ -430,11 +430,11 @@ const checkCommentVisibility = () => {
                       disabled={!allowFavorite}
                       className="button-bookmark"
                     >
-                      <FontAwesomeIcon
+                      {logged && <FontAwesomeIcon
                         color={isFavorited ? 'gold' : 'lightwhite'}
                         opacity={isFavorited ? 1 : 0.7}
                         icon={faBookmark}
-                      />
+                      />}
                     </Button>
                   )}
                 </Card.Title>
