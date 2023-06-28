@@ -94,3 +94,16 @@
     text-align: right;
     color: white;
   }
+
+
+  .accordion-categories span.completed-flag {
+    font-weight: bold;
+    color: #0E6216;
+    border: 1px solid #0E6216;
+    padding: 2px 5px;
+    border-radius: 5px;
+    height: fit-content;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}

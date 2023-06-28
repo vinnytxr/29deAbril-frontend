@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card'
-import { Col, ListGroup, ListGroupItem, Modal, Row } from 'react-bootstrap'
+import { Col, ListGroup, ListGroupItem, Modal, Row, Accordion } from 'react-bootstrap'
 import './course_details.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import CardDetails from '../../components/CardDetails/card_details'
@@ -8,7 +8,6 @@ import CheckDetails from '../../components/CheckDetails/check_details'
 import CheckCourseInformation from '../../components/CheckCourseInformation/check_course_information'
 import StarRating from '../../components/StarRating/star_rating'
 import StarCourseRating from '../../components/StarCourseRating/star_course'
-import AccordionListCourse from '../../components/AccordionList/accordion_list'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Button, Container } from 'react-bootstrap'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
@@ -20,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { BookmarkAPI } from '../../api/bookmark'
 import { UserTools } from '../../tools/user'
 import { HiDownload } from "react-icons/hi"
+import { CategoryAPI } from '../../api/category'
 
 function CourseDetails() {
   const { token, logged, user, refreshUserOnContext } = useAuthContext()
@@ -33,6 +33,8 @@ function CourseDetails() {
   const [commentList, setCommentList] = useState([]);
   const [isCommentFetched, setIsCommentFetched] = useState(false);
   const [formErrors, setFormErrors] = useState({})
+  const [categories, setCategories] = useState([])
+
   const navigate = useNavigate()
   const { id } = useParams()
 
@@ -106,6 +108,7 @@ function CourseDetails() {
           //console.log("Favorite ", user.favorite_courses.includes(data.id))
           setFavorited(logged && user.favorite_courses.includes(data.id))
           setData({ ...data })
+          getCategories();
         } catch (err) {
           navigate('/404-not-found')
         }
@@ -493,25 +496,16 @@ function CourseDetails() {
               </Card>
             </div>
           </div>
-
-          <div className="row">
-            <div className="col mt-3">
-              {data?.lessons?.length ? (
-                <Card className="body-card ">
-                  <div className="row">
-                    <Card.Text className="my-2 ms-3 fw-bold">
-                      Aulas do curso:
-                    </Card.Text>
-                    <div>
-                      <AccordionListCourse sessions={data} />
-                    </div>
-                  </div>
-                </Card>
-              ) : (
-                <></>
-              )}
-            </div>
-          </div>
+          <Row>
+            <Col xs={12} className="mb-3 mt-3">
+              <Card className="body-card ">
+                <Card.Text className="my-2 ms-3 fw-bold">
+                  Categorias e aulas do curso:
+                </Card.Text>
+                <Categories categories={categories} />
+              </Card>
+            </Col>
+          </Row>
           <Row>
             <Card
               style={{
@@ -554,6 +548,59 @@ function CourseDetails() {
       </div>
     </Container>
   )
+
+  async function getCategories() {
+    const response = await CategoryAPI.getCategoriesByCourse(id);
+
+    if (response.status == HttpStatus.OK && response.data) {
+      setCategories(response.data.categories);
+    }
+  }
 }
 
 export default CourseDetails
+
+const userCompleteTheLesson = (lesson, loggedUserId) => {
+  if (lesson.users_who_completed.includes(loggedUserId))
+    return true;
+  return false;
+}
+
+const Categories = ({ categories }) => {
+  const navigate = useNavigate();
+  const { user, logged } = useAuthContext();
+
+  return categories && categories.length ? (
+    <Accordion className='accordion-categories'>
+      {
+        categories.map((category, categoryIdx) => (
+          <Accordion.Item eventKey={`${categoryIdx}`} key={categoryIdx}>
+            <Accordion.Header>
+              <section className='w-100 d-flex flex-row justify-content-between'>
+                <span>{category.name}</span>
+                <span className='me-4'>{category.lessons.length}</span>
+              </section>
+            </Accordion.Header>
+            <Accordion.Body>
+              {
+                category.lessons.map((l, idx) => (
+                  <Card body className='mb-2' onClick={() => navigate(`/student/lessons/${l.id}`)} style={{ 'cursor': 'pointer' }} key={idx}>
+                    {/* <section style={{ 'position': 'relative' }} className='w-100'> */}
+                    <img src={`${BASE_URL}${l.banner}`} style={{ 'width': '150px', 'aspectRatio': '16/9', 'borderRadius': '10px', 'marginRight': '1rem' }} />
+                    {l.title}
+                    {
+                      user && logged && userCompleteTheLesson(l, user.id) &&
+                      <span className="completed-flag">Concluído</span>
+                    }
+                    {/* </section> */}
+                  </Card>
+                ))
+              }
+            </Accordion.Body>
+          </Accordion.Item>
+
+        ))
+      }
+    </Accordion>
+  ) : <></>;
+}
