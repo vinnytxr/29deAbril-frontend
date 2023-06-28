@@ -1,6 +1,7 @@
 import { BASE_URL, HttpResponse, HttpStatus } from "./default";
 
 export const CategoryAPI = {
+  getCategoryById,
   getCategoriesByCourse,
   updateCourseCategoriesOrder,
   updateCategory,
@@ -32,6 +33,11 @@ async function getCategoriesByCourse (courseId) {
         data.categories.sort((x, y) => data.order.indexOf(x.id) - data.order.indexOf(y.id));
       else throw new Error("CategoryAPI::getCategoryByCourse() on categories or order: ", data);
 
+      for (let i = 0; i < data.categories.length; i++){
+        if(data.categories[i].lessons && data.categories[i].lessons_order && isAIntegerArray(data.categories[i].lessons_order))
+        data.categories[i].lessons.sort((x, y) => data.categories[i].lessons_order.indexOf(x.id) - data.categories[i].lessons_order.indexOf(y.id));
+      }
+
       return new HttpResponse(HttpStatus.OK, data)
     }
 
@@ -51,7 +57,6 @@ async function updateCourseCategoriesOrder (courseId, categoriesOrder) {
       'categories_order': JSON.stringify(categoriesOrder)
     }
 
-    console.log('body: ', body)
 
     const url = `${BASE_URL}/courses/courses/${courseId}`;
     const options = {
@@ -145,6 +150,37 @@ async function createCategory (courseId, categoryName) {
       return new HttpResponse(HttpStatus.OK, data)
     }
     throw new Error("CategoryAPI::createCategory()")
+  } catch (error) {
+    console.warn(error);
+    return new HttpResponse(HttpStatus.ERROR, null);
+  }
+}
+
+async function getCategoryById (categoryId) {
+  try {
+    const url = `${BASE_URL}/courses/categories/${categoryId}`
+
+    const options = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    }
+
+    const response = await fetch(url, options)
+
+    if (response.ok) {
+      const data = await response.json()
+
+      if(data.lessons && data.lessons_order && isAIntegerArray(data.lessons_order))
+        data.lessons.sort((x, y) => data.lessons_order.indexOf(x.id) - data.lessons_order.indexOf(y.id));
+
+      else throw new Error("CategoryAPI::getCategoryByYd() on categories or order: ", data);
+
+      return new HttpResponse(HttpStatus.OK, data)
+    }
+
+    throw new Error("CategoryAPI::getCategoryById()")
   } catch (error) {
     console.warn(error);
     return new HttpResponse(HttpStatus.ERROR, null);

@@ -113,8 +113,6 @@ export function EditCategoryPage() {
   function showCategoryOptions(categoryId) {
     const category = categories.find(c => c.id == categoryId)
 
-    console.log('ref', inputEditCategoryRef)
-
     if (category && inputEditCategoryRef.current) {
 
       inputEditCategoryRef.current.value = category.name;
@@ -172,13 +170,10 @@ export function EditCategoryPage() {
   }
 
   function handleDragEnd(event) {
-    console.log("Drag end called")
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      console.log(active.id, over.id)
       setCategories(items => {
-        console.log('items', items)
         const activeIndex = items.map(i => i.id).indexOf(active.id);
         const overIndex = items.map(i => i.id).indexOf(over.id);
 
@@ -186,7 +181,6 @@ export function EditCategoryPage() {
 
         (async () => {
           const r = await CategoryAPI.updateCourseCategoriesOrder(id, orderedCategories.map(c => c.id));
-          console.log('update: ', r);
         })()
 
         return orderedCategories;
