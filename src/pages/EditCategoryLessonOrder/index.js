@@ -61,13 +61,10 @@ export function EditCategoryLessonsOrder() {
   }
 
   function handleDragEnd(event) {
-    console.log("Drag end called")
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      console.log(active.id, over.id)
       setLessons(items => {
-        console.log('items', items)
         const activeIndex = items.map(i => i.id).indexOf(active.id);
         const overIndex = items.map(i => i.id).indexOf(over.id);
 
@@ -75,10 +72,7 @@ export function EditCategoryLessonsOrder() {
 
         (async () => {
           const r = await CategoryAPI.updateCategory(categoryId, {'lessons_order': orderedlessons.map(c => c.id)});
-          console.log('r:', r)
         })()
-
-        console.log('new:', orderedlessons)
 
         return orderedlessons;
       })

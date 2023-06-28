@@ -598,7 +598,7 @@ export const EditCourseScreen = () => {
                     <Accordion className='accordion-categories'>
                       {
                         categories.map((category, categoryIdx) => (
-                          <Accordion.Item eventKey={`${categoryIdx}`}>
+                          <Accordion.Item eventKey={`${categoryIdx}`} key={categoryIdx}>
                             <Accordion.Header>
                               <section className='w-100 d-flex flex-row justify-content-between'>
                                 <span>{category.name}</span>
@@ -606,14 +606,17 @@ export const EditCourseScreen = () => {
                               </section>
                             </Accordion.Header>
                             <Accordion.Body>
-                              <Button className="btn-edit-lessons-order mb-3"
-                                onClick={() => navigate(`/professor/courses/edit/category-lessons-order/${category.id}`)}
-                              >
-                                Editar ordem das aulas
-                              </Button>
+                              {
+                                category.lessons.length > 0 &&
+                                <Button className="btn-edit-lessons-order mb-3"
+                                  onClick={() => navigate(`/professor/courses/edit/category-lessons-order/${category.id}`)}
+                                >
+                                  Editar ordem das aulas
+                                </Button>
+                              }
                               {
                                 category.lessons.map((l, idx) => (
-                                  <Card body className='mb-2' onClick={() => navigate(`/professor/lessons/edit/${l.id}`)} style={{ 'cursor': 'pointer' }}>
+                                  <Card body className='mb-2' onClick={() => navigate(`/professor/lessons/edit/${l.id}`)} style={{ 'cursor': 'pointer' }} key={idx}>
                                     <img src={`${BASE_URL}${l.banner}`} style={{ 'width': '150px', 'aspectRatio': '16/9', 'borderRadius': '10px', 'marginRight': '1rem' }} />
                                     {l.title}
                                   </Card>

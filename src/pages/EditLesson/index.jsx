@@ -114,8 +114,10 @@ export const EditLessonScreen = () => {
         if (!formValores.useBannerFromVideo && formValores.files.length && imageBeUpdated(formValores.files[0]))
             post.append("banner", formValores.files[0]);
 
-        if (formValores.videos.length && videoBeUpdated(formValores.videos[0]))
+        if (formValores.videos.length && !!formValores.videos[0] && videoBeUpdated(formValores.videos[0]))
             post.append("video", formValores.videos[0]);
+
+        console.log('post-append', formValores)
 
         if (formValores.useBannerFromVideo)
             post.append("useframe", 1)
@@ -350,7 +352,7 @@ export const EditLessonScreen = () => {
                                     </Col>
                                     <Col xs={12} className='file-input-span mb-3'>
                                         <span className={`${!!estado.videos ? 'ok' : estado.videos === false ? 'error' : ''}`}>
-                                            {formValores.videos.length > 0 ? `${formValores.videos.length} ${formValores.videos.length > 1 ? 'videos selecionados' : 'video selecionado'}` : 'Nenhum video selecionado'}
+                                            {formValores.videos.length > 0 && !!formValores.videos[0] ? `${formValores.videos.length} ${formValores.videos.length > 1 ? 'videos selecionados' : 'video selecionado'}` : 'Nenhum video selecionado'}
                                         </span>
                                     </Col>
                                     <InvisibleInputFile />

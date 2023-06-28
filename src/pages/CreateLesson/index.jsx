@@ -112,6 +112,8 @@ export const NewLessonScreen = () => {
 
     if (formValores.categoryId) post.append("category", formValores.categoryId)
 
+    console.log('categoryId', formValores.categoryId)
+
     LessonAPI.registerLesson(post).then((response) => {
       setEditable(false)
       setTimeout(() => {
@@ -397,8 +399,11 @@ export const NewLessonScreen = () => {
   async function getCategories() {
     const response = await CategoryAPI.getCategoriesByCourse(courseId);
 
-    if (response.status == HttpStatus.OK && response.data) {
+    if (response.status == HttpStatus.OK && response?.data) {
+      const catId = response.data?.categories?.sort((a, b) => compareObjects(a, b, formValores.categoryId))?.[0]?.id ?? null;
+      setFormValores({...formValores, categoryId: catId});
       setCategories(response.data.categories);
+      console.log('C', catId)
     }
   }
 }

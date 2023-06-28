@@ -57,7 +57,6 @@ async function updateCourseCategoriesOrder (courseId, categoriesOrder) {
       'categories_order': JSON.stringify(categoriesOrder)
     }
 
-    console.log('body: ', body)
 
     const url = `${BASE_URL}/courses/courses/${courseId}`;
     const options = {
