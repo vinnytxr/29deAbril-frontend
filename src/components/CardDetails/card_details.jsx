@@ -53,7 +53,7 @@ function CardDetails({ image, course, onChange }) {
         const enrolledCourseInfo = user.enrolled_courses.find((c) => c.id === parseInt(courseId));
 
         if (!!enrolledCourseInfo) {
-          console.log("56: ", enrolledCourseInfo, user.enrolled_courses)
+          //console.log("56: ", enrolledCourseInfo, user.enrolled_courses)
           let completedPercentage = 0
           if (enrolledCourseInfo.total_lessons > 0) completedPercentage = UserTools.getEnrolledCourseFromUser(user, parseInt(courseId)).completed_percentage
           setButtonText(`${completedPercentage}%`)
@@ -86,7 +86,7 @@ function CardDetails({ image, course, onChange }) {
         // setcardText2('Aproveite!')
         refreshUserOnContext()
         // setButtonText('Inscrito')
-        console.log("refreshUser")
+        //console.log("refreshUser")
       })
       .catch((error) => {
         setIsLoading(false)

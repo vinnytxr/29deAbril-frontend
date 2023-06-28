@@ -324,12 +324,6 @@ export default function RegisterScreen() {
             <p className="ps-2" style={{ color: 'red' }}>
               {formErrors.birth}
             </p>
-            <p className="ps-1" style={{ fontSize: '13px' }}>
-              Ao me cadastrar, concordo com os{' '}
-              <a href="http://www.google.com.br" className="link-termos">
-                Termos de uso e Política de privacidade
-              </a>
-            </p>
 
             <div className="row mt-3">
               <div className="col text-start">

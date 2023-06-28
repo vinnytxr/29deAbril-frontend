@@ -117,7 +117,7 @@ export const EditLessonScreen = () => {
         if (formValores.videos.length && !!formValores.videos[0] && videoBeUpdated(formValores.videos[0]))
             post.append("video", formValores.videos[0]);
 
-        console.log('post-append', formValores)
+        //console.log('post-append', formValores)
 
         if (formValores.useBannerFromVideo)
             post.append("useframe", 1)
