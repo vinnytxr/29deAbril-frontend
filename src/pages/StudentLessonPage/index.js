@@ -14,7 +14,7 @@ import QuestionCourse from '../../components/QuestionCourse/question_course';
 import './styles.css'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShare } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faShare } from '@fortawesome/free-solid-svg-icons';
 import CardAnotation from '../../components/Note/CardAnotation';
 
 const DEFAULT_VIDEO_PLAYER_STATE = {
@@ -291,7 +291,7 @@ export const StudentLessonPage = () => {
 
   return lesson ? (
     <>
-      {logged && React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")}
+      {/* {logged && React.createElement("Button", { onClick: () => anotar(), className: 'btn btn-success', style: { position: "absolute", right: "30px", bottom: "50%" } }, "Anotar")} */}
       {/* {console.log(lesson)} */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
@@ -338,15 +338,18 @@ export const StudentLessonPage = () => {
               {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#0E6216', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
             </section>}
           </Col>
+          <Col>
+            <Button className='btn btn-success' onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
+          </Col>
           <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
             <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
           </Col>
           {(controle.enrolled || isProfessorOfLessonCourse()) &&
             <Col xs={12} className="mb-4">
-              <QuestionCourse dataLesson={lesson}/>
+              <QuestionCourse dataLesson={lesson} />
             </Col>
           }
-          { logged && 
+          {logged &&
             <Col xs={12}>
               <section style={{ display: 'flex', justifyContent: 'space-between' }}>
                 {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}

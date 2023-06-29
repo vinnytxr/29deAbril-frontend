@@ -133,9 +133,9 @@ const updateQuestion = async (comment, idCourse, idQuestion, token) => {
   }
 }
 
-const deleteReply = async (idCourse, idQuestion, token) => {
+const deleteReply = async (idCourse, idQuestion, idReply, token) => {
   try {
-    const url = `${BASE_URL}/lessons/lessons/${idCourse}/comments/${idQuestion}/reply`
+    const url = `${BASE_URL}/lessons/lessons/${idCourse}/comments/${idQuestion}/reply/${idReply}/`
     const options = {
       method: 'DELETE',
       headers: {
@@ -153,9 +153,9 @@ const deleteReply = async (idCourse, idQuestion, token) => {
   }
 }
 
-const updateReply= async (comment, idCourse, idQuestion, token) => {
+const updateReply= async (comment, id, idQuestion, idReply, token) => {
   try {
-    const url = `${BASE_URL}/lessons/lessons/${idCourse}/comments/${idQuestion}/reply`
+    const url = `${BASE_URL}/lessons/lessons/${id}/comments/${idQuestion}/reply/${idReply}/`
     const options = {
       method: 'PUT',
       headers: {

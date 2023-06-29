@@ -154,8 +154,8 @@ const QuestionCourse = ({ dataLesson }) => {
     }
   }
 
-  const rmReply= async (idQuestion) => {
-    const response = await QuestionsAPI.deleteReply(id, idQuestion, token)
+  const rmReply= async (idQuestion, idReply) => {
+    const response = await QuestionsAPI.deleteReply(id, idQuestion, idReply, token)
     if (response.status === HttpStatus.OK) {
       refreshQuestions()
       notifySuccess("Removido com sucesso!")
@@ -165,9 +165,9 @@ const QuestionCourse = ({ dataLesson }) => {
     }
   }
 
-  const upReply = async (replyContent, idQuestion) => {
+  const upReply = async (replyContent, idQuestion, idReply) => {
     if (formEditReply.content !== replyContent) {
-      const response = await QuestionsAPI.updateReply(formEditReply.content, id, idQuestion, token)
+      const response = await QuestionsAPI.updateReply(formEditReply.content, id, idQuestion, idReply, token)
       if (response.status === HttpStatus.OK) {
         notifySuccess("Resposta alterada com sucesso!")
         setEditQuestion(false)
@@ -402,7 +402,7 @@ const QuestionCourse = ({ dataLesson }) => {
                               <Row className='me-1 mt-1' style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 {editReply && editFormId === reply.id ? (
                                   <>
-                                    <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => upReply(reply.content, reply.id)}>
+                                    <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => upReply(reply.content, item.id, reply.id)}>
                                       Salvar
                                     </Button>
                                     <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => { setEditReply(false); setEditFormId(null) }}>
@@ -413,7 +413,7 @@ const QuestionCourse = ({ dataLesson }) => {
                                   <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => { setFormEditReply({ ...formEditReply, content: reply.content }); setEditReply(true); setEditFormId(reply.id) }}>
                                     Editar <FontAwesomeIcon icon={faEdit} />
                                   </Button>
-                                  <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => rmReply(reply.id)}>
+                                  <Button style={{ width: '50px' }} className="questionLesson cancel-question" onClick={() => rmReply(item.id, reply.id)}>
                                     <FontAwesomeIcon icon={faTrash} />
                                   </Button>
                                 </>
