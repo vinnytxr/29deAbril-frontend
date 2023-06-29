@@ -99,19 +99,29 @@ const UserProfileScreen = () => {
   const editar = () => {
     setNewName(user.name)
     setAboutText(user.about)
-    setNewLink(user.contactLink)
+    setNewLink(user.contactLink == "https://www.exemplo.com" ? "": user.contactLink)
     setEditando(true)
   }
 
   const salvarAlteracoes = async () => {
     if (Object.keys(validateEditing()).length === 0 && editando) {
-      setEditando(false)
+      var link = "";
+      if(newLink){
+        if(newLink.length === 0){
+          link = "https://www.exemplo.com";
+        }else{
+          link = newLink;
+        }
+      }else{
+        link = "https://www.exemplo.com";
+      }
       if (user.name !== newName || aboutText !== user.about  || newLink !== user.contactLink) {
-        const response = await ProfileAPI.fetchEdit(newName, aboutText, newLink, user.id)
+        const response = await ProfileAPI.fetchEdit(newName, aboutText, link, user.id)
         if (response.status !== HttpStatus.OK) {
           notifyError("Falha na edição de perfil.");
         } else {
           notifySuccess("Perfil alterado com sucesso.");
+          setEditando(false);
           refreshUserOnContext();
         }
       }
@@ -138,9 +148,7 @@ const UserProfileScreen = () => {
       errors.about = "Texto 'sobre' é muito longo!";
     }
 
-    if (newLink.length === 0) {
-      errors.about = "Digite o link do seu perfil!";
-    } else if (aboutText.length > 150) {
+    if (newLink && newLink.length > 150) {
       errors.about = "O link é muito longo!";
     }
 
@@ -367,7 +375,7 @@ const UserProfileScreen = () => {
                     ) : (
                       <div className="mb-3 d-flex justify-content-between align-items-center">
                         <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
-                          {user.contactLink}
+                          {user.contactLink == "https://www.exemplo.com" ? "": user.contactLink}
                         </p>
                       </div>
                     )}
