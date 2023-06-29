@@ -111,6 +111,9 @@ const UserProfileScreen = () => {
           link = "https://www.exemplo.com";
         }else{
           link = newLink;
+          if(!link.includes("https")){
+            link = "https://" + newLink;
+          }
         }
       }else{
         link = "https://www.exemplo.com";
