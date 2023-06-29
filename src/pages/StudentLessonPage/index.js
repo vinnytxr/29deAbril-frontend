@@ -9,6 +9,7 @@ import ReactPlayer from 'react-player'
 import { toast } from 'react-toastify';
 import { UserTools } from '../../tools/user'
 import QuestionCourse from '../../components/QuestionCourse/question_course';
+import { HiDownload } from "react-icons/hi"
 
 
 import './styles.css'
@@ -338,9 +339,17 @@ export const StudentLessonPage = () => {
               {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#0E6216', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
             </section>}
           </Col>
-          <Col>
-            <Button className='btn btn-success' onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
-          </Col>
+          {logged && controle.enrolled &&
+            <Col>
+              {
+                <Button className='btn btn-success' style={{ 'marginRight': '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
+              }
+              {
+                !!lesson.appendix &&
+                <Button className='btn btn-success' onClick={() => window.open(lesson.appendix, '_blank')} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
+              }
+            </Col>
+          }
           <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
             <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
           </Col>

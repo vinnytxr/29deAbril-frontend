@@ -29,7 +29,7 @@ function compareObjects(a, b, idFirst) {
     } else if (b.id === idFirst) {
         return 1;
     } else {
-        return 0; 
+        return 0;
     }
 }
 
@@ -46,6 +46,7 @@ export const EditLessonScreen = () => {
             useBannerFromVideo: false,
             course: null,
             caegoryId: null,
+            apendices: []
         };
     };
 
@@ -58,6 +59,7 @@ export const EditLessonScreen = () => {
         files: undefined,
         content: undefined,
         videos: undefined,
+        apendices: undefined
     });
 
     const [formValores, setFormValores] = useState(resetValores());
@@ -125,6 +127,10 @@ export const EditLessonScreen = () => {
         if (formValores.categoryId)
             post.append("category", formValores.categoryId)
 
+        if (formValores.apendices.length > 0 && !!formValores.apendices[0] && !!estado.apendices) post.append("appendix", formValores.apendices[0])
+
+
+        setEstado({})
         LessonAPI.updateLesson(post, id).then(response => {
             setEditable(false)
             setTimeout(() => {
@@ -163,6 +169,23 @@ export const EditLessonScreen = () => {
         />
     );
 
+    const InvisibleInputApendice = () => (
+        <input
+            id="input-files-apc"
+            type="file"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+                setFormValores({
+                    ...formValores,
+                    apendices: FileListToFileArray(e.target.files ?? new FileList()),
+                })
+                setEstado({ ...estado, apendices: true })
+            }}
+            accept=".pdf, .zip"
+            disabled={!editable}
+        />
+    )
+
     const InvisibleVideoInputFile = () => (
         <input id='input-files-video-ftc'
             type="file"
@@ -187,10 +210,11 @@ export const EditLessonScreen = () => {
             setFormValores({
                 title: lesson.title,
                 content: lesson.content,
-                files: [lesson.banner],
-                videos: [lesson.video],
+                files: !!lesson.banner ? [lesson.banner] : [],
+                videos: !!lesson.video ? [lesson.video] : [],
                 course: lesson.course,
-                categoryId: lesson.category.id
+                categoryId: lesson.category.id,
+                apendices: !!lesson.appendix ? [lesson.appendix] : [],
             })
             setLessonExists(true)
         } else setLessonExists(false)
@@ -347,16 +371,33 @@ export const EditLessonScreen = () => {
                                     </Col>
                                     <Col xs={12} className='mt-3 pr0'>
                                         <label htmlFor="input-files-video-ftc" className='label-to-use-frame-as-banner-input' style={{ cursor: editable ? 'pointer' : 'auto' }}>
-                                            <span>Selecionar video</span>
+                                            <span>{formValores.videos.length > 0 ? 'Trocar video' : 'Selecionar video'}</span>
                                         </label>
                                     </Col>
-                                    <Col xs={12} className='file-input-span mb-3'>
-                                        <span className={`${!!estado.videos ? 'ok' : estado.videos === false ? 'error' : ''}`}>
-                                            {formValores.videos.length > 0 && !!formValores.videos[0] ? `${formValores.videos.length} ${formValores.videos.length > 1 ? 'videos selecionados' : 'video selecionado'}` : 'Nenhum video selecionado'}
-                                        </span>
+                                    {   estado.videos !== undefined && estado.videos !== null && 
+                                        <Col xs={12} className='file-input-span mb-3'>
+                                            <span className={`${!!estado.videos ? 'ok' : estado.videos === false ? 'error' : ''}`}>
+                                                {formValores.videos.length > 0 && !!formValores.videos[0] ? `${formValores.videos.length} ${formValores.videos.length > 1 ? 'videos selecionados' : 'video selecionado'}` : 'Nenhum video selecionado'}
+                                            </span>
+                                        </Col>
+                                    }
+                                    <Col xs={12} className="mt-1 mb-2 pr0">
+                                        <label
+                                            htmlFor="input-files-apc"
+                                            className="label-to-use-frame-as-banner-input"
+                                            style={{ cursor: editable ? 'pointer' : 'auto' }}
+                                        >
+                                            <span>{formValores.apendices.length > 0 ? 'Trocar arquivo de apoio' : 'Selecionar arquivo de apoio'}</span>
+                                        </label>
                                     </Col>
+                                    {   estado.apendices && 
+                                        <Col xs={12} className='file-input-span mb-3'>
+                                            <span className='ok'>1 arquivo selecionado</span>
+                                        </Col>
+                                    }
                                     <InvisibleInputFile />
                                     <InvisibleVideoInputFile />
+                                    <InvisibleInputApendice />
                                 </Row>
                                 <Row>
                                     <Col lg={12} className="mt-3 pr0" style={{ display: postFormSuccess !== PostFormStatus.NULL ? "none" : "block", paddingBottom: "5px" }}>

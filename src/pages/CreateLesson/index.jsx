@@ -37,6 +37,7 @@ export const NewLessonScreen = () => {
       videos: [],
       useBannerFromVideo: false,
       categoryId: null,
+      apendices: [],
     }
   }
 
@@ -112,6 +113,10 @@ export const NewLessonScreen = () => {
 
     if (formValores.categoryId) post.append("category", formValores.categoryId)
 
+    console.log('form', formValores.apendices)
+
+    if (formValores.apendices.length > 0 && !!formValores.apendices[0]) post.append("appendix", formValores.apendices[0])
+
     LessonAPI.registerLesson(post).then((response) => {
       setEditable(false)
       setTimeout(() => {
@@ -138,6 +143,22 @@ export const NewLessonScreen = () => {
     }
     return files
   }
+
+  const InvisibleInputApendice = () => (
+    <input
+      id="input-files-apc"
+      type="file"
+      style={{ display: 'none' }}
+      onChange={(e) => {
+        setFormValores({
+          ...formValores,
+          apendices: FileListToFileArray(e.target.files ?? new FileList()),
+        })
+      }}
+      accept=".pdf, .zip"
+      disabled={!editable}
+    />
+  )
 
   const InvisibleInputFile = () => (
     <input
@@ -334,8 +355,17 @@ export const NewLessonScreen = () => {
                         : 'Nenhum video selecionado'}
                     </span>
                   </Col>
+                  <Col xs={12} className="mt-1 mb-2 pr0">
+                    <label
+                      htmlFor="input-files-apc"
+                      className="label-to-use-frame-as-banner-input"
+                    >
+                      <span>{ formValores.apendices.length > 0 ? 'Trocar arquivo de apoio' : 'Selecionar arquivo de apoio'}</span>
+                    </label>
+                  </Col>
                   <InvisibleInputFile />
                   <InvisibleVideoInputFile />
+                  <InvisibleInputApendice />
                 </Row>
                 <Row>
                   <Col
@@ -399,7 +429,7 @@ export const NewLessonScreen = () => {
 
     if (response.status == HttpStatus.OK && response?.data) {
       const catId = response.data?.categories?.sort((a, b) => compareObjects(a, b, formValores.categoryId))?.[0]?.id ?? null;
-      setFormValores({...formValores, categoryId: catId});
+      setFormValores({ ...formValores, categoryId: catId });
       setCategories(response.data.categories);
       //console.log('C', catId)
     }
