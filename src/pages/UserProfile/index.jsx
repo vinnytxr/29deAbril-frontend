@@ -226,6 +226,9 @@ const UserProfileScreen = () => {
 
         <Container>
             <Row className="d-flex justify-content-center gap-4">
+
+                {/* TODO: Ver como diminuir o número de componentes e deixar responsivo */}
+                {/* Coluna com foto, nome, data de cadastro e "Tornar-me professor" */}
                 <Col className='pe-0' xs={3}>
                     <Card style={{ paddingTop: '16px', width: '90%' }} >
                         <Row>
@@ -236,6 +239,8 @@ const UserProfileScreen = () => {
                                     placement="bottom"
                                     overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
                                     >
+
+                                        {/* Foto do aluno */}
                                         <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
                                         {user.photo ? <img src={user.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
                                             : <Avatar
@@ -249,148 +254,166 @@ const UserProfileScreen = () => {
                                         </label>
                                     </OverlayTrigger>
                                 </div>
+
+                                {/* Nome do aluno */}
                                 <Col className="d-flex align-items-center gap-1">
+                                    {editando ? (
+                                        <div className="mt-4 mb-4 ms-1">
+                                            <input
+                                            type="text"
+                                            className="form-control"
+                                            value={newName}
+                                            onChange={(e) => setNewName(e.target.value)}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="d-flex justify-content-between align-items-center">
+                                            <h1
+                                            className="fw-bold fs-4 mt-4 mb-4 ms-1"
+                                            style={{ color: '#727273' }}
+                                            >
+                                            {user.name}
+                                            </h1>
+                                        </div>
+                                    )}
+                                </Col>
+                            </Col>
+                        </Row>
 
-        {/* Parei aqui */}
-        {editando ? (
-            <div className="mt-4 mb-4 ms-1">
-            <input
-            type="text"
-            className="form-control"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            />
-            </div>
-        ) : (
-            <div className="d-flex justify-content-between align-items-center">
-            <h1
-            className="fw-bold fs-4 mt-4 mb-4 ms-1"
-            style={{ color: '#727273' }}
-            >
-            {user.name}
-            </h1>
-            </div>
-        )}
+                        {/* Data de cadastro */}
+                        <Card.Footer className="d-flex justify-content-center align-items-center">
+                            <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
+                                {date(user.created)}
+                            </p>
+                        </Card.Footer>
+                    </Card>
 
+            {/* Botão "Tornar-me professor" */}
+            {
+                user?.role?.includes(Roles.STUDENT)
+                    && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
+                    && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
+                    <Card style={{ cursor: 'pointer', width: '90%' }} className='mt-1' onClick={handleShowModal}>
+                        <Col style={{ backgroundColor: "#0E6216", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
+                            <p className="m-1">Tornar-me professor!</p>
+                        </Col>
+                    </Card>
+            }
 
+                    {/* Modal do form para colocar o código de professor */}
+                    <Modal show={showModal} onHide={handleCloseModal} className="modal-invite">
+                        <Modal.Header closeButton>
+                            <Modal.Title>Tornar-se professor</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form onSubmit={handleSubmit}>
+                                <Form.Group controlId="authorizationCode">
+                                    <Form.Control autoComplete="off" type="text" placeholder="Cole o código aqui" value={authorizationCode} onChange={(e) => setAuthorizationCode(e.target.value)} />
+                                    </Form.Group>
+                                    <Button disabled={authorizationCode?.length < 3} className='mt-2' variant="success" type="submit">Utilizar convite</Button>
+                                </Form>
+                        </Modal.Body>
+                    </Modal>
+                </Col>
+                <Col>
 
-        </Col>
-        </Col>
-        </Row>
-        <Card.Footer className="d-flex justify-content-center align-items-center">
-        <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
-        {date(user.created)}
-        </p>
-        </Card.Footer>
-        </Card>
-        {
-            user?.role?.includes(Roles.STUDENT)
-            && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
-            && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
-            <Card style={{ cursor: 'pointer', width: '90%' }} className='mt-1' onClick={handleShowModal}>
-            <Col style={{ backgroundColor: "#0E6216", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
-            <p className="m-1">Tornar-me professor!</p>
-            </Col>
-            </Card>
-        }
+                    {/* Botões de Salvar e Cancelar na edição do perfil */}
+                    <Row>
+                        <Col className='d-flex justify-content-between pe-0 ps-0'>
+                            {editando && <Button onClick={() => cancelEditing()} className='btn btn-danger mb-1'>
+                                Cancelar
+                            </Button>}
+                            {editando && <Button onClick={() => salvarAlteracoes()} className='btn btn-success mb-1'>
+                                Salvar
+                            </Button>}
+                        </Col>
+                    </Row>
+                    <Row className="mb-4">
 
-        <Modal show={showModal} onHide={handleCloseModal} className="modal-invite">
-        <Modal.Header closeButton>
-        <Modal.Title>Tornar-se professor</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="authorizationCode">
-        <Form.Control autoComplete="off" type="text" placeholder="Cole o código aqui" value={authorizationCode} onChange={(e) => setAuthorizationCode(e.target.value)} />
-        </Form.Group>
-        <Button disabled={authorizationCode?.length < 3} className='mt-2' variant="success" type="submit">Utilizar convite</Button>
-        </Form>
-        </Modal.Body>
-        </Modal>
-        </Col>
-        <Col>
-        <Row>
-        <Col className='d-flex justify-content-between pe-0 ps-0'>
-        {editando && <Button onClick={() => cancelEditing()} className='btn btn-danger mb-1'>
-            Cancelar
-            </Button>}
-        {editando && <Button onClick={() => salvarAlteracoes()} className='btn btn-success mb-1'>
-                Salvar
-                </Button>}
-        </Col>
-        </Row>
-        <Row className="mb-4">
-        {Object.keys(formErrors).length !== 0 && editando && <> <p className="ps-2 mb-1" style={{ color: "red" }}>{formErrors.newName}</p><p className="ps-2 mb-1" style={{ color: "red" }}>{formErrors.about}</p></>}
-        <Card
-        style={{
-            padding: '16px',
-        }}
-        >
-        <Row className="mb-3">
-        <Col className="d-flex justify-content-between align-items-center">
-        <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
-        Sobre mim
-        </h1>
-        </Col>
-        </Row>
-        <Row>
-        <Col>
-        {editando ? (
-            <div className="mb-3">
-            <textarea
-            rows={4}
-            className="form-control"
-            value={aboutText}
-            onChange={(e) => setAboutText(e.target.value)}
-            />
-            </div>
-        ) : (
-            <div className="mb-3 d-flex justify-content-between align-items-center">
-            <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
-            {user.about}
-            </p>
-            </div>
-        )}
-        </Col>
-        </Row>
-        {user.contactLink && 
-            <Row className="mb-3">
-            <Col className="d-flex justify-content-between align-items-center">
-            <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
-            Rede Social
-            </h1>
-            </Col>
+                        {/* Erro ao editar nome e sobre mim */}
+                        {
+                            Object.keys(formErrors).length !== 0 && editando && 
+                            <> 
+                                <p className="ps-2 mb-1" style={{ color: "red" }}>
+                                    {formErrors.newName}
+                                </p>
+                                <p className="ps-2 mb-1" style={{ color: "red" }}>
+                                    {formErrors.about}
+                                </p>
+                            </>
+                        }
+
+                        {/* Card "Sobre mim" */}
+                        <Card style={{ padding: '16px', }} >
+                            <Row className="mb-3">
+                                <Col className="d-flex justify-content-between align-items-center">
+                                    <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                                        Sobre mim
+                                    </h1>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    {editando ? (
+                                        <div className="mb-3">
+                                            <textarea
+                                                rows={4}
+                                                className="form-control"
+                                                value={aboutText}
+                                                onChange={(e) => setAboutText(e.target.value)}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="mb-3 d-flex justify-content-between align-items-center">
+                                            <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
+                                                {user.about}
+                                            </p>
+                                        </div>
+                                    )}
+                                </Col>
+                            </Row>
+                            {user.contactLink && 
+                                <Row className="mb-3">
+                                    <Col className="d-flex justify-content-between align-items-center">
+                                        <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                                            Rede Social
+                                        </h1>
+                                    </Col>
+                                </Row>
+                            }
+                            <Row>
+                                <Col>
+                                    {editando ? (
+                                        <div className="mb-3">
+                                            <span className="ms-1">
+                                                Insira o link completo do LinkedIn ou Instagram: 
+                                            </span>
+                                            <textarea
+                                                rows={1}
+                                                className="form-control mt-1"
+                                                value={newLink}
+                                                onChange={(e) => setNewLink(e.target.value)}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="mb-3 d-flex justify-content-between align-items-center">
+                                            <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
+                                                {user.contactLink == "https://www.exemplo.com" ? "": user.contactLink}
+                                            </p>
+                                        </div>
+                                    )}
+                                </Col>
+                            </Row>
+                        </Card>
+                        {/* Término do Card "Sobre mim" */}
+
+                    </Row>
+                </Col>
+                {/* Término da Coluna com botões do editar e Card "Sobre mim" */}
+
             </Row>
-        }
-        <Row>
-        <Col>
-        {editando ? (
-            <div className="mb-3">
-            <span className="ms-1">
-            Insira o link completo do LinkedIn ou Instagram: 
-            </span>
-            <textarea
-            rows={1}
-            className="form-control mt-1"
-            value={newLink}
-            onChange={(e) => setNewLink(e.target.value)}
-            />
-            </div>
-        ) : (
-            <div className="mb-3 d-flex justify-content-between align-items-center">
-            <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
-            {user.contactLink == "https://www.exemplo.com" ? "": user.contactLink}
-            </p>
-            </div>
-        )}
-        </Col>
-        </Row>
-        </Card>
-        </Row>
-        </Col>
-        </Row>
         </Container>
-        </>
+    </>
     ) : <></>
 }
 
