@@ -14,6 +14,32 @@ import DropdownMenu from 'react-bootstrap/esm/DropdownMenu'
 import DropdownToggle from 'react-bootstrap/esm/DropdownToggle'
 import { toast } from 'react-toastify'
 
+// ANOTACOES
+// Idealização dos componentes da página:
+
+// Corpo: Uma Row com duas Columns
+// 1º Column: Um Card e um Button
+    // Card: Uma Row e um Footnote
+        // Column: Uma Image e um campo Text
+// 2º Column: Uma Row e um Card
+    // Row: Dois Buttons
+    // Card: Title e dois campos Text Area
+
+// Componentes reais:
+
+// Corpo: Um Container com uma Row com duas Columns -> Tirar Container?
+// 1º Column: Dois Cards
+    // Card 1: Row com uma Column, e um Footer -> Deixar só uma Column e um Footer?
+        // Column: Um Div e uma Column
+            // Div: Label com uma Image ou Avatar -> Tirar Label?
+            // Column: Div com campo Text com nome do aluno ou Input para mudar nome Deixar só uma Column?
+    // Card 2: Coluna com Parágrafo (para tornar-se professor) -> Usar só um Button? 
+// 2º Column: Duas Rows
+    // 1º Row: Uma Column com dois Buttons (Cancelar/Salvar) -> Tirar Column e fazer botão um do lado do outro?
+    // 2º Row: Card com 4 Rows
+        // 4 Rows: Cada Row com uma Colum -> Tirar Column?
+            // Rows: Label Sobre mim + campo Sobre mim + Label Rede Social + campo Rede Social
+
 const UserProfileScreen = () => {
     const navigate = useNavigate()
     const { logged, user, token, setToken, refreshUserOnContext } = useAuthContext();
@@ -185,6 +211,7 @@ const UserProfileScreen = () => {
 
     return logged && user ? (
         <>
+            {/* NAVBAR */}
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
                     <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
@@ -223,12 +250,16 @@ const UserProfileScreen = () => {
                     </Navbar.Collapse>
             </Container>
         </Navbar>
+        {/* NAVBAR */}
 
+        {/* CONTENT */}
         <Container>
             <Row className="d-flex justify-content-center gap-4">
 
                 {/* TODO: Ver como diminuir o número de componentes e deixar responsivo */}
                 {/* Coluna com foto, nome, data de cadastro e "Tornar-me professor" */}
+
+                {/* PRIMEIRA PARTE */}
                 <Col className='pe-0' xs={3}>
                     <Card style={{ paddingTop: '16px', width: '90%' }} >
                         <Row>
@@ -315,6 +346,8 @@ const UserProfileScreen = () => {
                         </Modal.Body>
                     </Modal>
                 </Col>
+
+                {/* SEGUNDA PARTE */}
                 <Col>
 
                     {/* Botões de Salvar e Cancelar na edição do perfil */}
@@ -345,6 +378,8 @@ const UserProfileScreen = () => {
 
                         {/* Card "Sobre mim" */}
                         <Card style={{ padding: '16px', }} >
+
+                            {/* Label Sobre mim */}
                             <Row className="mb-3">
                                 <Col className="d-flex justify-content-between align-items-center">
                                     <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
@@ -352,6 +387,8 @@ const UserProfileScreen = () => {
                                     </h1>
                                 </Col>
                             </Row>
+
+                            {/* Campo Sobre mim (modo Edição ou Visualização) */}
                             <Row>
                                 <Col>
                                     {editando ? (
@@ -372,6 +409,8 @@ const UserProfileScreen = () => {
                                     )}
                                 </Col>
                             </Row>
+
+                            {/* Label Rede Social Opcional */}
                             {user.contactLink && 
                                 <Row className="mb-3">
                                     <Col className="d-flex justify-content-between align-items-center">
@@ -381,6 +420,8 @@ const UserProfileScreen = () => {
                                     </Col>
                                 </Row>
                             }
+
+                            {/* Campo Rede Social (modo Edição ou Visualização) */}
                             <Row>
                                 <Col>
                                     {editando ? (
