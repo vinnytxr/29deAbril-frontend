@@ -254,62 +254,52 @@ const UserProfileScreen = () => {
 
         {/* CONTENT */}
         <Container>
-            <Row className="d-flex justify-content-center gap-4">
-
-                {/* TODO: Ver como diminuir o número de componentes e deixar responsivo */}
-                {/* Coluna com foto, nome, data de cadastro e "Tornar-me professor" */}
+            <Row className="d-flex gap-2 justify-content-center">
 
                 {/* PRIMEIRA PARTE */}
-                <Col className='pe-0' xs={3}>
-                    <Card style={{ paddingTop: '16px', width: '90%' }} >
-                        <Row>
-                            <Col className="d-flex justify-content-center align-items-center flex-column">
-                                <div style={{ position: 'relative' }}>
-                                    <InvisibleInputFile />
-                                    <OverlayTrigger
-                                    placement="bottom"
-                                    overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
-                                    >
+                <Col className="d-flex flex-column gap-2" style={{margin: 0, padding: 0}} xs={3}>
+                    <Card style={{margin: 0, padding: 0}} >
 
-                                        {/* Foto do aluno */}
-                                        <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
-                                        {user.photo ? <img src={user.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
-                                            : <Avatar
-                                            name={user.name && user.name.split(' ')[0]}
-                                            color="#0f5b7a"
-                                            size={150}
-                                            textSizeRatio={2}
-                                            round={true}
-                                            style={{ cursor: 'pointer' }}
-                                            />}
-                                        </label>
-                                    </OverlayTrigger>
-                                </div>
+                        {/* Foto do aluno */}
+                        <Card.Header style={{padding: 0, border: 'none'}}>
+                            <InvisibleInputFile />
+                            <OverlayTrigger
+                            placement="bottom"
+                            overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
+                            >
+                                {/* Ver o que fazer com Imagem */}
+                                <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
+                                {user.photo ? <img src={user.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
+                                    : <Avatar
+                                    name={user.name && user.name.split(' ')[0]}
+                                    color="#0f5b7a"
+                                    size={150}
+                                    textSizeRatio={2}
+                                    round={true}
+                                    style={{ cursor: 'pointer' }}
+                                    />}
+                                </label>
+                            </OverlayTrigger>
+                        </Card.Header>
 
-                                {/* Nome do aluno */}
-                                <Col className="d-flex align-items-center gap-1">
-                                    {editando ? (
-                                        <div className="mt-4 mb-4 ms-1">
-                                            <input
-                                            type="text"
-                                            className="form-control"
-                                            value={newName}
-                                            onChange={(e) => setNewName(e.target.value)}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="d-flex justify-content-between align-items-center">
-                                            <h1
-                                            className="fw-bold fs-4 mt-4 mb-4 ms-1"
-                                            style={{ color: '#727273' }}
-                                            >
-                                            {user.name}
-                                            </h1>
-                                        </div>
-                                    )}
-                                </Col>
-                            </Col>
-                        </Row>
+                        {/* Nome do aluno */}
+                        <Card.Body>
+                            {editando ? (
+                                <input
+                                type="text"
+                                className="form-control"
+                                value={newName}
+                                onChange={(e) => setNewName(e.target.value)}
+                                />
+                            ) : (
+                                <h1
+                                className="fw-bold fs-4 mt-4 mb-4 ms-1"
+                                style={{ color: '#727273', textAlign: 'center' }}
+                                >
+                                {user.name}
+                                </h1>
+                            )}
+                        </Card.Body>
 
                         {/* Data de cadastro */}
                         <Card.Footer className="d-flex justify-content-center align-items-center">
@@ -324,11 +314,14 @@ const UserProfileScreen = () => {
                 user?.role?.includes(Roles.STUDENT)
                     && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
                     && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
+                    <Button style={{ backgroundColor: "#0E6216", color: "white", border: 'none' }} onClick={handleShowModal}>Tornar-me professor!</Button>
+                    /*
                     <Card style={{ cursor: 'pointer', width: '90%' }} className='mt-1' onClick={handleShowModal}>
                         <Col style={{ backgroundColor: "#0E6216", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
                             <p className="m-1">Tornar-me professor!</p>
                         </Col>
                     </Card>
+                    */
             }
 
                     {/* Modal do form para colocar o código de professor */}
