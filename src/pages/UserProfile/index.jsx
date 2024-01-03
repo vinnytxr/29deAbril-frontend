@@ -212,6 +212,7 @@ const UserProfileScreen = () => {
     return logged && user ? (
         <>
             {/* NAVBAR */}
+            {/* TODO: Investigar componentes dessa Navbar*/}
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
                     <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
@@ -222,12 +223,11 @@ const UserProfileScreen = () => {
                         <Row className='align-items-center'>
                             <Col>
                                 <Navbar.Text>
-                                    <Dropdown>
-                                        <DropdownToggle className='gear'>
+                                    <Dropdown style={{padding: 0}}>
+                                        <DropdownToggle className='gear'style={{padding: 0}}>
                                             <FontAwesomeIcon icon={faBars} />
                                         </DropdownToggle>
 
-                                        {/* TODO: Exibição dos itens tá passando da tela*/}
                                         <DropdownMenu>
                                             <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
                                             <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
@@ -248,20 +248,20 @@ const UserProfileScreen = () => {
                             </Col>
                         </Row>
                     </Navbar.Collapse>
-            </Container>
-        </Navbar>
-        {/* NAVBAR */}
+                </Container>
+            </Navbar>
+            {/* NAVBAR */}
 
         {/* CONTENT */}
         <Container>
             <Row className="d-flex gap-2 justify-content-center">
 
                 {/* PRIMEIRA PARTE */}
-                <Col className="d-flex flex-column gap-2" style={{margin: 0, padding: 0}} xs={3}>
+                <Col className="d-flex flex-column gap-2" style={{margin: 0, padding: 0}} xs={12} md={6} lg={4}>
                     <Card style={{margin: 0, padding: 0}} >
 
                         {/* Foto do aluno */}
-                        <Card.Header style={{padding: 0, border: 'none'}}>
+                        <Card.Header style={{padding: 0, border: 'none', backgroundColor: 'white'}}>
                             <InvisibleInputFile />
                             <OverlayTrigger
                             placement="bottom"
@@ -269,7 +269,7 @@ const UserProfileScreen = () => {
                             >
                                 {/* Ver o que fazer com Imagem */}
                                 <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
-                                {user.photo ? <img src={user.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
+                                {user.photo ? <img src={user.photo} style={{ width: '70%', height: '50%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
                                     : <Avatar
                                     name={user.name && user.name.split(' ')[0]}
                                     color="#0f5b7a"
@@ -341,7 +341,7 @@ const UserProfileScreen = () => {
                 </Col>
 
                 {/* SEGUNDA PARTE */}
-                <Col>
+                <Col className='about-me-column' xs={12} md={6} lg={4}>
 
                     {/* Botões de Salvar e Cancelar na edição do perfil */}
                     <Row>

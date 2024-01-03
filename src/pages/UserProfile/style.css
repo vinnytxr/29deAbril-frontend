@@ -28,3 +28,10 @@
 .dropdown-item-no-highlight:focus {
   background-color: transparent !important;
 }
+
+/* .md > | Medium devices and up (tablets) 768px and up */
+@media (min-width: 768px) {
+    .about-me-column {
+        width: 65%;
+    }
+}
