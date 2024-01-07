@@ -5,7 +5,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { Form, Spinner } from 'react-bootstrap'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
-
+import { Container, Row, Col } from 'react-bootstrap';
 // Style
 import './style.css'
 
@@ -105,101 +105,104 @@ const LoginPage = () => {
     return errors
   }
 
+
+
   return (
-    <>
-      <div className="container p-5 col-7">
-        <div className="row">
-          <div className="col mb-5">
-            <div className="row">
-              <div className="col">
-                <img
-                  style={{ width: '11em' }}
-                  onClick={() => {
-                    window.location.href = '/'
-                  }}
-                  src="https://i.ibb.co/r3QPmSt/logo.png"
-                  alt="logo"
-                  border="0"
+    <Container fluid>
+      <Row className="justify-content-md-center p-4">
+        <Col xs={12} md={10} lg={8}>
+          <Row>
+            <Col>
+              <Row>
+                <Col>
+                  <img
+                    style={{ width: '11em' }}
+                    onClick={() => {
+                      window.location.href = '/'
+                    }}
+                    src="https://i.ibb.co/r3QPmSt/logo.png"
+                    alt="logo"
+                    border="0"
+                  />
+                </Col>
+                <Col className="d-flex justify-content-end">
+                  <p className="mt-3">
+                    Não tem uma conta?&nbsp;
+                    <Link
+                      className="fw-bold link-limpo"
+                      style={{ color: '#1dbfb0' }}
+                      to="/register"
+                    >
+                      CADASTRE-SE AGORA!
+                    </Link>
+                  </p>
+                </Col>
+              </Row>
+            </Col>
+            <p className="fs-6 mb-1 ms-1">
+              Bem-vindo(a) a plataforma da Let Cursos.
+            </p>
+            <p className="fw-bold fs-4 ms-1">Entre para estudar!</p>
+          </Row>
+          <Row className="ps-1 mt-2">
+            <Form onSubmit={handleSubmit}>
+              <div>
+                <input
+                  type="text"
+                  name="email"
+                  placeholder="Email"
+                  className="form-control"
+                  value={formValues.username}
+                  onChange={handleChange}
                 />
               </div>
-              <div className="col d-flex justify-content-end">
-                <p className="mt-3">
-                  Não tem uma conta?&nbsp;
-                  <Link
-                    className="fw-bold link-limpo"
-                    style={{ color: '#1dbfb0' }}
-                    to="/register"
-                  >
-                    CADASTRE-SE AGORA!
-                  </Link>
-                </p>
+              <p className="mb-3 ps-1" style={{ color: 'red' }}>
+                {formErrors.email}
+              </p>
+              <div>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Senha"
+                  className="form-control"
+                  value={formValues.password}
+                  onChange={handleChange}
+                />
               </div>
-            </div>
-          </div>
-          <p className="fs-6 mb-1 ms-1">
-            Bem-vindo(a) a plataforma da Let Cursos.
-          </p>
-          <p className="fw-bold fs-4 ms-1">Entre para estudar!</p>
-        </div>
-        <div className="row ps-1 mt-2">
-          <Form onSubmit={handleSubmit}>
-            <div>
-              <input
-                type="text"
-                name="email"
-                placeholder="Email"
-                className="form-control"
-                value={formValues.username}
-                onChange={handleChange}
-              />
-            </div>
-            <p className="mb-3 ps-1" style={{ color: 'red' }}>
-              {formErrors.email}
-            </p>
-            <div>
-              <input
-                type="password"
-                name="password"
-                placeholder="Senha"
-                className="form-control"
-                value={formValues.password}
-                onChange={handleChange}
-              />
-            </div>
-            <p className="mb-3 ps-1" style={{ color: 'red' }}>
-              {formErrors.password}
-            </p>
-            <div className="row mt-3">
-              <div className="col text-start">
-                <button className="btn btn-info" disabled={isLoading}>
-                  {isLoading ? (
-                    <Spinner
-                      className="me-2"
-                      as="span"
-                      animation="border"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <FontAwesomeIcon icon={faCheck} className="me-2" />
-                  )}
-                  Entrar
-                </button>
-              </div>
-            </div>
-            <p
-              className="ps-1 fw-bold mt-1"
-              style={{ color: '#1dbfb0', cursor: 'pointer' }}
-              onClick={() => navigate('/recuperar-senha')}
-            >
-              Esqueci minha senha
-            </p>
-          </Form>
-        </div>
-      </div>
-    </>
-  )
-}
-
+              <p className="mb-3 ps-1" style={{ color: 'red' }}>
+                {formErrors.password}
+              </p>
+              <Row className="mt-3">
+                <Col className="text-start">
+                  <button className="btn btn-info" disabled={isLoading}>
+                    {isLoading ? (
+                      <Spinner
+                        className="me-2"
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <FontAwesomeIcon icon={faCheck} className="me-2" />
+                    )}
+                    Entrar
+                  </button>
+                </Col>
+              </Row>
+              <p
+                className="ps-1 fw-bold mt-1"
+                style={{ color: '#1dbfb0', cursor: 'pointer' }}
+                onClick={() => navigate('/recuperar-senha')}
+              >
+                Esqueci minha senha
+              </p>
+            </Form>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
+  )}
+                    
 export default LoginPage
