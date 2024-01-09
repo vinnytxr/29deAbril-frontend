@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Container, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeftLong, faCheck } from '@fortawesome/free-solid-svg-icons'
@@ -102,79 +103,95 @@ const ChangePasswordPage = () => {
         return errors;
     }
 
+
+
     return (
-        <>
-            <div className="container p-5 col-7">
-                <div className="row">
-                    <div className="col mb-5">
-                        <div className="row">
-                            <div className="col">
-                                <img style={{ width: "11em" }} onClick={() => { navigate("/") }} src="https://i.ibb.co/r3QPmSt/logo.png" alt="logo" border="0" />
+        <Container fluid>
+            <Row className="justify-content-md-center p-5">
+                <Col xs={12} md={9} lg={9}>
+                    <Row>
+                        <Col>
+                            <Row>
+                                <Col>
+                                    <img
+                                        style={{ width: '11em' }}
+                                        onClick={() => {navigate('/')}}
+                                        src="https://i.ibb.co/r3QPmSt/logo.png"
+                                        alt="logo"
+                                        border="0"
+                                    />
+                                </Col>
+                                <Col className="d-flex justify-content-end">
+                                    <p className="mt-3">
+                                        <Link className="fw-bold link-limpo" style={{ color: '#1dbfb0' }} to="/">
+                                            <FontAwesomeIcon icon={faArrowLeftLong} className="me-1" /> Cancelar!
+                                        </Link>
+                                    </p>
+                                </Col>
+                            </Row>
+                        </Col>
+                        <p className="fw-bold fs-4 ms-1">Mudança de senha!</p>
+                        <p className="ms-2">Preencha os campos para realizar a mudança da sua senha.</p>
+                    </Row>
+                    <Row className="ps-1 mt-2">
+                        <Form onSubmit={handleSubmit}>
+                            <div>
+                                <input
+                                    type="password"
+                                    name="oldPassword"
+                                    placeholder="Senha atual"
+                                    className="form-control"
+                                    value={formValues.oldPassword}
+                                    onChange={handleChange}
+                                />
                             </div>
-                            <div className="col d-flex justify-content-end">
-                                <p className="mt-3"><Link className="fw-bold link-limpo" style={{ color: "#1dbfb0" }} to="/perfil"><FontAwesomeIcon icon={faArrowLeftLong} className="me-1" /> Voltar!</Link></p>
+                            <p className="mb-3 ps-1" style={{ color: 'red' }}>{formErrors.oldPassword}</p>
+                            <div>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    placeholder="Sua nova senha"
+                                    className="form-control"
+                                    value={formValues.newPassword}
+                                    onChange={handleChange}
+                                />
                             </div>
-                        </div>
-                    </div>
-                    <p className="fw-bold fs-4 ms-1">Mudança de senha!</p>
-                    <p className="ms-2">Preencha os campos para realizar a mudança da sua senha.</p>
-                </div>
-                <div className="row ps-1 mt-2">
-                    <Form onSubmit={handleSubmit}>
-                        <div>
-                            <input
-                                type="password"
-                                name="oldPassword"
-                                placeholder="Senha atual"
-                                className="form-control"
-                                value={formValues.oldPassword}
-                                onChange={handleChange} />
-                        </div>
-                        <p className="mb-3 ps-1" style={{ color: "red" }}>{formErrors.oldPassword}</p>
-                        <div>
-                            <input
-                                type="password"
-                                name="newPassword"
-                                placeholder="Sua nova senha"
-                                className="form-control"
-                                value={formValues.newPassword}
-                                onChange={handleChange} />
-                        </div>
-                        <p className="mb-3 ps-1" style={{ color: "red" }}>{formErrors.newPassword}</p>
-                        <div>
-                            <input
-                                type="password"
-                                name="newPasswordConfirm"
-                                placeholder="Digite a nova senha novamente"
-                                className="form-control"
-                                value={formValues.newPasswordConfirm}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <p className="mb-3 ps-1" style={{ color: "red" }}>{formErrors.newPasswordConfirm}</p>
-                        <div className="row mt-3">
-                            <div className="col text-start">
-                                <button className="btn btn-success" disabled={isLoading}>
-                                {isLoading ? (
-                                        <Spinner
-                                        className="me-2"
-                                        as="span"
-                                        animation="border"
-                                        size="sm"
-                                        role="status"
-                                        aria-hidden="true"
-                                        />
-                                    ) : (
-                                        <FontAwesomeIcon icon={faCheck} className="me-2" />
-                                    )}
-                                    Confirmar alteração
-                                </button>
+                            <p className="mb-3 ps-1" style={{ color: 'red' }}>{formErrors.newPassword}</p>
+                            <div>
+                                <input
+                                    type="password"
+                                    name="newPasswordConfirm"
+                                    placeholder="Digite a nova senha novamente"
+                                    className="form-control"
+                                    value={formValues.newPasswordConfirm}
+                                    onChange={handleChange}
+                                />
                             </div>
-                        </div>
-                    </Form>
-                </div>
-            </div >
-        </>
+                            <p className="mb-3 ps-1" style={{ color: 'red' }}>{formErrors.newPasswordConfirm}</p>
+                            <Row className="mt-3">
+                                <Col className="text-start">
+                                    <button className="btn btn-success" disabled={isLoading}>
+                                        {isLoading ? (
+                                            <Spinner
+                                                className="me-2"
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                            />
+                                        ) : (
+                                            <FontAwesomeIcon icon={faCheck} className="me-2" />
+                                        )}
+                                        Confirmar alteração
+                                    </button>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Row>
+                </Col>
+            </Row>
+        </Container>
     )
 }
 
