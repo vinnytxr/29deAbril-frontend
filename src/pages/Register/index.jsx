@@ -79,14 +79,14 @@ export default function RegisterScreen() {
   useEffect(() => {
     const fetchFunction = async () => {
       if (Object.keys(formErrors).length === 0 && isSubmit) {
-        setIsLoading(true)
+        //setIsLoading(true)
         const response = await AuthAPI.fetchRegister(formValues);
         if (response.status === HttpStatus.OK) {
             notifySuccess("Registrado com sucesso!");
-            setIsLoading(false)
+            //setIsLoading(false)
             navigate('/login')
         } else {
-          setIsLoading(false)
+          //setIsLoading(false)
           notifyError("Falha ao cadastrar novo usuário. " + response.data.error + ".");
         }
     }
@@ -108,13 +108,15 @@ export default function RegisterScreen() {
         const response = await AuthAPI.fetchRegister(formValues);
         if (response.status === HttpStatus.OK) {
             notifySuccess("Registrado com sucesso!");
-            setIsLoading(false)
+            //setIsLoading(false)
             navigate('/login')
         } else {
             setIsLoading(false)
             notifyError("Falha ao cadastrar novo usuário. " + response.data.error + ".");
         }
 
+      }else{
+        setIsLoading(false)
       }
   }
 
@@ -135,7 +137,7 @@ export default function RegisterScreen() {
       cpf === '88888888888' ||
       cpf === '99999999999'
     ) {
-      setIsLoading(false)
+      //setIsLoading(false)
       return false
     }
 
@@ -147,7 +149,7 @@ export default function RegisterScreen() {
     let resto = 11 - (soma % 11)
     let digitoVerificador1 = resto === 10 || resto === 11 ? 0 : resto
     if (digitoVerificador1 !== parseInt(cpf.charAt(9))) {
-      setIsLoading(false)
+      //setIsLoading(false)
       return false
     }
 
@@ -159,7 +161,7 @@ export default function RegisterScreen() {
     resto = 11 - (soma % 11)
     let digitoVerificador2 = resto === 10 || resto === 11 ? 0 : resto
     if (digitoVerificador2 !== parseInt(cpf.charAt(10))) {
-      setIsLoading(false)
+      //setIsLoading(false)
       return false
     }
 
