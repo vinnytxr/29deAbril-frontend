@@ -85,6 +85,8 @@
     font-weight: bold;
     padding: 0 10px;
     border-radius: 5px;
+    display: inline-block;
+    text-align: left;
 }
 
 .delete {
