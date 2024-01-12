@@ -373,12 +373,12 @@ const checkCommentVisibility = () => {
           }
         </div>
         {isStudent && user && data && user.id !== data?.professor?.id &&
-          <div className="col-md-8 text-end">
-            <Button className="mt-2 detail-header-btn" onClick={() => { handleShow(); isUserRating(); }}>
+          <div className="row-md-8">
+            <Button className="me-2 mt-2 detail-header-btn" onClick={() => { handleShow(); isUserRating(); }}>
               Avaliar curso
             </Button>
             {showCertificateBtn() &&
-              <Button className="mt-2 detail-header-btn" onClick={() => { window.location.replace(`${BASE_URL}/lessons/lessons/generate-certificate/${data.id}/${user.id}`) }} style={{ marginLeft: '15px' }}>
+              <Button className="ms-0 mt-2 detail-header-btn" onClick={() => { window.location.replace(`${BASE_URL}/lessons/lessons/generate-certificate/${data.id}/${user.id}`) }} style={{ marginLeft: '15px' }}>
                 <HiDownload className="download-certificate-icon" />
                 Certificado
               </Button>
@@ -421,7 +421,7 @@ const checkCommentVisibility = () => {
         <div className="col mt-1">
           <Card className="custom-bg">
             <div className="row">
-              <div className="col-8 mt-2 mx-1">
+             <div className="col-12 col-lg-8 mt-2 mx-1">
                 <Card.Title>
                   {logged && (
                     <Button
@@ -442,7 +442,7 @@ const checkCommentVisibility = () => {
                   <p>{data.title}</p>
                 </div>
                 <div className="row mt-5 mx-2">
-                  <Card.Text>{data.description}</Card.Text>
+                  <Card.Text style={{textAlign: "justify"}}>{data.description}</Card.Text>
                 </div>
                 <div className="row mt-5 mx-2">
                   <StarRating value={data.rating} />
