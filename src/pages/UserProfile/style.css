@@ -34,4 +34,16 @@
     .about-me-column {
         width: 65%;
     }
+
+    .dropdown-position-md-lg {
+        position: absolute;
+        margin-left: 90%;
+    }
+}
+
+/* .sm < | Small devices and down (landscape, phones) less than 768px */
+@media (max-width: 767.98px) {
+    .navbar-brand-visibility {
+        display: none;
+    }
 }

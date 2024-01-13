@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Navbar, Row, Card, Button, Modal, Form, Dropdown } from 'react-bootstrap'
+import { Col, Container, Navbar, Row, Card, Button, Modal, Form, Dropdown, Nav } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
@@ -10,35 +10,7 @@ import { Roles } from '../../api/default'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ProfileAPI } from '../../api/profile';
 import './style.css'
-import DropdownMenu from 'react-bootstrap/esm/DropdownMenu'
-import DropdownToggle from 'react-bootstrap/esm/DropdownToggle'
 import { toast } from 'react-toastify'
-
-// ANOTACOES
-// Idealização dos componentes da página:
-
-// Corpo: Uma Row com duas Columns
-// 1º Column: Um Card e um Button
-    // Card: Uma Row e um Footnote
-        // Column: Uma Image e um campo Text
-// 2º Column: Uma Row e um Card
-    // Row: Dois Buttons
-    // Card: Title e dois campos Text Area
-
-// Componentes reais:
-
-// Corpo: Um Container com uma Row com duas Columns -> Tirar Container?
-// 1º Column: Dois Cards
-    // Card 1: Row com uma Column, e um Footer -> Deixar só uma Column e um Footer?
-        // Column: Um Div e uma Column
-            // Div: Label com uma Image ou Avatar -> Tirar Label?
-            // Column: Div com campo Text com nome do aluno ou Input para mudar nome Deixar só uma Column?
-    // Card 2: Coluna com Parágrafo (para tornar-se professor) -> Usar só um Button? 
-// 2º Column: Duas Rows
-    // 1º Row: Uma Column com dois Buttons (Cancelar/Salvar) -> Tirar Column e fazer botão um do lado do outro?
-    // 2º Row: Card com 4 Rows
-        // 4 Rows: Cada Row com uma Colum -> Tirar Column?
-            // Rows: Label Sobre mim + campo Sobre mim + Label Rede Social + campo Rede Social
 
 const UserProfileScreen = () => {
     const navigate = useNavigate()
@@ -79,6 +51,7 @@ const UserProfileScreen = () => {
     const handleShowModal = () => setShowModal(true);
 
     useEffect(() => {
+
         // Atualiza imagem do aluno, se editada
         const fetchFunction = async () => {
             if (imagesToUpdate && imagesToUpdate.length) {
@@ -211,52 +184,44 @@ const UserProfileScreen = () => {
 
     return logged && user ? (
         <>
-            {/* NAVBAR */}
-            {/* TODO: Investigar componentes dessa Navbar*/}
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
-                    <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                        &#128075;&nbsp; Hey, {user.name.split(' ')[0]}!
-                    </p>
                     <Navbar.Toggle />
-                    <Navbar.Collapse className="justify-content-end">
-                        <Row className='align-items-center'>
-                            <Col>
-                                <Navbar.Text>
-                                    <Dropdown style={{padding: 0}}>
-                                        <DropdownToggle className='gear'style={{padding: 0}}>
-                                            <FontAwesomeIcon icon={faBars} />
-                                        </DropdownToggle>
+                    <Navbar.Brand href="#home" className='navbar-brand-visibility'>
+                        <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                            &#128075;&nbsp; Hey, {user.name.split(' ')[0]}!
+                        </p>
+                    </Navbar.Brand>
+                    <Dropdown className='dropdown-position-md-lg'>
+                        <Dropdown.Toggle className='gear' style={{border: 'none'}} variant="none">
+                            <FontAwesomeIcon
+                                icon={faBars} 
+                                /> 
+                            </Dropdown.Toggle>
 
-                                        <DropdownMenu>
-                                            <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
-                                            <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
-                                        </DropdownMenu>
-                                    </Dropdown>
-                                </Navbar.Text>
-                            </Col>
-                            <Col>
-                                <Navbar.Text className='pb-1'>
-                                    <Avatar
-                                        name={user.name}
-                                        color="#0f5b7a"
-                                        size={34}
-                                        textSizeRatio={2}
-                                        round={true}
-                                    />
-                                </Navbar.Text>
-                            </Col>
-                        </Row>
+                            <Dropdown.Menu>
+                                <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => editar()}>Editar Perfil</Dropdown.Item>
+                                <Dropdown.Item className="dropdown-item-no-highlight" onClick={() => changePass()}>Alterar Senha</Dropdown.Item>
+                            </Dropdown.Menu>
+                    </Dropdown> 
+
+                    <Navbar.Collapse className="justify-content-end">
+                        <Nav>
+                            <Avatar
+                                name={user.name}
+                                color="#0f5b7a"
+                                size={34}
+                                textSizeRatio={2}
+                                round={true}
+                            />
+                      </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            {/* NAVBAR */}
 
-        {/* CONTENT */}
         <Container>
             <Row className="d-flex gap-2 justify-content-center">
 
-                {/* PRIMEIRA PARTE */}
                 <Col className="d-flex flex-column gap-2" style={{margin: 0, padding: 0}} xs={12} md={6} lg={4}>
                     <Card style={{margin: 0, padding: 0}} >
 
@@ -267,7 +232,6 @@ const UserProfileScreen = () => {
                             placement="bottom"
                             overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
                             >
-                                {/* Ver o que fazer com Imagem */}
                                 <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
                                 {user.photo ? <img src={user.photo} style={{ width: '70%', height: '50%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
                                     : <Avatar
@@ -315,13 +279,6 @@ const UserProfileScreen = () => {
                     && (!user?.role?.includes(Roles.PROFESSOR) ?? false)
                     && (!user?.role?.includes(Roles.ADMIN) ?? false) &&
                     <Button style={{ backgroundColor: "#0E6216", color: "white", border: 'none' }} onClick={handleShowModal}>Tornar-me professor!</Button>
-                    /*
-                    <Card style={{ cursor: 'pointer', width: '90%' }} className='mt-1' onClick={handleShowModal}>
-                        <Col style={{ backgroundColor: "#0E6216", color: "white" }} className="d-flex justify-content-center align-items-center bg-gradient">
-                            <p className="m-1">Tornar-me professor!</p>
-                        </Col>
-                    </Card>
-                    */
             }
 
                     {/* Modal do form para colocar o código de professor */}
@@ -340,7 +297,6 @@ const UserProfileScreen = () => {
                     </Modal>
                 </Col>
 
-                {/* SEGUNDA PARTE */}
                 <Col className='about-me-column' xs={12} md={6} lg={4}>
 
                     {/* Botões de Salvar e Cancelar na edição do perfil */}
@@ -371,8 +327,6 @@ const UserProfileScreen = () => {
 
                         {/* Card "Sobre mim" */}
                         <Card style={{ padding: '16px', }} >
-
-                            {/* Label Sobre mim */}
                             <Row className="mb-3">
                                 <Col className="d-flex justify-content-between align-items-center">
                                     <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
@@ -381,7 +335,6 @@ const UserProfileScreen = () => {
                                 </Col>
                             </Row>
 
-                            {/* Campo Sobre mim (modo Edição ou Visualização) */}
                             <Row>
                                 <Col>
                                     {editando ? (
@@ -439,12 +392,8 @@ const UserProfileScreen = () => {
                                 </Col>
                             </Row>
                         </Card>
-                        {/* Término do Card "Sobre mim" */}
-
                     </Row>
                 </Col>
-                {/* Término da Coluna com botões do editar e Card "Sobre mim" */}
-
             </Row>
         </Container>
     </>
