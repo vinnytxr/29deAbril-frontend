@@ -606,12 +606,24 @@ const Categories = ({ categories }) => {
                 category.lessons.map((l, idx) => (
                   <Card body className='mb-2' onClick={() => navigate(`/student/lessons/${l.id}`)} style={{ 'cursor': 'pointer' }} key={idx}>
                     {/* <section style={{ 'position': 'relative' }} className='w-100'> */}
-                    <img src={`${BASE_URL}${l.banner}`} style={{ 'width': '150px', 'aspectRatio': '16/9', 'borderRadius': '10px', 'marginRight': '1rem' }} />
-                    {l.title}
                     {
                       user && logged && userCompleteTheLesson(l, user.id) &&
-                      <span className="completed-flag">Concluído</span>
+                      <div className='divCompleted'>
+                        <span className="completed-flag">Concluído</span>
+                      </div>
                     }
+                    <Row>
+                      <Col lg={3} md={6}>
+                        <img src={`${BASE_URL}${l.banner}`} className='img' />
+                      </Col>
+                      <Col lg={9} md={6} className='title'>
+                        {l.title}
+                      </Col>                       
+                    </Row>
+                    {/* {
+                      user && logged && userCompleteTheLesson(l, user.id) &&
+                      <span className="completed-flag">Concluído</span>
+                    } */}
                     {/* </section> */}
                   </Card>
                 ))
