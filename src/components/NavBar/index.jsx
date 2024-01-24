@@ -71,7 +71,7 @@ const FAIcon = ({ Icon }) => (
 const SideNav = () => {
   const navigate = useNavigate();
   return (
-      <Navbar className='home'>
+      <Navbar className='home-desktop show-desktop-version'>
         <Card className='cardSide'>
           <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" onClick={()=> navigate("/")} src={'https://i.ibb.co/r3QPmSt/logo.png'} />
 
@@ -81,7 +81,7 @@ const SideNav = () => {
               paddingRRight: '0px',
             }}
           >
-            <NavText text='GERAL' />
+            <NavText text='GERAL DESKTOP' />
             <NavGroupFlush>
               <NavLinkTo title='Home' href='/' icon={<FAIcon Icon={AiFillHome} />} />
               <StrictRoute roles={[Roles.STUDENT, Roles.ADMIN, Roles.PROFESSOR]}>
@@ -127,7 +127,7 @@ const SideNav = () => {
             </Card.Footer>
           </StrictRoute>
         </Card>
-      </Navbar >
+      </Navbar>
     );
   }
 

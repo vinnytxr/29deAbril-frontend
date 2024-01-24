@@ -1,4 +1,4 @@
-.home {
+.home-desktop {
   height: 100%;
   width: 15%;
   position: fixed;
@@ -14,7 +14,7 @@
   box-shadow: 1px 1px 5px rgb(213, 213, 213);
 }
 
-.home a {
+.home-desktop a {
   box-shadow: none !important;
   text-decoration: none !important;
 }
@@ -61,4 +61,18 @@
   border-top: 0px;
   margin-top: 0px;
   padding-top: 0px;
+}
+
+/* .md > | Medium devices and up (tablets) 768px and up */
+@media (min-width: 768px) {
+    .show-deskto-version {
+        display: block !important;
+    }
+}
+
+/* .sm < | Small devices and down (landscape, phones) less than 768px */
+@media (max-width: 767.98px) {
+    .show-desktop-version {
+        display: none !important;
+    }
 }
