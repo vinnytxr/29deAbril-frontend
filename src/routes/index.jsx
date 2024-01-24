@@ -10,6 +10,7 @@ import NewLessonScreen from '../pages/CreateLesson';
 import EditCourseScreen from '../pages/EditCourse';
 import Home from "../pages/Home/Home";
 import SideNav from '../components/NavBar';
+import SideNavMobile from '../components/NavBarMobile';
 import { AuthProvider, useAuthContext } from '../contexts/AuthContext';
 import { StrictRoute } from '../contexts/StrictRoute';
 import { Roles } from '../api/default';
@@ -34,10 +35,11 @@ import { EditCategoryLessonsOrder } from '../pages/EditCategoryLessonOrder';
 
 const SidebarLayout = () => (
   <>
+    <SideNavMobile />
     <SideNav />
     <Container>
       <Row>
-        <div className="col-2" />
+        <div className="col-lg-2 col-md-2" />
         <Col>
           <Outlet />
         </Col>
