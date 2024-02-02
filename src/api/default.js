@@ -1,5 +1,5 @@
- export const BASE_URL = 'https://portal-aulas-api.fly.dev';
-//export const BASE_URL = 'http://localhost:8080';
+ export const BASE_URL = 'http://srv461416.hstgr.cloud:8401';
+//export const BASE_URL = 'http://localhost:8401';
 
 export const AUTH_DEBUG = true
 
