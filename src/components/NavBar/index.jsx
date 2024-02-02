@@ -81,7 +81,7 @@ const SideNav = () => {
               paddingRRight: '0px',
             }}
           >
-            <NavText text='GERAL DESKTOP' />
+            <NavText text='GERAL' />
             <NavGroupFlush>
               <NavLinkTo title='Home' href='/' icon={<FAIcon Icon={AiFillHome} />} />
               <StrictRoute roles={[Roles.STUDENT, Roles.ADMIN, Roles.PROFESSOR]}>

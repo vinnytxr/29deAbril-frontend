@@ -94,7 +94,7 @@ const SideNavMobile = () => {
     }, [expanded])
 
   return (
-    <Navbar expanded={expanded} expand="lg" className="bg-body-tertiary show-mobile-version">
+    <Navbar expanded={expanded} expand="lg" className="bg-body-tertiary show-mobile-version" style={{ boxShadow: '1px 1px 5px rgb(213, 213, 213)'}}> 
       <Container>
       <Navbar.Toggle onClick={() => setExpanded(expanded ? false : "expanded")} aria-controls="responsive-navbar-nav" className='mr-auto' style={{border: 'none', color: 'black'}}>
       <FontAwesomeIcon
