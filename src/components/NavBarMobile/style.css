@@ -1,12 +1,11 @@
-.home-desktop {
+.home {
   height: 100%;
-  width: 15%;
+  width: 50%;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
   background-color: white;
-  overflow-x: hidden;
 
   transition: 0.5s;
   color: white;
@@ -14,7 +13,7 @@
   box-shadow: 1px 1px 5px rgb(213, 213, 213);
 }
 
-.home-desktop a {
+.home a {
   box-shadow: none !important;
   text-decoration: none !important;
 }
@@ -65,14 +64,14 @@
 
 /* .md > | Medium devices and up (tablets) 768px and up */
 @media (min-width: 768px) {
-    .show-deskto-version {
-        display: block !important;
+    .show-mobile-version {
+        display: none !important;
     }
 }
 
 /* .sm < | Small devices and down (landscape, phones) less than 768px */
 @media (max-width: 767.98px) {
-    .show-desktop-version {
-        display: none !important;
+    .show-mobile-version {
+        display: block !important;
     }
 }

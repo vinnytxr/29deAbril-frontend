@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Col, Container, Navbar, Row, Card, Button, Modal, Form, Dropdown, Nav } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { HttpStatus } from "../../api/default";
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../contexts/AuthContext'
@@ -195,7 +195,7 @@ const UserProfileScreen = () => {
                     <Dropdown className='dropdown-position-md-lg'>
                         <Dropdown.Toggle className='gear' style={{border: 'none'}} variant="none">
                             <FontAwesomeIcon
-                                icon={faBars} 
+                                icon={faPen} 
                                 /> 
                             </Dropdown.Toggle>
 
@@ -233,14 +233,14 @@ const UserProfileScreen = () => {
                             overlay={<Tooltip>Mudar foto de Perfil</Tooltip>}
                             >
                                 <label className='d-flex justify-content-center' htmlFor="input-files-user-photo-update" >
-                                {user.photo ? <img src={user.photo} style={{ width: '70%', height: '50%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile"/>
+                                {user.photo ? <img src={user.photo} style={{ width: '70%', height: '50%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer', paddingTop: '10px' }} alt="profile"/>
                                     : <Avatar
                                     name={user.name && user.name.split(' ')[0]}
                                     color="#0f5b7a"
                                     size={150}
                                     textSizeRatio={2}
                                     round={true}
-                                    style={{ cursor: 'pointer' }}
+                                    style={{ cursor: 'pointer', paddingTop: '10px' }}
                                     />}
                                 </label>
                             </OverlayTrigger>
