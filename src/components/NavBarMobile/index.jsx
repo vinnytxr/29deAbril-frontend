@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './style.css'
-import { Navbar, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Navbar, Card, ListGroup, ListGroupItem, Nav, NavItem, NavDropdown, Container, Collapse, Fade } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
 import { SiBookstack, SiNotepadplusplus } from 'react-icons/si'
 import { FaBookmark, FaUser } from 'react-icons/fa'
 import { ImBooks } from 'react-icons/im'
@@ -57,6 +59,8 @@ const NavGroupFlush = ({ children }) => (
       style={{
         paddingLeft: '15px',
         paddingRight: '0px',
+        paddingTop: '0px',
+        paddingBottom: '0px',
       }}
     >
       {children}
@@ -68,19 +72,40 @@ const FAIcon = ({ Icon }) => (
   <Icon style={{ color: '#8a9094', fontSize: '18' }} className="me-2" />
 )
 
-const SideNav = () => {
-  const navigate = useNavigate();
-  return (
-      <Navbar className='home-desktop show-desktop-version'>
-        <Card className='cardSide'>
-          <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" onClick={()=> navigate("/")} src={'https://i.ibb.co/r3QPmSt/logo.png'} />
+const SideNavMobile = () => {
+    const [expanded, setExpanded] = useState(false);
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            const navbar = document.getElementById('responsive-navbar-nav');
+            const toggleBtn = document.querySelector('.navbar-toggler');
 
-          <Card.Body
-            style={{
-              paddingLeft: '0px',
-              paddingRRight: '0px',
-            }}
-          >
+            if (navbar && toggleBtn && !navbar.contains(event.target) && !toggleBtn.contains(event.target)) {
+                setExpanded(false);
+            }
+        };
+
+        document.addEventListener('click', handleOutsideClick);
+
+        return () => {
+          document.removeEventListener('click', handleOutsideClick);
+        };
+    }, [expanded])
+
+  return (
+    <Navbar expanded={expanded} expand="lg" className="bg-body-tertiary show-mobile-version" style={{ boxShadow: '1px 1px 5px rgb(213, 213, 213)'}}> 
+      <Container>
+      <Navbar.Toggle onClick={() => setExpanded(expanded ? false : "expanded")} aria-controls="responsive-navbar-nav" className='mr-auto' style={{border: 'none', color: 'black'}}>
+      <FontAwesomeIcon
+        icon={faBars} 
+      /> 
+      </Navbar.Toggle>
+        <Navbar.Brand onClick={()=> navigate("/")}>
+            <img style={{width: '200px'}} src={'https://i.ibb.co/r3QPmSt/logo.png'} alt="Logo" />
+        </Navbar.Brand>
+        <Navbar.Collapse id="responsive-navbar-nav">
+      <Nav onClick={() => setExpanded(false)} className='me-auto home'>
             <NavText text='GERAL' />
             <NavGroupFlush>
               <NavLinkTo title='Home' href='/' icon={<FAIcon Icon={AiFillHome} />} />
@@ -120,15 +145,20 @@ const SideNav = () => {
               </NavGroupFlush>
             </StrictRoute>
             
-          </Card.Body>
+            <div style={{height: '15px'}}>
+            </div>
+
           <StrictRoute roles={[Roles.STUDENT, Roles.ADMIN, Roles.PROFESSOR]}>
-            <Card.Footer style={{backgroundColor: "white"}}>
-              <NavLinkTo title='Sair' href='/logout' icon={<FAIcon Icon={TbLogin} />} />
-            </Card.Footer>
+              <NavGroupFlush>
+                <NavLinkTo title='Sair' href='/logout' icon={<FAIcon Icon={TbLogin} />} />
+              </NavGroupFlush>
           </StrictRoute>
-        </Card>
-      </Navbar>
+      </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar> 
     );
   }
 
-  export default SideNav;
+  export default SideNavMobile;
+
