@@ -1,4 +1,4 @@
- export const BASE_URL = 'http://srv461416.hstgr.cloud:8401';
+ export const BASE_URL = 'https://api.29deabril.cloud';
 //export const BASE_URL = 'http://localhost:8401';
 
 export const AUTH_DEBUG = true
