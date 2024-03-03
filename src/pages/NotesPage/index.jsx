@@ -146,14 +146,14 @@ const NotesPage = () => {
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text>
-                            <Avatar
-                                class
-                                name={user?.name}
+                            {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                            : <Avatar
+                                name={(user?.name && user?.name.split(' ')[0]) || "O i"}
                                 color="#0f5b7a"
                                 size={30}
                                 textSizeRatio={2}
                                 round={true}
-                            />
+                            />}
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Container>

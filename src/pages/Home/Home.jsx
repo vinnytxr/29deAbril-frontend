@@ -10,7 +10,7 @@ import Navbar from 'react-bootstrap/Navbar'
 
 //Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMagnifyingGlass, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
 import { useAuthContext } from '../../contexts/AuthContext'
@@ -68,7 +68,15 @@ function Home() {
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
               <Navbar.Text>
-                {user && (
+                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                  : <Avatar
+                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                      color="#0f5b7a"
+                      size={30}
+                      textSizeRatio={2}
+                      round={true}
+                  />}
+                {/* {user && (
                   <Avatar
                     name={user.name}
                     color="#0f5b7a"
@@ -76,7 +84,7 @@ function Home() {
                     textSizeRatio={2}
                     round={true}
                   />
-                )}
+                )} */}
               </Navbar.Text>
             </Navbar.Collapse>
           </Navbar>

@@ -64,7 +64,7 @@ const UserProfileScreen = () => {
             }
         }
         fetchFunction()
-    }, [imagesToUpdate])
+    }, [imagesToUpdate, refreshUserOnContext, user])
 
     // Formata data em String para exibição no perfil
     const date = (dateString) => {
@@ -101,7 +101,7 @@ const UserProfileScreen = () => {
     const editar = () => {
         setNewName(user.name)
         setAboutText(user.about)
-        setNewLink(user.contactLink == "https://www.exemplo.com" ? "": user.contactLink)
+        setNewLink(user.contactLink === "https://www.exemplo.com" ? "": user.contactLink)
         setEditando(true)
     }
 
@@ -206,15 +206,16 @@ const UserProfileScreen = () => {
                     </Dropdown> 
 
                     <Navbar.Collapse className="justify-content-end">
-                        <Nav>
-                            <Avatar
-                                name={user.name}
+                        <Nav className='nav-collapse'>
+                            {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                            : <Avatar
+                                name={(user?.name && user?.name.split(' ')[0]) || "O i"}
                                 color="#0f5b7a"
-                                size={34}
+                                size={30}
                                 textSizeRatio={2}
                                 round={true}
-                            />
-                      </Nav>
+                            />}
+                        </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
@@ -385,7 +386,7 @@ const UserProfileScreen = () => {
                                     ) : (
                                         <div className="mb-3 d-flex justify-content-between align-items-center">
                                             <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
-                                                {user.contactLink == "https://www.exemplo.com" ? "": user.contactLink}
+                                                {user.contactLink === "https://www.exemplo.com" ? "": user.contactLink}
                                             </p>
                                         </div>
                                     )}

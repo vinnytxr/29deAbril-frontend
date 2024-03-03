@@ -362,7 +362,7 @@ export const StudentLessonPage = () => {
             <Col xs={12}>
               <section style={{ display: 'flex', justifyContent: 'space-between' }}>
                 {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
-                <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
+                <Button className='button-all-lesson' onClick={() => navigate(`/student/courses/${lesson.course}`)}>
                   Ver todas as aulas
                 </Button>
                 {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}

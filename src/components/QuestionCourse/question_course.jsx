@@ -188,7 +188,7 @@ const QuestionCourse = ({ dataLesson }) => {
 
   return (
     <div className="questionLesson">
-      <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }}
+      <Button className='button-question'
         onClick={handleShow}>
         Perguntas
       </Button>
@@ -248,7 +248,7 @@ const QuestionCourse = ({ dataLesson }) => {
                   <Accordion.Header className='accordion-header'>
                     <Row>
                       <Row>
-                        <Col>
+                        <Col className='col-3'>
                           {item.user.photo ? <img src={`${BASE_URL}${item.user.photo}`} style={{ width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
                             : <Avatar
                               name={item.user.name && item.user.name.split(' ')[0]}
@@ -258,11 +258,11 @@ const QuestionCourse = ({ dataLesson }) => {
                               style={{ cursor: 'pointer' }}
                             />}
                         </Col>
-                      </Row>
-                      <Row className='mt-1'>
-                        <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216' }}>
-                          {item.user.name}
-                        </div>
+                        <Col className='col-8'>
+                          <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216', paddingTop: '5px' }}>
+                            {item.user.name}
+                          </div>
+                        </Col>
                       </Row>
                       <Row>
                         {editQuestion && editFormId === item.id ? (
@@ -327,8 +327,8 @@ const QuestionCourse = ({ dataLesson }) => {
                                     Editar pergunta <FontAwesomeIcon icon={faEdit} />
                                   </Button>
 
-                                  <Button className="questionLesson cancel-question" style={{ width: '100px' }} onClick={() => rmQuestion(item.id)}>
-                                    Deletar <FontAwesomeIcon icon={faTrash} />
+                                  <Button className="questionLesson cancel-question" style={{ width: '50px' }} onClick={() => rmQuestion(item.id)}>
+                                    <FontAwesomeIcon icon={faTrash} />
                                   </Button>
                                 </>
                               )}
@@ -342,7 +342,7 @@ const QuestionCourse = ({ dataLesson }) => {
                           <ListGroupItem key={reply.id} className='mt-2'>
                             <Row>
                               <Row>
-                                <Col xs={1}>
+                                <Col className='col-lg-1 col-3'>
                                   {reply.user.photo ? <img src={`${BASE_URL}${reply.user.photo}`} style={{ width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
                                     : <Avatar
                                       name={reply.user.name && reply.user.name.split(' ')[0]}
@@ -352,11 +352,11 @@ const QuestionCourse = ({ dataLesson }) => {
                                       style={{ cursor: 'pointer' }}
                                     />}
                                 </Col>
-                              </Row>
-                              <Row style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216' }}>
-                                <div>
-                                  {reply.user.name}
-                                </div>
+                                <Col className='col-lg-11 col-8'>
+                                  <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216' }}>
+                                    {reply.user.name}
+                                  </div>
+                                </Col>
                               </Row>
                               <Col>
                                 {editReply && editFormId === reply.id ? (
@@ -399,7 +399,7 @@ const QuestionCourse = ({ dataLesson }) => {
                               </Col>
                             </Row>
                             {reply.user.id === user.id &&
-                              <Row className='me-1 mt-1' style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                              <Row className='me-1 mt-2' style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 {editReply && editFormId === reply.id ? (
                                   <>
                                     <Button style={{ width: '100px' }} className="questionLesson submit-question" onClick={() => upReply(reply.content, item.id, reply.id)}>

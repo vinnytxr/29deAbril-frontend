@@ -52,7 +52,7 @@ function CardProfessorProfile() {
                     <>
                         <Card>
                             <Row className='mt-4'>
-                                <Col className='col-4 ms-2'>
+                                <Col className='col-lg-4 col-12  mb-4'>
                                     <Row>
                                         <Col className="d-flex justify-content-center align-items-center flex-column">
                                             {data.photo ? <img src={data.photo} style={{ width: '70%', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
@@ -64,14 +64,14 @@ function CardProfessorProfile() {
                                                     round={true}
                                                     style={{ cursor: 'pointer' }}
                                                 />}
-                                            <Col className="d-flex align-items-center gap-1">
+                                            {/* <Col className="d-flex align-items-center gap-1">
                                                 <Card.Title
                                                     className="fw-bold fs-4 mt-4 mb-4 ms-1"
                                                     style={{ color: '#727273' }}
                                                 >
                                                     {data.name && data.name.split(' ')[0]}
                                                 </Card.Title>
-                                            </Col>
+                                            </Col> */}
                                         </Col>
                                     </Row>
                                 </Col>
@@ -82,7 +82,7 @@ function CardProfessorProfile() {
                                             Sobre o docente {data.name}
                                         </Card.Title>
                                     </Row>
-                                    <Row >
+                                    <Row>
                                         <Col>
                                             <Card.Text className="mt-1 mb-0 fs-6" style={{ color: '#727273' }}>
                                                 {data.about}
@@ -90,7 +90,7 @@ function CardProfessorProfile() {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Card.Text className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
+                                        <Card.Text className="mt-3 mb-0 fs-6" style={{ color: '#727273' }}>
                                             {date(data.created)}
                                         </Card.Text>
                                     </Row>
