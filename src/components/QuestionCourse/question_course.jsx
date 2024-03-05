@@ -246,35 +246,33 @@ const QuestionCourse = ({ dataLesson }) => {
               <Card key={item.id}>
                 <Accordion.Item eventKey={item.id.toString()} key={item.id}>
                   <Accordion.Header className='accordion-header'>
-                    <Row>
-                      <Row>
-                        <Col className='col-3'>
-                          {item.user.photo ? <img src={`${BASE_URL}${item.user.photo}`} style={{ width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
-                            : <Avatar
-                              name={item.user.name && item.user.name.split(' ')[0]}
-                              color="#0E6216"
-                              size={50}
-                              round={true}
-                              style={{ cursor: 'pointer' }}
-                            />}
-                        </Col>
-                        <Col className='col-8'>
-                          <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216', paddingTop: '5px' }}>
-                            {item.user.name}
-                          </div>
-                        </Col>
-                      </Row>
-                      <Row>
+                    <Row style={{ minWidth: '100%' }}>
+                      <Col lg={1} xs={3}>
+                        {item.user.photo ? <img src={`${BASE_URL}${item.user.photo}`} style={{ width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                        : <Avatar
+                          name={item.user.name && item.user.name.split(' ')[0]}
+                          color="#0E6216"
+                          size={50}
+                          round={true}
+                          style={{ cursor: 'pointer' }}
+                        />}
+                      </Col>
+                      <Col lg={11} xs={8}>
+                        <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216', paddingTop: '5px'}}>
+                          {item.user.name}
+                        </div>
+                      </Col>
+                      <div>
                         {editQuestion && editFormId === item.id ? (
                           <></>
                         ) : (
                           <Row className='mt-3' >
-                            <div className="text-justify" style={{ overflowWrap: 'break-word' }}>
+                            <div style={{ overflowWrap: 'break-word' }}>
                               {item.content}
                             </div>
                           </Row>
                         )}
-                      </Row>
+                      </div>
                     </Row>
                   </Accordion.Header>
                   <Accordion.Body>
@@ -342,7 +340,7 @@ const QuestionCourse = ({ dataLesson }) => {
                           <ListGroupItem key={reply.id} className='mt-2'>
                             <Row>
                               <Row>
-                                <Col className='col-lg-1 col-3'>
+                                <Col lg={1} xs={3}>
                                   {reply.user.photo ? <img src={`${BASE_URL}${reply.user.photo}`} style={{ width: 'auto', height: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
                                     : <Avatar
                                       name={reply.user.name && reply.user.name.split(' ')[0]}
@@ -352,7 +350,7 @@ const QuestionCourse = ({ dataLesson }) => {
                                       style={{ cursor: 'pointer' }}
                                     />}
                                 </Col>
-                                <Col className='col-lg-11 col-8'>
+                                <Col lg={11} xs={8}>
                                   <div style={{ fontWeight: 'bold', fontSize: '18px', color: '#0E6216' }}>
                                     {reply.user.name}
                                   </div>

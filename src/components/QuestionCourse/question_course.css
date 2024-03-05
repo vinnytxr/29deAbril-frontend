@@ -21,6 +21,11 @@
     /* Cor de fundo desejada */
 }
 
+/* .questionLesson .lesson-accordion .accordion-header {
+    display: flex;
+    flex-direction: column;
+} */
+
 .questionLesson .lesson-accordion .accordion-header button {
     background-color: white;
     color: black;

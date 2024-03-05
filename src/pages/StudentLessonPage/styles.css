@@ -27,3 +27,16 @@
   border-color: #0E6216;
   border-radius: 10px; 
 }
+
+.container-student-lesson-page .flag-completed-lesson, .container-student-lesson-page .buttons{
+  margin-left: 1px;
+}
+
+@media (max-width:991.98px){
+  .container-student-lesson-page .flag-completed-lesson, .container-student-lesson-page .buttons{
+    flex-direction: column;
+  }
+  .container-student-lesson-page .flag-completed-lesson, .container-student-lesson-page .buttons .btn-apoio{
+    margin-top: 15px;
+  }
+}
