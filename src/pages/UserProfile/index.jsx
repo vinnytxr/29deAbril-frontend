@@ -207,7 +207,7 @@ const UserProfileScreen = () => {
 
                     <Navbar.Collapse className="justify-content-end">
                         <Nav className='nav-collapse'>
-                            {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                            {user && user.photo ? <img src={user.photo} style={{ width: '34px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
                             : <Avatar
                                 name={(user?.name && user?.name.split(' ')[0]) || "O i"}
                                 color="#0f5b7a"
