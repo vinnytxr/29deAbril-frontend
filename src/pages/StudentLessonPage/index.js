@@ -340,15 +340,15 @@ export const StudentLessonPage = () => {
             </section>}
           </Col>
           {logged && controle.enrolled &&
-            <Col>
-              {
-                <Button className='btn btn-success' style={{ 'marginRight': '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
-              }
-              {
-                !!lesson.appendix &&
-                <Button className='btn btn-success' onClick={() => window.open(lesson.appendix, '_blank')} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
-              }
-            </Col>
+            <Row className='buttons'>
+                {
+                  <Button className='' style={{ 'marginRight': '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
+                }
+                {
+                  !!lesson.appendix &&
+                  <Button className='btn-apoio' onClick={() => window.open(lesson.appendix, '_blank')} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
+                }
+            </Row>
           }
           <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
             <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
@@ -362,7 +362,7 @@ export const StudentLessonPage = () => {
             <Col xs={12}>
               <section style={{ display: 'flex', justifyContent: 'space-between' }}>
                 {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
-                <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
+                <Button className='button-all-lesson' onClick={() => navigate(`/student/courses/${lesson.course}`)}>
                   Ver todas as aulas
                 </Button>
                 {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}

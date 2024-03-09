@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Col, Container, Navbar, Row, Pagination } from 'react-bootstrap'
 import Avatar from 'react-avatar'
+import { useAuthContext } from '../../contexts/AuthContext'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
 import CardCourses from '../../components/CardCourses'
@@ -10,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
 
 const ProfessorCoursesPage = () => {
+    const { user, token } = useAuthContext();
     const [userData, setUserData] = useState({ name: "" });
     const [data, setData] = useState({})
     const [isFetched, setIsFetched] = useState(false)
@@ -55,6 +57,7 @@ const ProfessorCoursesPage = () => {
         const userData = localStorage.getItem('userData')
         if (userData != null)
             setUserData(JSON.parse(userData))
+        console.log('teste ',userData)
     }, [])
 
     useEffect(() => {
@@ -87,14 +90,14 @@ const ProfessorCoursesPage = () => {
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text>
-                            <Avatar
-                                class
-                                name="Christofer"
+                            {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                            : <Avatar
+                                name={(user?.name && user?.name.split(' ')[0]) || "O i"}
                                 color="#0f5b7a"
                                 size={30}
                                 textSizeRatio={2}
                                 round={true}
-                            />
+                            />}
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Container>

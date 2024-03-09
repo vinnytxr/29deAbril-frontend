@@ -46,4 +46,8 @@
     .navbar-brand-visibility {
         display: none;
     }
+
+    .nav-collapse{
+      display: none;
+    }
 }
