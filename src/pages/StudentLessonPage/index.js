@@ -10,8 +10,8 @@ import { toast } from 'react-toastify';
 import { UserTools } from '../../tools/user'
 import QuestionCourse from '../../components/QuestionCourse/question_course';
 import { HiDownload } from "react-icons/hi"
-
-
+import Navbar from 'react-bootstrap/Navbar'
+import Avatar from 'react-avatar'
 import './styles.css'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -310,7 +310,42 @@ export const StudentLessonPage = () => {
       </Modal>
 
       <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
-        <Row>
+        <Navbar>
+            {logged && user ? (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+              </p>
+            ) : (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; BEM-VINDO!
+              </p>
+            )}
+
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                  : <Avatar
+                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                      color="#0f5b7a"
+                      size={30}
+                      textSizeRatio={2}
+                      round={true}
+                  />}
+                {/* {user && (
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                )} */}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Navbar>
+
+        <Row className='mt-5'>
           {
             videoPlayer.completed &&
             <Col xs={12} style={{ marginTop: '0.5rem' }}>
@@ -340,15 +375,15 @@ export const StudentLessonPage = () => {
             </section>}
           </Col>
           {logged && controle.enrolled &&
-            <Col>
-              {
-                <Button className='btn btn-success' style={{ 'marginRight': '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
-              }
-              {
-                !!lesson.appendix &&
-                <Button className='btn btn-success' onClick={() => window.open(lesson.appendix, '_blank')} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
-              }
-            </Col>
+            <Row className='buttons'>
+                {
+                  <Button className='' style={{ 'marginRight': '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
+                }
+                {
+                  !!lesson.appendix &&
+                  <Button className='btn-apoio' onClick={() => window.open(lesson.appendix, '_blank')} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
+                }
+            </Row>
           }
           <Col xs={12} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
             <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
@@ -362,7 +397,7 @@ export const StudentLessonPage = () => {
             <Col xs={12}>
               <section style={{ display: 'flex', justifyContent: 'space-between' }}>
                 {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
-                <Button style={{ width: '22%', fontWeight: 'bold', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px' }} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
+                <Button className='button-all-lesson' onClick={() => navigate(`/student/courses/${lesson.course}`)}>
                   Ver todas as aulas
                 </Button>
                 {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}

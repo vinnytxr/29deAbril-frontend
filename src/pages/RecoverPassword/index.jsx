@@ -7,6 +7,7 @@ import { Form, Spinner } from 'react-bootstrap';
 import { PasswordAPI } from "../../api/password";
 import { HttpStatus } from "../../api/default";
 import { toast } from 'react-toastify';
+import logo from '../../assets/images/logo.png';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Style
@@ -100,7 +101,7 @@ const PasswordRecoveryPage = () => {
                                     <img
                                         style={{ width: '11em' }}
                                         onClick={() => {navigate('/')}}
-                                        src="https://i.ibb.co/r3QPmSt/logo.png"
+                                        src={logo}
                                         alt="logo"
                                         border="0"
                                     />

@@ -9,6 +9,7 @@ import { PasswordAPI } from "../../api/password"
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuthContext } from "../../contexts/AuthContext";
+import logo from '../../assets/images/logo.png';
 import './style.css'
 
 const ChangePasswordPage = () => {
@@ -116,7 +117,7 @@ const ChangePasswordPage = () => {
                                     <img
                                         style={{ width: '11em' }}
                                         onClick={() => {navigate('/')}}
-                                        src="https://i.ibb.co/r3QPmSt/logo.png"
+                                        src={logo}
                                         alt="logo"
                                         border="0"
                                     />

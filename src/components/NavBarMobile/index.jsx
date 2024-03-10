@@ -13,7 +13,7 @@ import { BsKeyFill, BsReverseListColumnsReverse } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router-dom';
 import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
 import { Roles } from '../../api/default';
-import { faNoteSticky } from '@fortawesome/free-solid-svg-icons';
+import logo from '../../assets/images/logo.png';
 
 
 const NavLinkTo = ({ href, title, icon }) => (
@@ -102,7 +102,7 @@ const SideNavMobile = () => {
       /> 
       </Navbar.Toggle>
         <Navbar.Brand onClick={()=> navigate("/")}>
-            <img style={{width: '200px'}} src={'https://i.ibb.co/r3QPmSt/logo.png'} alt="Logo" />
+            <img style={{width: '150px'}} src={logo} alt="Logo" />
         </Navbar.Brand>
         <Navbar.Collapse id="responsive-navbar-nav">
       <Nav onClick={() => setExpanded(false)} className='me-auto home'>

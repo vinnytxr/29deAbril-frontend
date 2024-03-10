@@ -3,6 +3,14 @@
     color: #ffffff;
 }
 
+.questionLesson .button-question{
+    min-width: 230px;
+    font-weight: bold;
+    background-color: #0E6216; 
+    border-color: #0E6216;
+    border-radius: 10px; 
+}
+
 .questionLesson .body {
     background-color: #DBDBDB;
     /* Cor de fundo desejada */
@@ -12,6 +20,11 @@
     background-color: #FFFFFF;
     /* Cor de fundo desejada */
 }
+
+/* .questionLesson .lesson-accordion .accordion-header {
+    display: flex;
+    flex-direction: column;
+} */
 
 .questionLesson .lesson-accordion .accordion-header button {
     background-color: white;
@@ -23,7 +36,7 @@
     border: 2px solid #dc3545;
     background-color: #dc3545;
 }
-  
+
 .questionLesson .cancel-question:active {
     background-color: white;
     color: #dc3545;
