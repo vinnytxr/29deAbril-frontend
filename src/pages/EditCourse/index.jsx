@@ -15,6 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAdd, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { CategoryAPI } from '../../api/category'
 import { BASE_URL } from '../../api/default'
+import Navbar from 'react-bootstrap/Navbar'
+import Avatar from 'react-avatar'
 
 const PostFormStatus = {
   ENVIADO: 'ENVIADO',
@@ -40,7 +42,7 @@ export const EditCourseScreen = () => {
 
   const { id } = useParams()
 
-  const { user } = useAuthContext()
+  const { logged, user } = useAuthContext()
 
   const [estado, setEstado] = useState({
     title: undefined,
@@ -235,7 +237,42 @@ export const EditCourseScreen = () => {
   ) : courseExists && !!user ? (
     <section className="box-course pb-1 pt-1">
       <Container fluid className="container-new-course container-course mb-5">
-        <Form>
+        <Navbar>
+            {logged && user ? (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+              </p>
+            ) : (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; BEM-VINDO!
+              </p>
+            )}
+
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                  : <Avatar
+                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                      color="#0f5b7a"
+                      size={30}
+                      textSizeRatio={2}
+                      round={true}
+                  />}
+                {/* {user && (
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                )} */}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Navbar>
+
+        <Form className="mt-4">
           <Row>
             <Col lg={12} className="mt-4">
               <Row>
