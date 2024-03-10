@@ -11,7 +11,7 @@ import { BsKeyFill, BsReverseListColumnsReverse } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router-dom';
 import { OnlyNotLogged, StrictRoute } from '../../contexts/StrictRoute';
 import { Roles } from '../../api/default';
-import { faNoteSticky } from '@fortawesome/free-solid-svg-icons';
+import logo from '../../assets/images/logo.png';
 
 
 const NavLinkTo = ({ href, title, icon }) => (
@@ -73,7 +73,7 @@ const SideNav = () => {
   return (
       <Navbar className='home-desktop show-desktop-version'>
         <Card className='cardSide'>
-          <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" onClick={()=> navigate("/")} src={'https://i.ibb.co/r3QPmSt/logo.png'} />
+          <Card.Img className="cardSide-img-top mx-auto mt-2" variant="top" onClick={()=> navigate("/")} src={logo} />
 
           <Card.Body
             style={{

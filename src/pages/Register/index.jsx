@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthAPI } from "../../api/auth-api";
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import logo from '../../assets/images/logo.png';
 
 
 export default function RegisterScreen() {
@@ -205,12 +206,12 @@ export default function RegisterScreen() {
               onClick={() => {
                 window.location.href = '/'
               }}
-              src="https://i.ibb.co/r3QPmSt/logo.png"
+              src={logo}
               alt="logo"
               border="0"
             />
           </div>
-          <div className="col d-flex justify-content-end">
+          <div className="col d-flex justify-content-md-end justify-content-start">
             <p className="mt-3">
               Já tem conta? 
               <Link className="fw-bold link-termos" to="/login">
