@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthAPI } from "../../api/auth-api";
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import logo from '../../assets/images/logo.png';
 
 
 export default function RegisterScreen() {
@@ -17,7 +18,7 @@ export default function RegisterScreen() {
     name: '',
     email: '',
     password: '',
-    cpf: '',
+    ra: '',
     about: 'Conte algo sobre você!',
     role: [1],
     birth: '',
@@ -54,16 +55,16 @@ export default function RegisterScreen() {
       theme: 'light',
     })
 
-  function formatCPF(cpf) {
-    const formattedValue = cpf.replace(/\D/g, '')
-    return formattedValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+  function formatRA(ra) {
+    const formattedValue = ra.replace(/\D/g, '')
+    return formattedValue.slice(0, 8)
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "cpf") {
-        if (value.length > 14) {
+    if (name === "ra") {
+        if (value.length > 8) {
             return;
         }
         const formattedValue = value.replace(/\D/g, '');
@@ -122,50 +123,25 @@ export default function RegisterScreen() {
 
 
 
-  const validarCPF = (cpf) => {
-    // Elimina CPFs inválidos conhecidos
+  const validarRA = (ra) => {
+    // Elimina RAs inválidos conhecidos
     if (
-      cpf.length !== 11 ||
-      cpf === '00000000000' ||
-      cpf === '11111111111' ||
-      cpf === '22222222222' ||
-      cpf === '33333333333' ||
-      cpf === '44444444444' ||
-      cpf === '55555555555' ||
-      cpf === '66666666666' ||
-      cpf === '77777777777' ||
-      cpf === '88888888888' ||
-      cpf === '99999999999'
+      ra.length !== 8 ||
+      ra === '00000000' ||
+      ra === '11111111' ||
+      ra === '22222222' ||
+      ra === '33333333' ||
+      ra === '44444444' ||
+      ra === '55555555' ||
+      ra === '66666666' ||
+      ra === '77777777' ||
+      ra === '88888888' ||
+      ra === '99999999'
     ) {
       //setIsLoading(false)
       return false
     }
 
-    // Valida o primeiro dígito verificador
-    let soma = 0
-    for (let i = 0; i < 9; i++) {
-      soma += parseInt(cpf.charAt(i)) * (10 - i)
-    }
-    let resto = 11 - (soma % 11)
-    let digitoVerificador1 = resto === 10 || resto === 11 ? 0 : resto
-    if (digitoVerificador1 !== parseInt(cpf.charAt(9))) {
-      //setIsLoading(false)
-      return false
-    }
-
-    // Valida o segundo dígito verificador
-    soma = 0
-    for (let i = 0; i < 10; i++) {
-      soma += parseInt(cpf.charAt(i)) * (11 - i)
-    }
-    resto = 11 - (soma % 11)
-    let digitoVerificador2 = resto === 10 || resto === 11 ? 0 : resto
-    if (digitoVerificador2 !== parseInt(cpf.charAt(10))) {
-      //setIsLoading(false)
-      return false
-    }
-
-    // CPF é válido
     return true
   }
 
@@ -174,7 +150,6 @@ export default function RegisterScreen() {
         //console.log("Validade date:", values.birth)
         const errors = {};
         const regexemail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
-        const regexcpf = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 
         if (!values.name) {
             errors.name = "Digite um nome!";
@@ -211,12 +186,10 @@ export default function RegisterScreen() {
             }
         }
 
-        if (!values.cpf) {
-            errors.cpf = "Digite um cpf!";
-        } else if (!regexcpf.test(formatCPF(values.cpf))) {
-            errors.cpf = "Digite um cpf com formato válido!";
-        } else if (!validarCPF(formValues.cpf.replace(/\D/g, ''))) {
-            errors.cpf = "Número do cpf é inválido!";
+        if (!values.ra) {
+            errors.ra = "Digite um RA!";
+        } else if (!validarRA(formValues.ra.replace(/\D/g, ''))) {
+            errors.ra = "Número do RA é inválido!";
         }
 
         setIsLoading(false)
@@ -233,12 +206,12 @@ export default function RegisterScreen() {
               onClick={() => {
                 window.location.href = '/'
               }}
-              src="https://i.ibb.co/r3QPmSt/logo.png"
+              src={logo}
               alt="logo"
               border="0"
             />
           </div>
-          <div className="col d-flex justify-content-end">
+          <div className="col d-flex justify-content-md-end justify-content-start">
             <p className="mt-3">
               Já tem conta? 
               <Link className="fw-bold link-termos" to="/login">
@@ -304,15 +277,15 @@ export default function RegisterScreen() {
             <div className="mt-3">
               <input
                 type="text"
-                name="cpf"
-                placeholder="CPF *"
+                name="ra"
+                placeholder="RA *"
                 className="form-control"
-                value={formatCPF(formValues.cpf)}
+                value={formatRA(formValues.ra)}
                 onChange={handleChange}
               />
             </div>
             <p className="ps-2" style={{ color: 'red' }}>
-              {formErrors.cpf}
+              {formErrors.ra}
             </p>
             <div className="mt-3">
               <input

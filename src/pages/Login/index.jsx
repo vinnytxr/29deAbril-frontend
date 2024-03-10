@@ -6,6 +6,7 @@ import { Form, Spinner } from 'react-bootstrap'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
 import { Container, Row, Col } from 'react-bootstrap';
+import logo from '../../assets/images/logo.png';
 // Style
 import './style.css'
 
@@ -120,7 +121,7 @@ const LoginPage = () => {
                     onClick={() => {
                       window.location.href = '/'
                     }}
-                    src="https://i.ibb.co/r3QPmSt/logo.png"
+                    src={logo}
                     alt="logo"
                     border="0"
                   />
@@ -140,7 +141,7 @@ const LoginPage = () => {
               </Row>
             </Col>
             <p className="fs-6 mb-1 ms-1">
-              Bem-vindo(a) a plataforma da Let Cursos.
+              Bem-vindo(a) a plataforma à Plataforma 29deAbril.
             </p>
             <p className="fw-bold fs-4 ms-1">Entre para estudar!</p>
           </Row>
