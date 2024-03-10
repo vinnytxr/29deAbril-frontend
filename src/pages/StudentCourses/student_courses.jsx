@@ -80,7 +80,9 @@ const StudentCoursesPage = () => {
     }, [userData, activePage, pageSize])
 
     return (
-        <Row>
+        <>
+        <Container fluid>
+        <Col>
             <Row className="home-card mt-5">
                 <div className="col">
                     <h1 className="mb-3 fs-5 fw-bold">Meus cursos</h1>
@@ -114,7 +116,9 @@ const StudentCoursesPage = () => {
                     {renderPagination()}
                 </Col>
             </Row>
-        </Row>
+        </Col>
+        </Container>
+        </>
     )
 }
 

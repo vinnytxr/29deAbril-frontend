@@ -105,7 +105,9 @@ const BookmarksPage = () => {
     }, [userData, activePage, pageSize])
 
     return (
-        <Row>
+        <>
+        <Container fluid>
+        <Col>
             <Row className="home-card mt-5">
                 <div className="col">
                     <h1 className="mb-3 fs-5 fw-bold">Booksmarks</h1>
@@ -139,7 +141,9 @@ const BookmarksPage = () => {
                     {renderPagination()}
                 </Col>
             </Row>
-        </Row>
+        </Col>
+        </Container>
+        </>
     )
 }
 
