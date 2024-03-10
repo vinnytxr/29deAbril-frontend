@@ -8,6 +8,8 @@ import CardCourses from '../../components/CardCourses'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHandPointLeft } from '@fortawesome/free-solid-svg-icons'
 import { useAuthContext } from '../../contexts/AuthContext'
+import Navbar from 'react-bootstrap/Navbar'
+import Avatar from 'react-avatar'
 
 const StudentCoursesPage = () => {
     const [userData, setUserData] = useState({ name: "" });
@@ -15,6 +17,7 @@ const StudentCoursesPage = () => {
     const [isFetched, setIsFetched] = useState(false);
     const [activePage, setActivePage] = useState(1);
     const [amountPages, setAmountPages] = useState(6);
+    const { logged, user } = useAuthContext();
 
     const navigate = useNavigate();
 
@@ -80,7 +83,44 @@ const StudentCoursesPage = () => {
     }, [userData, activePage, pageSize])
 
     return (
-        <Row>
+        <>
+        <Container fluid>
+        <Col>
+        <Navbar>
+            {logged && user ? (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+              </p>
+            ) : (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; BEM-VINDO!
+              </p>
+            )}
+
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                  : <Avatar
+                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                      color="#0f5b7a"
+                      size={30}
+                      textSizeRatio={2}
+                      round={true}
+                  />}
+                {/* {user && (
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                )} */}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Navbar>
+
             <Row className="home-card mt-5">
                 <div className="col">
                     <h1 className="mb-3 fs-5 fw-bold">Meus cursos</h1>
@@ -114,7 +154,9 @@ const StudentCoursesPage = () => {
                     {renderPagination()}
                 </Col>
             </Row>
-        </Row>
+        </Col>
+        </Container>
+        </>
     )
 }
 

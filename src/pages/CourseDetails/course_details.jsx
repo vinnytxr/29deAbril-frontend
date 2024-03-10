@@ -20,6 +20,8 @@ import { BookmarkAPI } from '../../api/bookmark'
 import { UserTools } from '../../tools/user'
 import { HiDownload } from "react-icons/hi"
 import { CategoryAPI } from '../../api/category'
+import Navbar from 'react-bootstrap/Navbar'
+import Avatar from 'react-avatar'
 
 function CourseDetails() {
   const { token, logged, user, refreshUserOnContext } = useAuthContext()
@@ -357,7 +359,42 @@ const checkCommentVisibility = () => {
 
   return (
     <Container flex="true" className="pageDetails course-details mb-4">
-      <div className="row">
+        <Navbar>
+            {logged && user ? (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+              </p>
+            ) : (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; BEM-VINDO!
+              </p>
+            )}
+
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                  : <Avatar
+                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                      color="#0f5b7a"
+                      size={30}
+                      textSizeRatio={2}
+                      round={true}
+                  />}
+                {/* {user && (
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                )} */}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Navbar>
+
+      <div className="row mt-5">
         <div className="col-md-4">
           {
             user && data && user.id === data?.professor?.id &&

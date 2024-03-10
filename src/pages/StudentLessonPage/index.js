@@ -10,8 +10,8 @@ import { toast } from 'react-toastify';
 import { UserTools } from '../../tools/user'
 import QuestionCourse from '../../components/QuestionCourse/question_course';
 import { HiDownload } from "react-icons/hi"
-
-
+import Navbar from 'react-bootstrap/Navbar'
+import Avatar from 'react-avatar'
 import './styles.css'
 import { AUTH_DEBUG, BASE_URL, HttpResponse, HttpStatus } from '../../api/default';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -310,7 +310,42 @@ export const StudentLessonPage = () => {
       </Modal>
 
       <Container fluid style={{ marginBottom: '1rem' }} className='container-student-lesson-page'>
-        <Row>
+        <Navbar>
+            {logged && user ? (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+              </p>
+            ) : (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; BEM-VINDO!
+              </p>
+            )}
+
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                  : <Avatar
+                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                      color="#0f5b7a"
+                      size={30}
+                      textSizeRatio={2}
+                      round={true}
+                  />}
+                {/* {user && (
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                )} */}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Navbar>
+
+        <Row className='mt-5'>
           {
             videoPlayer.completed &&
             <Col xs={12} style={{ marginTop: '0.5rem' }}>

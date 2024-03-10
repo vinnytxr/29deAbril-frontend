@@ -5,11 +5,13 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './sortable-item';
-
+import { useAuthContext } from '../../contexts/AuthContext'
 import { useParams } from 'react-router-dom';
 import { CategoryAPI } from '../../api/category';
 import { HttpStatus } from '../../api/default';
 import { toast } from 'react-toastify'
+import Navbar from 'react-bootstrap/Navbar'
+import Avatar from 'react-avatar'
 
 export function EditCategoryLessonsOrder() {
   const [lessons, setLessons] = React.useState([])
@@ -17,6 +19,7 @@ export function EditCategoryLessonsOrder() {
   const [pageState, setPageState] = React.useState({ error: false, loading: true })
 
   const { categoryId } = useParams();
+  const { logged, user } = useAuthContext() 
 
   React.useEffect(() => {
     getInitialData()
@@ -24,7 +27,42 @@ export function EditCategoryLessonsOrder() {
 
   return !pageState.error && !pageState.loading ? (
     <Container className='pt-3 edit-category-page'>
-      <Row>
+        <Navbar>
+            {logged && user ? (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+              </p>
+            ) : (
+              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                &#128075;&nbsp; BEM-VINDO!
+              </p>
+            )}
+
+            <Navbar.Toggle />
+            <Navbar.Collapse className="justify-content-end">
+              <Navbar.Text>
+                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                  : <Avatar
+                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                      color="#0f5b7a"
+                      size={30}
+                      textSizeRatio={2}
+                      round={true}
+                  />}
+                {/* {user && (
+                  <Avatar
+                    name={user.name}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
+                  />
+                )} */}
+              </Navbar.Text>
+            </Navbar.Collapse>
+          </Navbar>
+
+      <Row className='mt-5'>
         <Col xs={12}>
           <DndContext
             collisionDetection={closestCenter}
