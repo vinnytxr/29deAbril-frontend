@@ -142,7 +142,6 @@ const AdministrationPage = () => {
 
             <Container fluid className='mb-3'>
                 <Row className="d-flex justify-content-center gap-4">
-
                     <Col>
                         <Row className="mb-4">
                             <Card
