@@ -84,10 +84,10 @@ export default function RegisterScreen() {
         const response = await AuthAPI.fetchRegister(formValues);
         if (response.status === HttpStatus.OK) {
             notifySuccess("Registrado com sucesso!");
-            //setIsLoading(false)
+            setIsLoading(false)
             navigate('/login')
         } else {
-          //setIsLoading(false)
+          setIsLoading(false)
           notifyError("Falha ao cadastrar novo usuário. " + response.data.error + ".");
         }
     }
@@ -109,15 +109,12 @@ export default function RegisterScreen() {
         const response = await AuthAPI.fetchRegister(formValues);
         if (response.status === HttpStatus.OK) {
             notifySuccess("Registrado com sucesso!");
-            //setIsLoading(false)
+            setIsLoading(false)
             navigate('/login')
         } else {
             setIsLoading(false)
             notifyError("Falha ao cadastrar novo usuário. " + response.data.error + ".");
         }
-
-      }else{
-        setIsLoading(false)
       }
   }
 
@@ -202,7 +199,7 @@ export default function RegisterScreen() {
         <div className="row">
           <div className="col">
             <img
-              style={{ width: '11em' }}
+              style={{ width: '11em', cursor: "pointer" }}
               onClick={() => {
                 window.location.href = '/'
               }}
