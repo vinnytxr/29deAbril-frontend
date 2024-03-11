@@ -118,26 +118,30 @@ const AdministrateTeachers = () => {
                                     <Col>
                                         <ListGroup>
                                             {teachers.map(teacher =>
-                                                <ListGroupItem key={teacher.id} style={{ display: "flex" }}>
-                                                    <Col xs={4} md={3}>
-                                                        <span className="code-span box">{teacher.name}</span>
-                                                    </Col>
-                                                    <Col xs={3} md={4}>
-                                                        <span className='box'>
-                                                            <span>{teacher.email}</span>
-                                                        </span>
-                                                    </Col>
-                                                    <Col xs={3} md={4}>
-                                                        <span style={{ cursor: "pointer" }} onClick={() => seeProfile(teacher.id)} className='share'>
-                                                            Ver Perfil&nbsp;
-                                                            <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faShare} />
-                                                        </span>
-                                                    </Col>
-                                                    <Col xs={2} md={1}>
-                                                        <span style={{ cursor: "pointer" }} onClick={() => revokePermissions(teacher.id)} className='delete'>
-                                                            Revogar Permissões&nbsp; 
-                                                            <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faRemove} />
-                                                        </span>
+                                                <ListGroupItem key={teacher.id}>
+                                                    <Col>
+                                                        <Row className="d-sm-flex justify-content-between">
+                                                            <Col>
+                                                                <span className="code-span">{teacher.name}</span>
+                                                            </Col>
+                                                            <Col>
+                                                                <span className="d-sm-inline-block break-word">{teacher.email}</span>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row className="d-sm-flex justify-content-between">
+                                                            <Col>
+                                                                <span style={{ cursor: "pointer" }} onClick={() => seeProfile(teacher.id)} className='share pillwrapper'>
+                                                                    Ver Perfil&nbsp;
+                                                                    <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faShare} />
+                                                                </span>
+                                                            </Col>
+                                                            <Col>
+                                                                <span style={{ cursor: "pointer" }} onClick={() => revokePermissions(teacher.id)} className='delete pillwrapper'>
+                                                                    Revogar Permissões&nbsp;
+                                                                    <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faRemove} />
+                                                                </span>
+                                                            </Col>
+                                                        </Row>
                                                     </Col>
                                                 </ListGroupItem>
                                             )}

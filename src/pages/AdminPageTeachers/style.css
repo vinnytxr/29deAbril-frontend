@@ -1,10 +1,10 @@
 .code-span {
-  width: 10rem;
+  width: 2rem;
   text-align: left;
 }
 
 .box{
-  width: 10rem;
+  width: 2rem;
 }
 
 .flag {
@@ -21,19 +21,26 @@
   background-color: rgb(209, 209, 9);
 }
 
-.share {
-  padding: 2px 10px;
-  background-color: #2d3d94;
+.pillwrapper {
+  display: inline-block;
   border-radius: 10px;
+  padding: 2px 10px;
+}
+
+.share {
+  background-color: #2d3d94;
   text-align: right;
   color: white;
 }
 
-
 .delete {
-  padding: 2px 10px;
   background-color: #c42f2f;
-  border-radius: 10px;
-  text-align: right;
+  text-align: left;
   color: white;
+}
+
+.break-word {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
 }
