@@ -6,7 +6,7 @@ import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupIt
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCode, faEnvelope, faShare, faX } from '@fortawesome/free-solid-svg-icons'
+import { faCode, faEnvelope, faNoteSticky, faShare, faX} from '@fortawesome/free-solid-svg-icons'
 import { AUTH_DEBUG, BASE_URL, HttpStatus } from '../../api/default'
 import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
@@ -204,7 +204,13 @@ const NotesPage = () => {
                                         </Col>
                                     </Row>
                                 </Card>
-                            </Row> : <></>
+                            </Row> : (
+                            <Container fluid>
+                                <div class="d-flex align-items-center justify-content-center" style={{"height": "350px"}}>
+                                    <h1>Você não fez nenhuma anotação. <FontAwesomeIcon className='fs-7' style={{color:"yellow"}} icon={faNoteSticky}/></h1>
+                                </div>
+                            </Container>
+                        )
                         }
                     </Col>
                 </Row>

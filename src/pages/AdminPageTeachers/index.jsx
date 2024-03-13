@@ -60,7 +60,7 @@ const AdministrateTeachers = () => {
 
         if (response.status !== HttpStatus.OK) {
             notifyError("Falha ao revogar permissão.");
-        }else{
+        } else {
             requestTeachers();
         }
     }
@@ -70,7 +70,7 @@ const AdministrateTeachers = () => {
 
         if (listTeachers.status !== HttpStatus.OK) {
             notifyError("Falha ao requisitar lista de professores.");
-        }else{
+        } else {
             setTeachers(listTeachers.data);
         }
     }
@@ -100,47 +100,55 @@ const AdministrateTeachers = () => {
 
             <Container fluid className='mb-3'>
                 <Row className="d-flex justify-content-center gap-4">
-
                     <Col>
-
-
                         {teachers.length ?
-                            <Row>
-                                <Card
-                                    style={{
-                                        padding: '16px',
-                                    }}
-                                >
-                                    <Row className="mb-4">
-                                        <Col className="d-flex justify-content-between align-items-center">
-                                            <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
-                                                Professores Cadastrados:
-                                            </h1>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col>
-                                            <ListGroup>
-                                                {teachers.map(teacher => <ListGroupItem key={teacher.id} style={{ display: "flex" }}>
-                                                    <span className="code-span box">{teacher.name}</span>
-                                                    <span className='box'>
-                                                        <span>{teacher.email}</span>
-                                                    </span>
-                                                    <span className='box'><span style={{ cursor: "pointer" }} onClick={() => seeProfile(teacher.id)} className='share'>Ver Perfil <FontAwesomeIcon
-                                                        style={{ color: 'white', fontSize: '16' }}
-                                                        icon={faShare}
-                                                    /></span></span>
-                                                    <span style={{ cursor: "pointer" }} onClick={() => revokePermissions(teacher.id)} className='delete'>Revogar Permissões <FontAwesomeIcon
-                                                        style={{ color: 'white', fontSize: '16' }}
-                                                        icon={faRemove}
-                                                    /></span>
-                                                </ListGroupItem>)}
-                                            </ListGroup>
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            </Row> : <></>
-                        }
+                            <Card
+                                style={{
+                                    padding: '16px',
+                                }}
+                            >
+                                <Row className="mb-4">
+                                    <Col className="d-flex justify-content-between align-items-center">
+                                        <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
+                                            Professores Cadastrados:
+                                        </h1>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <ListGroup>
+                                            {teachers.map(teacher =>
+                                                <ListGroupItem key={teacher.id}>
+                                                    <Col>
+                                                        <Row className="d-sm-flex justify-content-between">
+                                                            <Col>
+                                                                <span className="code-span">{teacher.name}</span>
+                                                            </Col>
+                                                            <Col>
+                                                                <span className="d-sm-inline-block break-word">{teacher.email}</span>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row className="d-sm-flex justify-content-between">
+                                                            <Col>
+                                                                <span style={{ cursor: "pointer" }} onClick={() => seeProfile(teacher.id)} className='share pillwrapper'>
+                                                                    Ver Perfil&nbsp;
+                                                                    <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faShare} />
+                                                                </span>
+                                                            </Col>
+                                                            <Col>
+                                                                <span style={{ cursor: "pointer" }} onClick={() => revokePermissions(teacher.id)} className='delete pillwrapper'>
+                                                                    Revogar Permissões&nbsp;
+                                                                    <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faRemove} />
+                                                                </span>
+                                                            </Col>
+                                                        </Row>
+                                                    </Col>
+                                                </ListGroupItem>
+                                            )}
+                                        </ListGroup>
+                                    </Col>
+                                </Row>
+                            </Card> : <></>}
                     </Col>
                 </Row>
             </Container>
