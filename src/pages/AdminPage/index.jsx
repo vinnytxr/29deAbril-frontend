@@ -142,7 +142,6 @@ const AdministrationPage = () => {
 
             <Container fluid className='mb-3'>
                 <Row className="d-flex justify-content-center gap-4">
-
                     <Col>
                         <Row className="mb-4">
                             <Card
@@ -159,7 +158,7 @@ const AdministrationPage = () => {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <Form.Control readOnly type="text" placeholder='Clique no botão abaixo para gerar o código.' value={newCode} />
+                                        <Form.Control style={{ textOverflow: "ellipsis"}} readOnly placeholder='Clique no botão abaixo para gerar o código.' value={newCode} />
                                         <Button disabled={!enableBtn} className='mt-2 btn-success' onClick={() => { createNewCode() }}>
                                             {isLoading ? (
                                                 <Spinner
@@ -226,16 +225,26 @@ const AdministrationPage = () => {
                                     <Row>
                                         <Col>
                                             <ListGroup>
-                                                {codes.map(code => <ListGroupItem key={code.id} style={{ display: "flex" }}>
-                                                    <span className="code-span box">{code.code}</span>
-                                                    <span className='box'>
-                                                        <span className={`flag ${code.professor !== null ? "flag-used" : "flag-not-used"}`}>{code.professor !== null ? "utilizado" : "livre"}</span>
-                                                    </span>
-                                                    {code.professor === null && <span style={{ cursor: "pointer" }} onClick={() => selectCode(code.code)} className='share'>Selecionar <FontAwesomeIcon
-                                                        style={{ color: 'white', fontSize: '16' }}
-                                                        icon={faShare}
-                                                    /></span>}
-                                                </ListGroupItem>)}
+                                                {codes.map(code => 
+                                                    <ListGroupItem key={code.id} style={{ display: "flex" }}>
+                                                        <Col xs={4} md={3}>
+                                                            <span className="code-span box">{code.code}</span>
+                                                        </Col>
+                                                        <Col xs={3} md={4}>
+                                                            <span className='box'>
+                                                                <span className={`flag ${code.professor !== null ? "flag-used" : "flag-not-used"}`}>{code.professor !== null ? "utilizado" : "livre"}</span>
+                                                            </span>
+                                                        </Col>
+                                                        {code.professor === null && 
+                                                            <Col xs={3} md={4}>
+                                                                <span style={{ cursor: "pointer" }} onClick={() => selectCode(code.code)} className='share'>
+                                                                    Selecionar 
+                                                                    <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faShare} />
+                                                                </span>
+                                                            </Col>
+                                                        }
+                                                    </ListGroupItem>
+                                                )}
                                             </ListGroup>
                                         </Col>
                                     </Row>
