@@ -84,10 +84,26 @@ export const StudentLessonPage = () => {
   }, [lesson])
 
   const isProfessorOfLessonCourse = () => user && lesson && lesson.professor && (lesson.professor === user.id);
+  const completeStudentLesson = async () => {
+    await LessonAPI.completeLessonAsStudent(user.id, lesson.id);
+    setVideoPlayer({ ...videoPlayer, completed: true })
+    await checkStudentLessonProgress();
+  }
 
   const refreshLesson = async () => {
     const response = await LessonAPI.getLesson(id);
     setLesson(response.data);
+  }
+
+  const checkStudentLessonProgress = async () => {
+    const courseInfoFromUserEnrolledCourse = UserTools.getEnrolledCourseFromUser(user, lesson.course ?? -1);
+
+    if (courseInfoFromUserEnrolledCourse.lessons_completed >= courseInfoFromUserEnrolledCourse.total_lessons - 1)
+      notifySuccess("Parabéns, você concluiu o curso, certificado disponibilizado!")
+    else notifySuccess("Parabéns, você concluiu a aula!")
+
+    await refreshLesson()
+    refreshUserOnContext()
   }
 
   React.useEffect(() => {
@@ -102,17 +118,7 @@ export const StudentLessonPage = () => {
   React.useEffect(() => {
     const completeLesson = async () => {
       if (videoPlayer.played > 0.95 && !videoPlayer.completed && !isProfessorOfLessonCourse()) {
-        await LessonAPI.completeLessonAsStudent(user.id, lesson.id);
-        setVideoPlayer({ ...videoPlayer, completed: true })
-
-        const courseInfoFromUserEnrolledCourse = UserTools.getEnrolledCourseFromUser(user, lesson.course ?? -1);
-
-        if (courseInfoFromUserEnrolledCourse.lessons_completed >= courseInfoFromUserEnrolledCourse.total_lessons - 1)
-          notifySuccess("Parabéns, você concluiu o curso, certificado disponibilizado!")
-        else notifySuccess("Parabéns, você concluiu a aula!")
-
-        await refreshLesson()
-        refreshUserOnContext()
+        await completeStudentLesson()
       }
     }
 
@@ -381,7 +387,11 @@ export const StudentLessonPage = () => {
                 }
                 {
                   !!lesson.appendix &&
-                  <Button className='btn-apoio' onClick={() => window.open(lesson.appendix, '_blank')} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
+                  <Button className='btn-apoio' onClick={() => window.open(lesson.appendix, '_blank')} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
+                }
+                {
+                  !lesson.video && !videoPlayer.completed && 
+                  <Button className='btn-complete-lesson' onClick={completeStudentLesson} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Concluir aula </Button>
                 }
             </Row>
           }
