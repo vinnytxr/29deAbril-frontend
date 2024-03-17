@@ -430,7 +430,7 @@ export const EditLessonScreen = () => {
                                             {formValores.files.length > 0 ? `${formValores.files.length} ${formValores.files.length > 1 ? 'imagens selecionadas' : 'imagem selecionada'}` : 'Nenhuma imagem selecionada'}
                                         </span>
                                     </Col>
-                                    <Col xs={12} className='mt-3 pr0'>
+                                    <Col xs={12} className='mt-3 pr0' style={{display: 'none'}}>
                                         <Form.Check
                                             type="checkbox"
                                             id='use-frame-as-banner-checkbox'
@@ -443,7 +443,7 @@ export const EditLessonScreen = () => {
                                             disabled={!editable || true}
                                         />
                                     </Col>
-                                    <Col xs={12} className='mt-3 pr0'>
+                                    <Col xs={12} className='mt-3 pr0' style={{display: 'none'}}>
                                         <label htmlFor="input-files-video-ftc" className='label-to-use-frame-as-banner-input' style={{ cursor: editable ? 'pointer' : 'auto' }}>
                                             <span>{formValores.videos.length > 0 ? 'Trocar video' : 'Selecionar video'}</span>
                                         </label>

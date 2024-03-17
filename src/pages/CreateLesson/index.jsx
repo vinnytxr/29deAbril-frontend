@@ -397,7 +397,7 @@ export const NewLessonScreen = () => {
                         : 'Nenhuma imagem selecionada'}
                     </span>
                   </Col>
-                  <Col xs={12} className="mt-3 pr0">
+                  <Col xs={12} className="mt-3 pr0" style={{display: 'none'}}>
                     <Form.Check
                       type="checkbox"
                       id="use-frame-as-banner-checkbox"
@@ -412,7 +412,7 @@ export const NewLessonScreen = () => {
                       checked={formValores.useBannerFromVideo}
                     />
                   </Col>
-                  <Col xs={12} className="mt-3 pr0">
+                  <Col xs={12} className="mt-3 pr0" style={{display: 'none'}}>
                     <label
                       htmlFor="input-files-video-ftc"
                       className="label-to-use-frame-as-banner-input"
@@ -420,7 +420,7 @@ export const NewLessonScreen = () => {
                       <span>Selecionar video</span>
                     </label>
                   </Col>
-                  <Col xs={12} className="file-input-span mb-3">
+                  <Col xs={12} className="file-input-span mb-3" style={{display: 'none'}}>
                     <span
                       className={`${!!estado.videos
                         ? 'ok'
@@ -437,7 +437,7 @@ export const NewLessonScreen = () => {
                         : 'Nenhum video selecionado'}
                     </span>
                   </Col>
-                  <Col xs={12} className="mt-1 mb-2 pr0">
+                  <Col xs={12} className="mt-1 mb-2 pr0" style={{display: 'none'}}>
                     <label
                       htmlFor="input-files-apc"
                       className="label-to-use-frame-as-banner-input"
