@@ -9,7 +9,7 @@ import ReactPlayer from 'react-player'
 import { toast } from 'react-toastify';
 import { UserTools } from '../../tools/user'
 import QuestionCourse from '../../components/QuestionCourse/question_course';
-import { HiDownload } from "react-icons/hi"
+import { HiDownload, HiOutlineExternalLink } from "react-icons/hi"
 import Navbar from 'react-bootstrap/Navbar'
 import Avatar from 'react-avatar'
 import './styles.css'
@@ -383,15 +383,19 @@ export const StudentLessonPage = () => {
           {logged && controle.enrolled &&
             <Row className='buttons'>
                 {
-                  <Button className='' style={{ 'marginRight': '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
+                  <Button className='btn-resources' style={{ marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
                 }
                 {
                   !!lesson.appendix &&
-                  <Button className='btn-apoio' onClick={() => window.open(lesson.appendix, '_blank')} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
+                  <Button className='btn-resources' onClick={() => window.open(lesson.appendix, '_blank')} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
+                }
+                {
+                  !!lesson.extern_appendix_link.trim().length &&
+                  <Button className='btn-resources' onClick={() => window.open(lesson.extern_appendix_link, '_blank')} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Material de apoio <HiOutlineExternalLink style={{ fontSize: '20px' }} /> </Button>
                 }
                 {
                   !lesson.video && !videoPlayer.completed && 
-                  <Button className='btn-complete-lesson' onClick={completeStudentLesson} style={{fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Concluir aula </Button>
+                  <Button className='btn-resources' onClick={completeStudentLesson} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Concluir aula </Button>
                 }
             </Row>
           }

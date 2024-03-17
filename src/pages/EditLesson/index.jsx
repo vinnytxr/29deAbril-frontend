@@ -440,7 +440,7 @@ export const EditLessonScreen = () => {
                                                 setFormValores({ ...formValores, useBannerFromVideo: e.target.checked })
                                             }}
                                             checked={formValores.useBannerFromVideo}
-                                            disabled={!editable}
+                                            disabled={!editable || true}
                                         />
                                     </Col>
                                     <Col xs={12} className='mt-3 pr0'>
@@ -455,11 +455,11 @@ export const EditLessonScreen = () => {
                                             </span>
                                         </Col>
                                     }
-                                    <Col xs={12} className="mt-1 mb-2 pr0">
+                                    <Col xs={12} className="mt-1 mb-2 pr0" style={{display: 'none'}}>
                                         <label
                                             htmlFor="input-files-apc"
                                             className="label-to-use-frame-as-banner-input"
-                                            style={{ cursor: editable ? 'pointer' : 'auto' }}
+                                            style={{ cursor: editable ? 'pointer' : 'auto'}}
                                         >
                                             <span>{formValores.apendices.length > 0 ? 'Trocar arquivo de apoio' : 'Selecionar arquivo de apoio'}</span>
                                         </label>
