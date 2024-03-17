@@ -76,6 +76,15 @@ export const NewLessonScreen = () => {
     getCategories()
   }, [])
 
+  const validateExternAppendixLink = (value) => {
+    const tags = ['http', 'https', 'localhost']
+
+    for (const tag of tags)
+      if (value.includes(tag)) return true
+
+    return value.length == 0
+  }
+
   const setTitle = (e) => {
     setEstado({ ...estado, title: undefined })
     setFormValores({ ...formValores, title: cut(e?.target?.value ?? '', 64) })
@@ -83,7 +92,7 @@ export const NewLessonScreen = () => {
 
   const setExternAppendixLink = (e) => {
     setEstado({ ...estado, externAppendixLink: undefined })
-    setFormValores({ ...formValores, externAppendixLink: cut(e?.target?.value ?? '', 256) })
+    setFormValores({ ...formValores, externAppendixLink: cut(e?.target?.value?.trim() ?? '', 256) })
   }
 
   const setCategoryId = (e) => {
@@ -318,13 +327,13 @@ export const NewLessonScreen = () => {
                   </Col>
                   <Col xs={12} className="pl0">
                     <Form.Label className="w-100 mt-3">
-                      Link externo
+                      Link material de apoio
                       <Form.Control
                         className="input-title"
                         spellCheck={false}
                         required
                         type="text"
-                        placeholder=""
+                        placeholder="https://<url> ou vazio"
                         value={formValores.externAppendixLink}
                         onChange={setExternAppendixLink}
                         isValid={estado.externAppendixLink}
@@ -335,7 +344,7 @@ export const NewLessonScreen = () => {
                         onBlur={() =>
                           setEstado({
                             ...estado,
-                            externAppendixLink: true,
+                            externAppendixLink: validateExternAppendixLink(formValores.externAppendixLink),
                           })
                         }
                       />
