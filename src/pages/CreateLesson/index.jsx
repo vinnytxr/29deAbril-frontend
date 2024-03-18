@@ -41,6 +41,7 @@ export const NewLessonScreen = () => {
       useBannerFromVideo: false,
       categoryId: null,
       apendices: [],
+      externAppendixLink: ''
     }
   }
 
@@ -51,6 +52,7 @@ export const NewLessonScreen = () => {
     files: undefined,
     content: undefined,
     videos: undefined,
+    externAppendixLink: undefined
   })
 
   const [formValores, setFormValores] = useState(resetValores())
@@ -74,9 +76,23 @@ export const NewLessonScreen = () => {
     getCategories()
   }, [])
 
+  const validateExternAppendixLink = (value) => {
+    const tags = ['http', 'https', 'localhost']
+
+    for (const tag of tags)
+      if (value.includes(tag)) return true
+
+    return value.length == 0
+  }
+
   const setTitle = (e) => {
     setEstado({ ...estado, title: undefined })
     setFormValores({ ...formValores, title: cut(e?.target?.value ?? '', 64) })
+  }
+
+  const setExternAppendixLink = (e) => {
+    setEstado({ ...estado, externAppendixLink: undefined })
+    setFormValores({ ...formValores, externAppendixLink: cut(e?.target?.value?.trim() ?? '', 256) })
   }
 
   const setCategoryId = (e) => {
@@ -96,6 +112,7 @@ export const NewLessonScreen = () => {
       videos:
         formValores.videos.length > 0 ||
         (formValores.files.length > 0 && !formValores.useBannerFromVideo),
+      externAppendixLink: true
     }
 
     setEstado({ ...estadoAux })
@@ -109,6 +126,7 @@ export const NewLessonScreen = () => {
     post.append('title', formValores.title)
     post.append('content', formValores.content)
     post.append('course', courseId)
+    post.append('extern_appendix_link', formValores.externAppendixLink)
 
     if (!formValores.useBannerFromVideo)
       post.append('banner', formValores.files[0])
@@ -307,6 +325,31 @@ export const NewLessonScreen = () => {
                       />
                     </Form.Label>
                   </Col>
+                  <Col xs={12} className="pl0">
+                    <Form.Label className="w-100 mt-3">
+                      Link material de apoio
+                      <Form.Control
+                        className="input-title"
+                        spellCheck={false}
+                        required
+                        type="text"
+                        placeholder="https://<url> ou vazio"
+                        value={formValores.externAppendixLink}
+                        onChange={setExternAppendixLink}
+                        isValid={estado.externAppendixLink}
+                        disabled={!editable}
+                        isInvalid={
+                          estado.externAppendixLink !== undefined ? !estado.externAppendixLink : undefined
+                        }
+                        onBlur={() =>
+                          setEstado({
+                            ...estado,
+                            externAppendixLink: validateExternAppendixLink(formValores.externAppendixLink),
+                          })
+                        }
+                      />
+                    </Form.Label>
+                  </Col>
                 </Row>
               </Container>
             </Col>
@@ -354,7 +397,7 @@ export const NewLessonScreen = () => {
                         : 'Nenhuma imagem selecionada'}
                     </span>
                   </Col>
-                  <Col xs={12} className="mt-3 pr0">
+                  <Col xs={12} className="mt-3 pr0" style={{display: 'none'}}>
                     <Form.Check
                       type="checkbox"
                       id="use-frame-as-banner-checkbox"
@@ -369,7 +412,7 @@ export const NewLessonScreen = () => {
                       checked={formValores.useBannerFromVideo}
                     />
                   </Col>
-                  <Col xs={12} className="mt-3 pr0">
+                  <Col xs={12} className="mt-3 pr0" style={{display: 'none'}}>
                     <label
                       htmlFor="input-files-video-ftc"
                       className="label-to-use-frame-as-banner-input"
@@ -377,7 +420,7 @@ export const NewLessonScreen = () => {
                       <span>Selecionar video</span>
                     </label>
                   </Col>
-                  <Col xs={12} className="file-input-span mb-3">
+                  <Col xs={12} className="file-input-span mb-3" style={{display: 'none'}}>
                     <span
                       className={`${!!estado.videos
                         ? 'ok'
@@ -394,7 +437,7 @@ export const NewLessonScreen = () => {
                         : 'Nenhum video selecionado'}
                     </span>
                   </Col>
-                  <Col xs={12} className="mt-1 mb-2 pr0">
+                  <Col xs={12} className="mt-1 mb-2 pr0" style={{display: 'none'}}>
                     <label
                       htmlFor="input-files-apc"
                       className="label-to-use-frame-as-banner-input"
