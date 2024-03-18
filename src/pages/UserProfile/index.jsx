@@ -268,9 +268,16 @@ const UserProfileScreen = () => {
 
                         {/* Data de cadastro */}
                         <Card.Footer className="d-flex justify-content-center align-items-center">
-                            <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
-                                {date(user.created)}
-                            </p>
+                            <div style={{textAlign: 'center'}}>
+                                <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
+                                    {date(user.created)}
+                                </p>
+
+                                <p className="mt-0 mb-0 fs-6" style={{ color: '#727273' }}>
+                                    {"RA: " + user.ra}
+                                </p>
+                            </div>
+
                         </Card.Footer>
                     </Card>
 
