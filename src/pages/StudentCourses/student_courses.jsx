@@ -47,8 +47,8 @@ const StudentCoursesPage = () => {
                                 : <Pagination.Prev disabled onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)} />
                             }
                             {items}
-                            {isFetched ? <Pagination.Next onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)} />
-                                : <Pagination.Next disabled onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)} />}
+                            {isFetched ? <Pagination.Next onClick={() => activePage < amountPages && setActivePage((prevState) => prevState + 1)} />
+                                : <Pagination.Next disabled onClick={() => activePage < amountPages && setActivePage((prevState) => prevState + 1)} />}
                         </>
                     )}
                 </Pagination>
