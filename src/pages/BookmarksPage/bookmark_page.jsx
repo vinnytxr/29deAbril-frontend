@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Row, Pagination } from 'react-bootstrap'
+import { Col, Container, Row } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { BASE_URL, HttpResponse, HttpStatus } from '../../api/default'
 import { useAuthContext } from '../../contexts/AuthContext';
@@ -13,45 +13,8 @@ const BookmarksPage = () => {
     const [userData, setUserData] = useState({ name: "" });
     const [data, setData] = useState({});
     const [isFetched, setIsFetched] = useState(false);
-    const [activePage, setActivePage] = useState(1);
-    const [amountPages, setAmountPages] = useState(6);
     const navigate = useNavigate();
     const { token, logged, user } = useAuthContext();
-
-    const pageSize = 6;
-
-    const renderPagination = () => {
-        let items = []
-        for (let i = 1; i <= amountPages; i++) {
-            if (!isFetched) {
-                items.push(
-                    <Pagination.Item key={i} active={i === activePage} disabled onClick={() => setActivePage(i)}>{i}</Pagination.Item>
-                )
-            } else {
-                items.push(
-                    <Pagination.Item key={i} active={i === activePage} onClick={() => setActivePage(i)}>{i}</Pagination.Item>
-                )
-            }
-        }
-
-        return (
-            <div>
-                <Pagination>
-                    {amountPages > 1 && (
-                        <>
-                            {isFetched ?
-                                <Pagination.Prev onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)} />
-                                : <Pagination.Prev disabled onClick={() => activePage > 1 && setActivePage((prevState) => prevState - 1)} />
-                            }
-                            {items}
-                            {isFetched ? <Pagination.Next onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)} />
-                                : <Pagination.Next disabled onClick={() => activePage < 3 && setActivePage((prevState) => prevState + 1)} />}
-                        </>
-                    )}
-                </Pagination>
-            </div>
-        )
-    }
 
     useEffect(() => {
         const userData = localStorage.getItem('userData')
@@ -60,7 +23,7 @@ const BookmarksPage = () => {
     }, [])
 
     const getBookmarks = async() => {
-        const url = `${BASE_URL}/courses/favorites`
+        var url = `${BASE_URL}/courses/favorites`
         try {
             const options = {
                 method: 'GET',
@@ -73,13 +36,26 @@ const BookmarksPage = () => {
                 }
             }
     
-            const response = await fetch(url, options);
-    
-            if (response.ok) {
-                const data = await response.json();
-                //AUTH_DEBUG && console.log("AuthAPI::getBookmarks(): ", data);
-                return new HttpResponse(HttpStatus.OK, data);
-            } else throw new Error("Error on getBookmarks()");
+            var data = {"results" : []}
+
+            while(true) {
+                const response = await fetch(url, options);
+
+                if (response.ok) {
+                    const jsonData = await response.json();
+
+                    data["results"] = data["results"].concat(jsonData.results)
+
+                    if (jsonData.next == null) {
+                        break
+                    }
+
+                    url = jsonData.next
+                    //AUTH_DEBUG && console.log("AuthAPI::getBookmarks(): ", data);
+                } else throw new Error("Error on getBookmarks()");
+            }
+
+            return new HttpResponse(HttpStatus.OK, data);
          } catch (error) {
                 console.warn(error)
                 return new HttpResponse(HttpStatus.ERROR, null);
@@ -92,10 +68,7 @@ const BookmarksPage = () => {
             try {
                 const responseCourses = await getBookmarks()
                 if (responseCourses.status === HttpStatus.OK) {
-                    //console.log(responseCourses)
                     setData(responseCourses.data)
-                    const pages = Math.ceil(responseCourses.data.count / pageSize)
-                    setAmountPages(pages)
                     setIsFetched(true)
                 }
             } catch (err) {
@@ -104,7 +77,7 @@ const BookmarksPage = () => {
         }
 
         getStudentCourses();
-    }, [userData, activePage, pageSize])
+    }, [userData])
 
     return (
         <>
@@ -172,11 +145,6 @@ const BookmarksPage = () => {
                         <p>Carregando...</p>
                     )}
                 </div>
-            </Row>
-            <Row className='mt-5'>
-                <Col className='d-flex justify-content-center'>
-                    {renderPagination()}
-                </Col>
             </Row>
         </Col>
         </Container>
