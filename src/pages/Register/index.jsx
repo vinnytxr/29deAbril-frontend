@@ -115,6 +115,8 @@ export default function RegisterScreen() {
             setIsLoading(false)
             notifyError("Falha ao cadastrar novo usuário. " + response.data.error + ".");
         }
+      }else{
+        setIsLoading(false);
       }
   }
 
