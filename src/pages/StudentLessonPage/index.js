@@ -74,7 +74,7 @@ export const StudentLessonPage = () => {
     const verifyPermissions = async (courseId) => {
       const response = await LessonAPI.getCourse(lesson.course);
       const course = response.data;
-      const isEnrolled = course.students.map(c => c.id).includes(user.id)
+      const isEnrolled = !!user.id && course.students.map(c => c.id).includes(user.id)
       setControle({ enrolled: isEnrolled })
     }
 
@@ -180,6 +180,7 @@ export const StudentLessonPage = () => {
   }
 
   const fetchAnotations = async () => {
+    return
     console.log(user.id)
     const url = `${BASE_URL}/anotation/list-notes-lesson/${user.id}/${id}/`;
     var errorMessage;
@@ -210,6 +211,7 @@ export const StudentLessonPage = () => {
   }
 
   const requestNotes = async () => {
+    return
     const listNotes = await fetchAnotations();
     //console.log(listNotes.data)
     if (listNotes.status !== HttpStatus.OK) {
@@ -364,6 +366,12 @@ export const StudentLessonPage = () => {
               <span className='flag-is-professor'>Você é o professor desta aula</span>
             </Col>
           }
+          {
+            controle.enrolled == false && !isProfessorOfLessonCourse() && 
+            <Col xs={12} style={{ marginTop: '0.5rem' }}>
+              <span className='flag-not-enrolled'>Você ainda não se inscreveu neste curso!</span>
+            </Col>
+          }
           <Col xs={12}>
             <h1 style={{ fontWeight: 'bold' }}>{lesson.title}</h1>
           </Col>
@@ -380,21 +388,21 @@ export const StudentLessonPage = () => {
               {(!videoPlayer.playing || !lesson.banner) && lesson.video && <BsFillPlayFill onClick={handleVideoOnPlay} style={{ fontSize: '5rem', color: '#0E6216', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', cursor: 'pointer' }} />}
             </section>}
           </Col>
-          {logged && controle.enrolled &&
+          {logged &&
             <Row className='buttons'>
-                {
+                { controle.enrolled && 
                   <Button className='btn-resources' style={{ marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
                 }
                 {
-                  !!lesson.appendix &&
+                  (controle.enrolled || isProfessorOfLessonCourse()) && !!lesson.appendix &&
                   <Button className='btn-resources' onClick={() => window.open(lesson.appendix, '_blank')} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Arquivo de apoio <HiDownload style={{ fontSize: '20px' }} /> </Button>
                 }
                 {
-                  !!lesson.extern_appendix_link.trim().length &&
+                  (controle.enrolled || isProfessorOfLessonCourse()) && !!lesson.extern_appendix_link.trim().length &&
                   <Button className='btn-resources' onClick={() => window.open(lesson.extern_appendix_link, '_blank')} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Material de apoio <HiOutlineExternalLink style={{ fontSize: '20px' }} /> </Button>
                 }
                 {
-                  !lesson.video && !videoPlayer.completed && 
+                  controle.enrolled && !lesson.video && !videoPlayer.completed && 
                   <Button className='btn-resources' onClick={completeStudentLesson} style={{marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}}>Concluir aula </Button>
                 }
             </Row>

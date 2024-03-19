@@ -20,6 +20,14 @@
   border-radius: 5px;
 }
 
+.container-student-lesson-page .flag-not-enrolled {
+  background-color: #dc3545;
+  color: white;
+  font-weight: bold;
+  padding: 0 10px;
+  border-radius: 5px;
+}
+
 .container-student-lesson-page .button-all-lesson{
   min-width: 230px;
   font-weight: bold;
