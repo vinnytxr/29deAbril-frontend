@@ -180,7 +180,6 @@ export const StudentLessonPage = () => {
   }
 
   const fetchAnotations = async () => {
-    return
     console.log(user.id)
     const url = `${BASE_URL}/anotation/list-notes-lesson/${user.id}/${id}/`;
     var errorMessage;
@@ -211,7 +210,6 @@ export const StudentLessonPage = () => {
   }
 
   const requestNotes = async () => {
-    return
     const listNotes = await fetchAnotations();
     //console.log(listNotes.data)
     if (listNotes.status !== HttpStatus.OK) {
