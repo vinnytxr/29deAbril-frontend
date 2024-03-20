@@ -28,12 +28,12 @@
   border-radius: 5px;
 }
 
-.container-student-lesson-page .button-all-lesson{
-  min-width: 230px;
+.container-student-lesson-page .button-navigate {
   font-weight: bold;
   background-color: #0E6216;
   border-color: #0E6216;
   border-radius: 10px; 
+  margin-bottom: 0.5rem;
 }
 
 .container-student-lesson-page .flag-completed-lesson, .container-student-lesson-page .buttons{

@@ -367,7 +367,7 @@ export const StudentLessonPage = () => {
           {
             controle.enrolled == false && !isProfessorOfLessonCourse() && 
             <Col xs={12} style={{ marginTop: '0.5rem' }}>
-              <span className='flag-not-enrolled'>Você ainda não se inscreveu neste curso!</span>
+              <span className='flag-not-enrolled'>Você não está inscrito neste curso!</span>
             </Col>
           }
           <Col xs={12}>
@@ -389,7 +389,7 @@ export const StudentLessonPage = () => {
           {logged &&
             <Row className='buttons'>
                 { controle.enrolled && 
-                  <Button className='btn-resources' style={{ marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
+                  <Button className='btn-resources' style={{ display: 'none', marginRight: '1rem', fontWeight: '600', backgroundColor: '#0E6216', borderColor: '#0E6216', borderRadius: '10px', width: '230px', height: '39px'}} onClick={() => anotar()}>Fazer Anotação <FontAwesomeIcon icon={faPen} /></Button>
                 }
                 {
                   (controle.enrolled || isProfessorOfLessonCourse()) && !!lesson.appendix &&
@@ -409,20 +409,32 @@ export const StudentLessonPage = () => {
             <p style={{ textAlign: 'justify' }}>{lesson.content}</p>
           </Col>
           {(controle.enrolled || isProfessorOfLessonCourse()) &&
-            <Col xs={12} className="mb-4">
+            <Col xs={12} className="mb-4" style={{display: 'none'}}>
               <QuestionCourse dataLesson={lesson} />
             </Col>
           }
-          {logged &&
-            <Col xs={12}>
-              <section style={{ display: 'flex', justifyContent: 'space-between' }}>
-                {lesson.prev && <LinkLesson title={lesson.prev.title} link={`/student/lessons/${lesson.prev.id}`} image={lesson.prev.banner} inverse />}
-                <Button className='button-all-lesson' onClick={() => navigate(`/student/courses/${lesson.course}`)}>
+          {logged && 
+            <Row className="d-flex justify-content-between">
+              { lesson.prev && 
+                <Col xs={12} lg={4}>
+                  <Button className='button-navigate' style={{width: '100%'}} onClick={() => navigate(`/student/lessons/${lesson.prev.id}`)}>
+                    Aula anterior
+                  </Button>
+                </Col>
+              }
+              <Col xs={12} lg={4}>
+                <Button className='button-navigate' style={{width: '100%'}} onClick={() => navigate(`/student/courses/${lesson.course}`)}>
                   Ver todas as aulas
                 </Button>
-                {lesson.next && <LinkLesson title={lesson.next.title} link={`/student/lessons/${lesson.next.id}`} image={lesson.next.banner} />}
-              </section>
-            </Col>
+              </Col>
+              { lesson.next && 
+                <Col xs={12} lg={4}>
+                  <Button className='button-navigate' style={{width: '100%'}} onClick={() => navigate(`/student/lessons/${lesson.next.id}`)}>
+                    Pŕoxima aula
+                  </Button>
+                </Col>
+              }
+            </Row>
           }
           {notes && notes.length ?
             <Row>
@@ -460,21 +472,4 @@ export const StudentLessonPage = () => {
     </>
   )
     : logged ? <></> : <h3 className='mt-5 w-100 text-center'>Você precisar realizar login para ver os recursos da aula!</h3>;
-}
-
-const LinkLesson = ({ title, link, image, inverse }) => {
-  return (
-    <Link to={link} style={{ width: '37%' }}>
-      <article style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden' }}>
-        <img alt='' src={image} style={{ width: '100%', filter: 'brightness(35%)', aspectRatio: '16/8' }} />
-
-        <div style={{ position: 'absolute', color: 'white', left: 0, top: 0, fontWeight: 'bold', textAlign: 'center', maxWidth: '100%', maxHeight: '100%', overflow: 'hidden', padding: '5px' }}>
-          {!inverse && <span>Próxima aula</span>}
-          {inverse && <span>Aula anterior</span>}
-          <br /><br />
-          <span>{title}</span>
-        </div>
-      </article>
-    </Link>
-  );
 }
