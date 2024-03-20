@@ -430,7 +430,7 @@ export const StudentLessonPage = () => {
               { lesson.next && 
                 <Col xs={12} lg={4}>
                   <Button className='button-navigate' style={{width: '100%'}} onClick={() => navigate(`/student/lessons/${lesson.next.id}`)}>
-                    Pŕoxima aula
+                    Próxima aula
                   </Button>
                 </Col>
               }

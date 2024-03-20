@@ -123,7 +123,7 @@ const SideNavMobile = () => {
               <NavGroupFlush>
                 {/* <NavLinkTo title='Cursos' href='/student/courses' icon={<FAIcon Icon={ImBooks} />} /> */}
                 {/* <NavLinkTo title='Minhas Notas' href='/student/notes' icon={<FAIcon Icon={TbNote} />} /> */}
-                <NavLinkTo title='Bookmarks' href='/student/marked-courses' icon={<FAIcon Icon={FaBookmark} />} />
+                <NavLinkTo title='Favoritos' href='/student/marked-courses' icon={<FAIcon Icon={FaBookmark} />} />
                 <NavLinkTo title='Meus cursos' href='/student/enrolled-courses' icon={<FAIcon Icon={SiBookstack} />} />
               </NavGroupFlush>
             </StrictRoute>
