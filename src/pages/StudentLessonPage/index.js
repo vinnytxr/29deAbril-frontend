@@ -74,11 +74,11 @@ export const StudentLessonPage = () => {
     const verifyPermissions = async (courseId) => {
       const response = await LessonAPI.getCourse(lesson.course);
       const course = response.data;
-      const isEnrolled = !!user.id && course.students.map(c => c.id).includes(user.id)
+      const isEnrolled = course.students.map(c => c.id).includes(user.id)
       setControle({ enrolled: isEnrolled })
     }
 
-    if (lesson && lesson.id) {
+    if (lesson && lesson.id && !!user) {
       verifyPermissions(lesson.course)
     }
   }, [lesson])
@@ -112,7 +112,10 @@ export const StudentLessonPage = () => {
 
     if (id) refreshLesson();
     if (window) window.scrollTo(0, 0);
-    requestNotes();
+
+    if(!!user){
+      requestNotes();
+    }
   }, [id]);
 
   React.useEffect(() => {
@@ -180,7 +183,7 @@ export const StudentLessonPage = () => {
   }
 
   const fetchAnotations = async () => {
-    console.log(user.id)
+
     const url = `${BASE_URL}/anotation/list-notes-lesson/${user.id}/${id}/`;
     var errorMessage;
     try {
