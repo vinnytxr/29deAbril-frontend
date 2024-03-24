@@ -411,11 +411,11 @@ const checkCommentVisibility = () => {
         </div>
         {isStudent && user && data && user.id !== data?.professor?.id &&
           <div className="row-md-8">
-            <Button className="me-2 mt-2 detail-header-btn" onClick={() => { handleShow(); isUserRating(); }}>
+            <Button className="me-2 mt-2 detail-header-btn" onClick={() => { handleShow(); isUserRating(); }} disabled={true}>
               Avaliar curso
             </Button>
             {showCertificateBtn() &&
-              <Button className="ms-0 mt-2 detail-header-btn" onClick={() => { window.location.replace(`${BASE_URL}/lessons/lessons/generate-certificate/${data.id}/${user.id}`) }} style={{ marginLeft: '15px' }}>
+              <Button className="ms-0 mt-2 detail-header-btn" disabled={true} onClick={() => { window.location.replace(`${BASE_URL}/lessons/lessons/generate-certificate/${data.id}/${user.id}`) }} style={{ marginLeft: '15px' }}>
                 <HiDownload className="download-certificate-icon" />
                 Certificado
               </Button>
@@ -482,7 +482,8 @@ const checkCommentVisibility = () => {
                   <Card.Text style={{textAlign: "justify"}}>{data.description}</Card.Text>
                 </div>
                 <div className="row mt-5 mx-2">
-                  <StarRating value={data.rating} />
+                  <StarRating value={5} />
+                {/*<StarRating value={data.rating} />*/}
                 </div>
                 <div className="row">
                   <div className="col">
