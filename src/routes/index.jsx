@@ -24,6 +24,7 @@ import { StudentLessonPage } from '../pages/StudentLessonPage';
 import EditLessonScreen from '../pages/EditLesson';
 import CourseRating from '../pages/CourseRating/course_rating';
 import TeacherProfile from '../pages/ProfessorProfile/professor_profile';
+import AdministrateUsers from '../pages/AdminPageUsers';
 
 import "../global.css"
 import PasswordRecoveryPage from '../pages/RecoverPassword';
@@ -85,6 +86,7 @@ function DefaultRoutes() {
             <Route path="/perfil" element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]}><UserProfileScreen /></StrictRoute>} />
             <Route path="/admin/generate-invite" element={<StrictRoute roles={[Roles.ADMIN]}><AdministrationPage /></StrictRoute>} />
             <Route path="/admin/manage-teachers" element={<StrictRoute roles={[Roles.ADMIN]}><AdministrateTeachers /></StrictRoute>} />
+            <Route path="/admin/manage-users" element={<StrictRoute roles={[Roles.ADMIN]}><AdministrateUsers /></StrictRoute>} />
             <Route path='/logout' element={<StrictRoute roles={[Roles.STUDENT, Roles.PROFESSOR, Roles.ADMIN]} children={<Logout />} />} />
             <Route path="*" element={< h2 className="w-100 vh-100 d-flex flex-row justify-content-center align-items-center font-weight-bold-important">Ops! Você está perdido ?!<br />Esta rota não existe ;(</h2>} />
           </Route>
