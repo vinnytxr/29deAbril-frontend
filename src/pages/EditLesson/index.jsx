@@ -49,7 +49,8 @@ export const EditLessonScreen = () => {
             course: null,
             caegoryId: null,
             apendices: [],
-            externAppendixLink: ""
+            externAppendixLink: "",
+            externVideoLink: ""
         };
     };
 
@@ -63,7 +64,8 @@ export const EditLessonScreen = () => {
         content: undefined,
         videos: undefined,
         apendices: undefined,
-        externAppendixLink: undefined
+        externAppendixLink: undefined,
+        externVideoLink: undefined
     });
 
     const [formValores, setFormValores] = useState(resetValores());
@@ -84,7 +86,7 @@ export const EditLessonScreen = () => {
 
     useEffect(() => { if (id) refreshLesson() }, [id]);
 
-    const validateExternAppendixLink = (value) => {
+    const validateExternLink = (value) => {
         const tags = ['http', 'https', 'localhost']
 
         for (const tag of tags)
@@ -103,6 +105,11 @@ export const EditLessonScreen = () => {
         setFormValores({ ...formValores, externAppendixLink: cut(e?.target?.value?.trim() ?? "", 256) })
     }
 
+    const setExternVideoLink = (e) => {
+        setEstado({ ...estado, externVideoLink: undefined })
+        setFormValores({ ...formValores, externVideoLink: cut(e?.target?.value?.trim() ?? "", 256) })
+    }
+
     const setContent = (e) => {
         setEstado({ ...estado, content: undefined })
         setFormValores({ ...formValores, content: cut(e?.target?.value, 1024) })
@@ -118,7 +125,8 @@ export const EditLessonScreen = () => {
             files: formValores.files.length > 0 || formValores.useBannerFromVideo,
             content: formValores.content.trim().length >= 3,
             videos: formValores.videos.length > 0 || (formValores.files.length > 0 && !formValores.useBannerFromVideo),
-            externAppendixLink: true
+            externAppendixLink: validateExternLink(formValores.externAppendixLink),
+            externVideoLink: validateExternLink(formValores.externVideoLink)
         };
 
         setEstado({ ...estadoAux });
@@ -132,6 +140,7 @@ export const EditLessonScreen = () => {
         post.append("title", formValores.title);
         post.append("content", formValores.content);
         post.append("extern_appendix_link", formValores.externAppendixLink)
+        post.append("extern_video_link", formValores.externVideoLink)
 
         if (!formValores.useBannerFromVideo && formValores.files.length && imageBeUpdated(formValores.files[0]))
             post.append("banner", formValores.files[0]);
@@ -235,7 +244,8 @@ export const EditLessonScreen = () => {
                 course: lesson.course,
                 categoryId: lesson.category.id,
                 apendices: !!lesson.appendix ? [lesson.appendix] : [],
-                externAppendixLink: lesson.extern_appendix_link
+                externAppendixLink: lesson.extern_appendix_link,
+                externVideoLink: lesson.extern_video_link
             })
             setLessonExists(true)
         } else setLessonExists(false)
@@ -404,7 +414,25 @@ export const EditLessonScreen = () => {
                                                 isValid={estado.externAppendixLink}
                                                 disabled={!editable}
                                                 isInvalid={estado.externAppendixLink !== undefined ? !estado.externAppendixLink : undefined}
-                                                onBlur={() => setEstado({ ...estado, externAppendixLink: validateExternAppendixLink(formValores.externAppendixLink) })}
+                                                onBlur={() => setEstado({ ...estado, externAppendixLink: validateExternLink(formValores.externAppendixLink) })}
+                                            />
+                                        </Form.Label>
+                                    </Col>
+                                    <Col xs={12} className="pl0">
+                                        <Form.Label className="w-100 mt-3">
+                                            Link video
+                                            <Form.Control
+                                                className="input-title"
+                                                spellCheck={false}
+                                                required
+                                                type="text"
+                                                placeholder="https://<url> ou vazio"
+                                                value={formValores.externVideoLink}
+                                                onChange={setExternVideoLink}
+                                                isValid={estado.externVideoLink}
+                                                disabled={!editable}
+                                                isInvalid={estado.externVideoLink !== undefined ? !estado.externVideoLink : undefined}
+                                                onBlur={() => setEstado({ ...estado, externVideoLink: validateExternLink(formValores.externVideoLink) })}
                                             />
                                         </Form.Label>
                                     </Col>

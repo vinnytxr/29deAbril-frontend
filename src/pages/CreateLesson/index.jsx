@@ -41,7 +41,8 @@ export const NewLessonScreen = () => {
       useBannerFromVideo: false,
       categoryId: null,
       apendices: [],
-      externAppendixLink: ''
+      externAppendixLink: '',
+      externVideoLink: ""
     }
   }
 
@@ -52,7 +53,8 @@ export const NewLessonScreen = () => {
     files: undefined,
     content: undefined,
     videos: undefined,
-    externAppendixLink: undefined
+    externAppendixLink: undefined,
+    externVideoLink: undefined
   })
 
   const [formValores, setFormValores] = useState(resetValores())
@@ -76,7 +78,7 @@ export const NewLessonScreen = () => {
     getCategories()
   }, [])
 
-  const validateExternAppendixLink = (value) => {
+  const validateExternLink = (value) => {
     const tags = ['http', 'https', 'localhost']
 
     for (const tag of tags)
@@ -93,6 +95,11 @@ export const NewLessonScreen = () => {
   const setExternAppendixLink = (e) => {
     setEstado({ ...estado, externAppendixLink: undefined })
     setFormValores({ ...formValores, externAppendixLink: cut(e?.target?.value?.trim() ?? '', 256) })
+  }
+
+  const setExternVideoLink = (e) => {
+    setEstado({ ...estado, externVideoLink: undefined })
+    setFormValores({ ...formValores, externVideoLink: cut(e?.target?.value?.trim() ?? "", 256) })
   }
 
   const setCategoryId = (e) => {
@@ -112,7 +119,8 @@ export const NewLessonScreen = () => {
       videos:
         formValores.videos.length > 0 ||
         (formValores.files.length > 0 && !formValores.useBannerFromVideo),
-      externAppendixLink: true
+      externAppendixLink: validateExternLink(formValores.externAppendixLink),
+      externVideoLink: validateExternLink(formValores.externVideoLink)
     }
 
     setEstado({ ...estadoAux })
@@ -127,6 +135,7 @@ export const NewLessonScreen = () => {
     post.append('content', formValores.content)
     post.append('course', courseId)
     post.append('extern_appendix_link', formValores.externAppendixLink)
+    post.append("extern_video_link", formValores.externVideoLink)
 
     if (!formValores.useBannerFromVideo)
       post.append('banner', formValores.files[0])
@@ -344,9 +353,27 @@ export const NewLessonScreen = () => {
                         onBlur={() =>
                           setEstado({
                             ...estado,
-                            externAppendixLink: validateExternAppendixLink(formValores.externAppendixLink),
+                            externAppendixLink: validateExternLink(formValores.externAppendixLink),
                           })
                         }
+                      />
+                    </Form.Label>
+                  </Col>
+                  <Col xs={12} className="pl0">
+                    <Form.Label className="w-100 mt-3">
+                      Link video
+                      <Form.Control
+                        className="input-title"
+                        spellCheck={false}
+                        required
+                        type="text"
+                        placeholder="https://<url> ou vazio"
+                        value={formValores.externVideoLink}
+                        onChange={setExternVideoLink}
+                        isValid={estado.externVideoLink}
+                        disabled={!editable}
+                        isInvalid={estado.externVideoLink !== undefined ? !estado.externVideoLink : undefined}
+                        onBlur={() => setEstado({ ...estado, externVideoLink: validateExternLink(formValores.externVideoLink) })}
                       />
                     </Form.Label>
                   </Col>

@@ -24,6 +24,12 @@ const getLesson = async (id) => {
                 data.video = BASE_URL + '/lessons/lessons/stream-video/' + pathVideo[pathVideo.length - 1]
             }
 
+            if(data.extern_video_link){
+                data.video = data.extern_video_link
+            }
+            
+            console.log(data)
+
             return new HttpResponse(HttpStatus.OK, data)
         }
         throw new Error("LessonAPI::getLesson()")
