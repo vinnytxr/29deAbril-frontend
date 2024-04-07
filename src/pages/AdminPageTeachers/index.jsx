@@ -56,13 +56,16 @@ const AdministrateTeachers = () => {
     }
 
     const revokePermissions = async (id) => {
-        const response = await AdminAPI.revokePermissions(token, id);
+        notifyError("Este recurso será liberado em breve!");
+        return
 
-        if (response.status !== HttpStatus.OK) {
-            notifyError("Falha ao revogar permissão.");
-        } else {
-            requestTeachers();
-        }
+        // const response = await AdminAPI.revokePermissions(token, id);
+
+        // if (response.status !== HttpStatus.OK) {
+        //     notifyError("Falha ao revogar permissão.");
+        // } else {
+        //     requestTeachers();
+        // }
     }
 
     const requestTeachers = async () => {
