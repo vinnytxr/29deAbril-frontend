@@ -125,8 +125,8 @@ export const EditLessonScreen = () => {
             files: formValores.files.length > 0 || formValores.useBannerFromVideo,
             content: formValores.content.trim().length >= 3,
             videos: formValores.videos.length > 0 || (formValores.files.length > 0 && !formValores.useBannerFromVideo),
-            externAppendixLink: true,
-            externVideoLink: true
+            externAppendixLink: validateExternLink(formValores.externAppendixLink),
+            externVideoLink: validateExternLink(formValores.externVideoLink)
         };
 
         setEstado({ ...estadoAux });
