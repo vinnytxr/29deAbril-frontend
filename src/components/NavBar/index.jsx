@@ -117,6 +117,7 @@ const SideNav = () => {
               <NavGroupFlush>
                 <NavLinkTo title='Gerar Convite' href='/admin/generate-invite' icon={<FAIcon Icon={BsKeyFill} />} />
                 <NavLinkTo title='Gerenciar Professores' href='/admin/manage-teachers' icon={<FAIcon Icon={BsReverseListColumnsReverse} />} />
+                <NavLinkTo title='Gerenciar Usuários' href='/admin/manage-users' icon={<FAIcon Icon={BsReverseListColumnsReverse} />} />
               </NavGroupFlush>
             </StrictRoute>
             
