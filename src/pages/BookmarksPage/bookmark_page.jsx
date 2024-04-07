@@ -39,6 +39,7 @@ const BookmarksPage = () => {
             var data = {"results" : []}
 
             while(true) {
+                
                 const response = await fetch(url, options);
 
                 if (response.ok) {
@@ -51,6 +52,10 @@ const BookmarksPage = () => {
                     }
 
                     url = jsonData.next
+
+                    if (url.includes("http:")) {
+                        url = url.replace("http:", "https:")
+                    }
                     //AUTH_DEBUG && console.log("AuthAPI::getBookmarks(): ", data);
                 } else throw new Error("Error on getBookmarks()");
             }
