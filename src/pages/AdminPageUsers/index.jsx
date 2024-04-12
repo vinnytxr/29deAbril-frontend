@@ -6,7 +6,7 @@ import { Col, Container, Navbar, Row, Card, Button, Form, ListGroup, ListGroupIt
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCancel, faCode, faEnvelope, faRemove, faShare } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUp, faArrowDown} from '@fortawesome/free-solid-svg-icons'
 import { HttpStatus } from '../../api/default'
 import { AdminAPI } from '../../api/admin'
 import { toast } from 'react-toastify';
@@ -14,16 +14,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom'
 
 
-const AdministrateTeachers = () => {
+const AdministrateUsers = () => {
     const { user, token } = useAuthContext();
-    const [newCode, setNewCode] = useState("")
-    const [email, setEmail] = useState("")
-    const [teachers, setTeachers] = useState([]);
-    const [enableBtn, setEnableBtn] = useState(true)
-    const [errors, setErrors] = useState({});
-    const [isLoading, setIsLoading] = useState(false)
-    const [isLoadingEmail, setIsLoadingEmail] = useState(false)
-    const navigate = useNavigate();
+    const [users, setUsers] = useState([]);
+    const [orderBy, setOrderBy] = useState("ra");
 
     const notifySuccess = () => toast.success("E-mail enviado com sucesso.", {
         position: "top-right",
@@ -48,34 +42,21 @@ const AdministrateTeachers = () => {
     });
 
     useEffect(() => {
-        requestTeachers()
-    }, []);
+        requestUsers()
+    }, [orderBy]);
 
-    const seeProfile = (id) => {
-        navigate("/student/courses/professor/" + id);
-    }
+    const requestUsers = async () => {
+        const listUsers = await AdminAPI.fetchUsers(token, orderBy);
 
-    const revokePermissions = async (id) => {
-        notifyError("Este recurso será liberado em breve!");
-        return
-
-        // const response = await AdminAPI.revokePermissions(token, id);
-
-        // if (response.status !== HttpStatus.OK) {
-        //     notifyError("Falha ao revogar permissão.");
-        // } else {
-        //     requestTeachers();
-        // }
-    }
-
-    const requestTeachers = async () => {
-        const listTeachers = await AdminAPI.fetchTeachers(token);
-
-        if (listTeachers.status !== HttpStatus.OK) {
-            notifyError("Falha ao requisitar lista de professores.");
+        if (listUsers.status !== HttpStatus.OK) {
+            notifyError("Falha ao requisitar lista de usuários.");
         } else {
-            setTeachers(listTeachers.data);
+            setUsers(listUsers.data);
         }
+    }
+
+    const toggleOrderBy = () => {
+        setOrderBy(prevOrder => (prevOrder === 'ra' ? 'role' : 'ra'));
     }
 
     return (
@@ -104,7 +85,7 @@ const AdministrateTeachers = () => {
             <Container fluid className='mb-3'>
                 <Row className="d-flex justify-content-center gap-4">
                     <Col>
-                        {teachers.length ?
+                        {users.length ?
                             <Card
                                 style={{
                                     padding: '16px',
@@ -113,35 +94,42 @@ const AdministrateTeachers = () => {
                                 <Row className="mb-4">
                                     <Col className="d-flex justify-content-between align-items-center">
                                         <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
-                                            Professores Cadastrados:
+                                            Usuários Cadastrados:
                                         </h1>
+                                        <div className='button-div'>
+                                            <Button className="button-order" onClick={toggleOrderBy}>
+                                                {orderBy === 'ra' ? (
+                                                    <>
+                                                        Ordenar <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faArrowDown} />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        Ordenar <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faArrowUp} />
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </div>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col>
                                         <ListGroup>
-                                            {teachers.map(teacher =>
-                                                <ListGroupItem key={teacher.id}>
+                                            {users.map(users =>
+                                                <ListGroupItem key={users.id}>
                                                     <Col>
                                                         <Row className="d-sm-flex justify-content-between">
-                                                            <Col>
-                                                                <span className="code-span">{teacher.name}</span>
+                                                            <Col className="col-lg-2 col-12">
+                                                                <span className="code-ra">{users.ra}</span>
                                                             </Col>
-                                                            <Col>
-                                                                <span className="d-sm-inline-block break-word">{teacher.email}</span>
+                                                            <Col className="col-lg-4 col-12">
+                                                                <span className="code-span">{users.name}</span>
                                                             </Col>
-                                                        </Row>
-                                                        <Row className="d-sm-flex justify-content-between">
-                                                            <Col>
-                                                                <span style={{ cursor: "pointer" }} onClick={() => seeProfile(teacher.id)} className='share pillwrapper'>
-                                                                    Ver Perfil&nbsp;
-                                                                    <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faShare} />
-                                                                </span>
+                                                            <Col className="col-lg-4 col-12">
+                                                                <span className="d-sm-inline-block break-word">{users.email}</span>
                                                             </Col>
-                                                            <Col>
-                                                                <span style={{ cursor: "pointer" }} onClick={() => revokePermissions(teacher.id)} className='delete pillwrapper'>
-                                                                    Revogar Permissões&nbsp;
-                                                                    <FontAwesomeIcon style={{ color: 'white', fontSize: '16' }} icon={faRemove} />
+                                                            <Col className="col-lg-2 col-12">
+                                                                <span className="d-sm-inline-block break-word tag-role">
+                                                                    {users.role.includes(3) ? 'Admin' : users.role.includes(2) ? 'Professor' : 'Estudante'}
                                                                 </span>
                                                             </Col>
                                                         </Row>
@@ -159,4 +147,4 @@ const AdministrateTeachers = () => {
     )
 }
 
-export default AdministrateTeachers
+export default AdministrateUsers
