@@ -102,7 +102,7 @@ const SideNavMobile = () => {
       /> 
       </Navbar.Toggle>
         <Navbar.Brand onClick={()=> navigate("/")}>
-            <img style={{width: '150px'}} src={logo} alt="Logo" />
+            <img style={{width: '80px'}} src={logo} alt="Logo" />
         </Navbar.Brand>
         <Navbar.Collapse id="responsive-navbar-nav">
       <Nav onClick={() => setExpanded(false)} className='me-auto home'>
@@ -142,6 +142,7 @@ const SideNavMobile = () => {
               <NavGroupFlush>
                 <NavLinkTo title='Gerar Convite' href='/admin/generate-invite' icon={<FAIcon Icon={BsKeyFill} />} />
                 <NavLinkTo title='Gerenciar Professores' href='/admin/manage-teachers' icon={<FAIcon Icon={BsReverseListColumnsReverse} />} />
+                <NavLinkTo title='Gerenciar Usuários' href='/admin/manage-users' icon={<FAIcon Icon={BsReverseListColumnsReverse} />} />
               </NavGroupFlush>
             </StrictRoute>
             

@@ -212,13 +212,13 @@ export default function RegisterScreen() {
           </div>
           <div className="col d-flex justify-content-md-end justify-content-start">
             <p className="mt-3">
-              Já tem conta? 
+              Já tem uma conta? 
               <Link className="fw-bold link-termos" to="/login">
                 ENTRE AGORA!
               </Link>
             </p>
           </div>
-          <p className="fw-bold fs-4 ms-1 mt-5">Estude Gratuitamente!</p>
+          <p className="fw-bold fs-4 ms-1 mt-5">Cadastro de usuário</p>
         </div>
 
         <div className="row ps-1 mt-2">

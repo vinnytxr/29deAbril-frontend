@@ -53,14 +53,14 @@
   border: none;
 }
 
-.cardSide-img-top {
+/* .cardSide-img-top {
   width: 75%;
   height: 2vw;
   object-fit: contain;
   border-top: 0px;
   margin-top: 0px;
   padding-top: 0px;
-}
+} */
 
 /* .md > | Medium devices and up (tablets) 768px and up */
 @media (min-width: 768px) {

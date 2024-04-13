@@ -54,9 +54,8 @@
   border: none;
 }
 
-.cardSide-img-top {
-  width: 75%;
-  height: 2vw;
+.home-desktop .cardSide-img-top {
+  height: 4vw;
   object-fit: contain;
   border-top: 0px;
   margin-top: 0px;

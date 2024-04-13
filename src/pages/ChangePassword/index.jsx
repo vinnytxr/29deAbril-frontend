@@ -131,8 +131,8 @@ const ChangePasswordPage = () => {
                                 </Col>
                             </Row>
                         </Col>
-                        <p className="fw-bold fs-4 ms-1">Mudança de senha!</p>
-                        <p className="ms-2">Preencha os campos para realizar a mudança da sua senha.</p>
+                        <p className="fw-bold fs-4 ms-1">Alteração de senha!</p>
+                        <p className="ms-2">Preencha os campos para alterar sua senha.</p>
                     </Row>
                     <Row className="ps-1 mt-2">
                         <Form onSubmit={handleSubmit}>
