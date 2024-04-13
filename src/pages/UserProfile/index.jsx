@@ -330,7 +330,7 @@ const UserProfileScreen = () => {
                         </Row>
                         <Row className="mb-4">
 
-                            {/* Erro ao editar nome e sobre mim */}
+                            {/* Erro ao editar nome e sobre */}
                             {
                                 Object.keys(formErrors).length !== 0 && editando &&
                                 <>
@@ -343,12 +343,12 @@ const UserProfileScreen = () => {
                                 </>
                             }
 
-                            {/* Card "Sobre mim" */}
+                            {/* Card "Sobre" */}
                             <Card style={{ padding: '16px', }} >
                                 <Row className="mb-3">
                                     <Col className="d-flex justify-content-between align-items-center">
                                         <h1 className="fw-bold fs-5" style={{ color: '#727273' }}>
-                                            Sobre mim
+                                            Informações do usuário
                                         </h1>
                                     </Col>
                                 </Row>
