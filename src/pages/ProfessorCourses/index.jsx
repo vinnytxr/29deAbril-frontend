@@ -85,7 +85,7 @@ const ProfessorCoursesPage = () => {
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
                     <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                        &#128075;&nbsp; Hey, {JSON.parse(localStorage.getItem('userData')).name.split(' ')[0]}!
+                        &#128075;&nbsp; Oi, {JSON.parse(localStorage.getItem('userData')).name.split(' ')[0]}!
                     </p>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">

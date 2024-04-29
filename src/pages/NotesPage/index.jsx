@@ -141,7 +141,7 @@ const NotesPage = () => {
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
                     <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                        &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+                        &#128075;&nbsp; Oi, {user?.name?.split(' ')[0]}!
                     </p>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">

@@ -190,7 +190,7 @@ const UserProfileScreen = () => {
                     <Navbar.Toggle />
                     <Navbar.Brand href="#home" className='navbar-brand-visibility'>
                         <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                            &#128075;&nbsp; Hey, {user.name.split(' ')[0]}!
+                            &#128075;&nbsp; Oi, {user.name.split(' ')[0]}!
                         </p>
                     </Navbar.Brand>
                     <Dropdown className='dropdown-position-md-lg'>

@@ -268,7 +268,7 @@ export const EditLessonScreen = () => {
             <Navbar>
             {logged && user ? (
               <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+                &#128075;&nbsp; Oi, {user?.name?.split(' ')[0]}!
               </p>
             ) : (
               <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
@@ -385,7 +385,7 @@ export const EditLessonScreen = () => {
                                     </Col>
                                     <Col xs={12} className="pl0">
                                         <Form.Label className="w-100 mt-3">
-                                            Conteudo da aula
+                                            Conteúdo da aula
                                             <Form.Control
                                                 className="input-content"
                                                 spellCheck="false"

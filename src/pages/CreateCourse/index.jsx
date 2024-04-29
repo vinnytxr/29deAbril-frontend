@@ -205,7 +205,7 @@ export const NewCourseScreen = () => {
       <Navbar>
             {logged && user ? (
               <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+                &#128075;&nbsp; Oi, {user?.name?.split(' ')[0]}!
               </p>
             ) : (
               <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
@@ -299,7 +299,7 @@ export const NewCourseScreen = () => {
                   </Col>
                   <Col xs={12} className="pl0">
                     <Form.Label className="w-100 mt-3">
-                      Conteudo do curso
+                      Conteúdo do curso
                       <Form.Control
                         className="input-content"
                         spellCheck="false"

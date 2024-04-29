@@ -64,7 +64,7 @@ const AdministrateUsers = () => {
             <Navbar style={{ marginBottom: '50px' }}>
                 <Container fluid>
                     <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                        &#128075;&nbsp; Hey, Administrador!
+                        &#128075;&nbsp; Oi, Administrador!
                     </p>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">

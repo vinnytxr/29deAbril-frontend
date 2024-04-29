@@ -57,7 +57,7 @@ function Home() {
           <Navbar>
             {logged && user ? (
               <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                &#128075;&nbsp; Hey, {user?.name?.split(' ')[0]}!
+                &#128075;&nbsp; Oi, {user?.name?.split(' ')[0]}!
               </p>
             ) : (
               <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">

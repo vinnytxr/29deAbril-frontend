@@ -141,7 +141,7 @@ const LoginPage = () => {
               </Row>
             </Col>
             <p className="fs-6 mb-1 ms-1">
-              Bem-vindo(a) a plataforma à Plataforma 29deAbril.
+              Bem-vindo(a) à Plataforma 29deAbril.
             </p>
             <p className="fw-bold fs-4 ms-1">Entre para estudar!</p>
           </Row>
