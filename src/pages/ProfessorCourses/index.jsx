@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Navbar, Row, Pagination } from 'react-bootstrap'
+import { Col, Container, Navbar, Row, Pagination, Spinner } from 'react-bootstrap'
 import Avatar from 'react-avatar'
 import { useAuthContext } from '../../contexts/AuthContext'
 import { AuthAPI } from '../../api/auth-api'
@@ -125,7 +125,14 @@ const ProfessorCoursesPage = () => {
                     </Container>
                     )
                 ) : (
-                    <p>Carregando...</p>
+                    <Container fluid>
+                    <div class="d-flex align-items-center justify-content-center" style={{ "height": "350px" }}>
+                      <Col className="text-center">
+                        <p className='fs-5'>Carregando cursos cadastrados por você.</p>
+                        <Spinner animation="border" variant="success" size='lg' />
+                      </Col>
+                    </div>
+                  </Container>
                 )}
 
 

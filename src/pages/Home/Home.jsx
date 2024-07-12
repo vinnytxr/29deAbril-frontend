@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import Container from 'react-bootstrap/Container'
 import Navbar from 'react-bootstrap/Navbar'
+import { Spinner } from 'react-bootstrap'
 
 //Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -70,11 +71,11 @@ function Home() {
               <Navbar.Text>
                 {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
                   : <Avatar
-                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
-                      color="#0f5b7a"
-                      size={30}
-                      textSizeRatio={2}
-                      round={true}
+                    name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                    color="#0f5b7a"
+                    size={30}
+                    textSizeRatio={2}
+                    round={true}
                   />}
                 {/* {user && (
                   <Avatar
@@ -130,7 +131,14 @@ function Home() {
                   )}
                 </>
               ) : (
-                <p>Carregando...</p>
+                <Container fluid>
+                  <div class="d-flex align-items-center justify-content-center" style={{ "height": "350px" }}>
+                    <Col className="text-center">
+                      <p className='fs-5'>Carregando cursos disponíveis.</p>
+                      <Spinner animation="border" variant="success" size='lg' />
+                    </Col>
+                  </div>
+                </Container>
               )}
             </div>
           </Row>

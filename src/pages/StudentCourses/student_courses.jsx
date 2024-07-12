@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
-import { Col, Container, Row, Pagination } from 'react-bootstrap'
+import { Col, Container, Row, Pagination, Spinner } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthAPI } from '../../api/auth-api'
 import { HttpStatus } from '../../api/default'
@@ -84,31 +84,31 @@ const StudentCoursesPage = () => {
 
     return (
         <>
-        <Container fluid>
-        <Col>
-        <Navbar>
-            {logged && user ? (
-              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                &#128075;&nbsp; Oi, {user?.name?.split(' ')[0]}!
-              </p>
-            ) : (
-              <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
-                &#128075;&nbsp; BEM-VINDO!
-              </p>
-            )}
+            <Container fluid>
+                <Col>
+                    <Navbar>
+                        {logged && user ? (
+                            <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                                &#128075;&nbsp; Oi, {user?.name?.split(' ')[0]}!
+                            </p>
+                        ) : (
+                            <p style={{ color: '#0f5b7a' }} className="mt-3 fs-6 fw-bold">
+                                &#128075;&nbsp; BEM-VINDO!
+                            </p>
+                        )}
 
-            <Navbar.Toggle />
-            <Navbar.Collapse className="justify-content-end">
-              <Navbar.Text>
-                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
-                  : <Avatar
-                      name={(user?.name && user?.name.split(' ')[0]) || "O i"}
-                      color="#0f5b7a"
-                      size={30}
-                      textSizeRatio={2}
-                      round={true}
-                  />}
-                {/* {user && (
+                        <Navbar.Toggle />
+                        <Navbar.Collapse className="justify-content-end">
+                            <Navbar.Text>
+                                {user && user.photo ? <img src={user.photo} style={{ width: '50px', aspectRatio: 1, borderRadius: '50%', objectFit: 'fill', objectPosition: 'center', cursor: 'pointer' }} alt="profile" />
+                                    : <Avatar
+                                        name={(user?.name && user?.name.split(' ')[0]) || "O i"}
+                                        color="#0f5b7a"
+                                        size={30}
+                                        textSizeRatio={2}
+                                        round={true}
+                                    />}
+                                {/* {user && (
                   <Avatar
                     name={user.name}
                     color="#0f5b7a"
@@ -117,47 +117,54 @@ const StudentCoursesPage = () => {
                     round={true}
                   />
                 )} */}
-              </Navbar.Text>
-            </Navbar.Collapse>
-          </Navbar>
+                            </Navbar.Text>
+                        </Navbar.Collapse>
+                    </Navbar>
 
-            <Row className="home-card mt-5">
-                <div className="col">
-                    <h1 className="mb-3 fs-5 fw-bold">Meus cursos</h1>
+                    <Row className="home-card mt-5">
+                        <div className="col">
+                            <h1 className="mb-3 fs-5 fw-bold">Meus cursos</h1>
 
-                    {isFetched ? (
-                        data.results.length ? (
-                            <Row className="g-4">
-                                {data.results.map((course) => (
-                                    <Col xs={12} lg={4} key={course.id}>
-                                        <Link to={`/student/courses/${course.id}`}>
-                                            <CardCourses teste={course} />
-                                        </Link>
-                                    </Col>
-                                ))}
-                            </Row>
-                        ) : (
-                            <Container fluid>
-                                <div class="d-flex align-items-center justify-content-center" style={{"height": "350px"}}>
-                                    <span><h1>Parece que você ainda não se inscreveu em nenhum curso :&#41;</h1>
-                                    <p className='fs-5' style={{ color: "#1dbfb0", cursor:"pointer" }} onClick={() => {navigate('/')}}>Clique aqui para ver nossa lista de cursos <FontAwesomeIcon className='fs-5' style={{color:"yellow"}} icon={faHandPointLeft}/></p></span>
-                                </div>
-                            </Container>
-                        )
-                    ) : (
-                        <p>Carregando...</p>
-                    )}
-                </div>
-            </Row>
-            { isFetched && amountPages > 1 &&
-            <Row className='mt-5'>
-                <Col className='d-flex justify-content-center'>
-                    {renderPagination()}
+                            {isFetched ? (
+                                data.results.length ? (
+                                    <Row className="g-4">
+                                        {data.results.map((course) => (
+                                            <Col xs={12} lg={4} key={course.id}>
+                                                <Link to={`/student/courses/${course.id}`}>
+                                                    <CardCourses teste={course} />
+                                                </Link>
+                                            </Col>
+                                        ))}
+                                    </Row>
+                                ) : (
+                                    <Container fluid>
+                                        <div class="d-flex align-items-center justify-content-center" style={{ "height": "350px" }}>
+                                            <span><h1>Parece que você ainda não se inscreveu em nenhum curso :&#41;</h1>
+                                                <p className='fs-5' style={{ color: "#1dbfb0", cursor: "pointer" }} onClick={() => { navigate('/') }}>Clique aqui para ver nossa lista de cursos <FontAwesomeIcon className='fs-5' style={{ color: "yellow" }} icon={faHandPointLeft} /></p></span>
+                                        </div>
+                                    </Container>
+                                )
+                            ) : (
+                                <Container fluid>
+                                    <div class="d-flex align-items-center justify-content-center" style={{ "height": "350px" }}>
+                                        <Col className="text-center">
+                                            <p className='fs-5'>Carregando cursos inscritos.</p>
+                                            <Spinner animation="border" variant="success" size='lg' />
+                                        </Col>
+                                    </div>
+                                </Container>
+                            )}
+                        </div>
+                    </Row>
+                    {isFetched && amountPages > 1 &&
+                        <Row className='mt-5'>
+                            <Col className='d-flex justify-content-center'>
+                                {renderPagination()}
+                            </Col>
+                        </Row>
+                    }
                 </Col>
-            </Row>
-            }
-        </Col>
-        </Container>
+            </Container>
         </>
     )
 }
